@@ -1,3 +1,13 @@
+.back{
+    background-color: #c9d6ff;
+    background: linear-gradient(to right, #e2e2e2, #c9d6ff);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    height: 100vh;
+}
+
 .container{
     background-color: #fff;
     border-radius: 30px;
@@ -56,15 +66,35 @@
     height: 100%;
 }
 
-.container input{
-    background-color: #eee;
-    border: none;
-    margin: 8px 0;
-    padding: 10px 15px;
-    font-size: 13px;
-    border-radius: 8px;
-    width: 100%;
-    outline: none;
+.input-container{
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.input-container input{
+  background-color: #eee;
+  width: 100%;
+  margin: 8px 0;
+  padding: 12px 40px 12px 15px;
+  border-radius: 8px;
+  border: 1px solid #eee;
+  outline: none;
+  font-size: 14px;
+  transition: border 0.2s;
+}
+
+.input-container input:focus{
+  border-color: #d258588c;
+}
+
+.input-container ng-icon{
+  position: absolute;
+  right: 12px;
+  color: #888;
+  font-size: 18px;
+  pointer-events: none;
 }
 
 .form-container{
@@ -111,17 +141,20 @@
 
 .social-icons{
     margin: 20px 0;
+    font-size: 12px;
 }
 
 .social-icons a{
     border: 1px solid #ccc;
-    border-radius: 20%;
+    border-radius: 5%;
     display: inline-flex;
     justify-content: center;
     align-items: center;
     margin: 0 3px;
-    width: 40px;
-    height: 40px;
+    /* width: 40px; */
+    height: 36px;
+    padding: 0 12px;
+    gap: 8px;
 }
 
 .toggle-container{

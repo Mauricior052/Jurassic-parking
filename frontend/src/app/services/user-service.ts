@@ -21,11 +21,12 @@ export class UserService {
     );
   }
 
-  register(credentials: { name: string, email: string; password: string }) {
-    return this.http.post(`${base_url}/usuarios`, credentials)
-      .pipe(tap((resp: any) => {
-        this.guardarLocalStorage(resp.token, resp.menu)
-      }));
+  register(credentials: { nombre: string; email: string; password: string }) {
+    return this.http.post(`${base_url}/users`, credentials).pipe(
+      tap((resp: any) => {
+        this.guardarLocalStorage(resp.token, resp.menu);
+      })
+    );
   }
 
   logout(): void {
