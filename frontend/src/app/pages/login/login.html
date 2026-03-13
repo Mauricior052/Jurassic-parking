@@ -6,7 +6,7 @@
       <form (ngSubmit)="register()">
         <h1>Crea una Cuenta</h1>
         <div class="social-icons">
-          <a href="#" class="icon">Google</a>
+          <div #googleRegisterBtn></div>
         </div>
         <span>o usa tu email para registrarte</span>
 
@@ -31,7 +31,7 @@
       <form (ngSubmit)="login()">
         <h1>Iniciar Sesión</h1>
         <div class="social-icons">
-          <a href="#" class="icon">Google</a>
+          <div #googleLoginBtn></div>
         </div>
         <span>o usa tu email y contraseña</span>
 
@@ -43,7 +43,13 @@
           <input type="password" name="password" placeholder="Password" [(ngModel)]="loginData.password" required />
           <ng-icon name="lucideLock"></ng-icon>
         </div>
-        <a href="#">¿Olvidaste tu contraseña?</a>
+        <div class="remember-forget">
+          <label>
+            <input type="checkbox" name="remember" [(ngModel)]="loginData.rememberMe"> 
+            Recuérdame
+          </label>
+          <a href="#">¿Olvidaste tu contraseña?</a>
+        </div>
         <button type="submit">Iniciar Sesión</button>
       </form>
     </div>

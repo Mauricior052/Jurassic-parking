@@ -1,10 +1,10 @@
-export interface User {
-  _id?: string;
-  email: string;
-  rol: 'admin' | 'cliente';
-  google: boolean;
-  favoritos: string[];
-  activo: boolean;
-  createdAt?: Date;
-  updatedAt?: Date;
+export class User {
+  constructor(
+    public nombre: string,
+    public email: string,
+    public password: string,
+    public google: boolean,
+    public role: string,
+    public id: string
+  ) {}
 }

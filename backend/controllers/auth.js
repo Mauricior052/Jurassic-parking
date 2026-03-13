@@ -33,12 +33,12 @@ export const login = async (req, res) => {
 
 export const googleSignIn = async (req, res) => {
   try {
-    const { email, name, picture } = await googleVerify(req.body.token);
+    const { email, name } = await googleVerify(req.body.token);
     const usuarioDB = await User.findOne({ email });
     let usuario;
 
     if (!usuarioDB) {
-        usuario = new User({ nombre: name, email, password: '@@@', img: picture, google: true });
+        usuario = new User({ nombre: name, email, password: '@@@@', google: true });
     } else {
         usuario = usuarioDB;
         usuario.google = true;
@@ -54,6 +54,20 @@ export const googleSignIn = async (req, res) => {
 
   } catch (error) {
     console.log(error);
-    res.status(500).json({ msg: "Token de Google invalido" });
+    res.status(400).json({ msg: "Token de Google invalido" });
+  }
+};
+
+export const renewToken = async (req, res) => {
+  try {
+    const id = req.id
+    const token = await generateJWT(id);
+    const usuario = await User.findById(id)
+
+    res.status(200).json({ token, usuario, menu: menuOptions(usuario.rol) });
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ msg: "Token invalido" });
   }
 };

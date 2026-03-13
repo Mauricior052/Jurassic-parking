@@ -1,8 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { tap } from 'rxjs';
+import { BehaviorSubject, catchError, map, of, tap } from 'rxjs';
 
 import { environment } from '../../environments/environment';
+import { User } from '../models/user';
 
 const base_url = environment.base_url;
 
@@ -11,7 +12,24 @@ const base_url = environment.base_url;
 })
 export class UserService {
 
+  private usuarioSubject = new BehaviorSubject<User | null>(null);
+  public usuario$ = this.usuarioSubject.asObservable();
+
   constructor(private http: HttpClient) {}
+
+  setUsuario(usuario: User) {
+    this.usuarioSubject.next(usuario);
+  }
+
+  get usuario(): User | null {
+    return this.usuarioSubject.value;
+  }
+
+  get headers() {
+    return {
+      headers: { 'token': localStorage.getItem('token') || '' }
+    }
+  }
 
   login(credentials: { email: string; password: string }) {
     return this.http.post(`${base_url}/login`, credentials).pipe(
@@ -19,6 +37,13 @@ export class UserService {
         this.guardarLocalStorage(resp.token, resp.menu);
       })
     );
+  }
+
+  loginGoogle (token: string) {
+    return this.http.post(`${base_url}/login/google`, { token })
+      .pipe(tap((resp: any) => {
+        this.guardarLocalStorage(resp.token, resp.menu)
+      }));
   }
 
   register(credentials: { nombre: string; email: string; password: string }) {
@@ -37,5 +62,26 @@ export class UserService {
   guardarLocalStorage (token: string, menu: any) {
     localStorage.setItem('token', token);
     localStorage.setItem('menu', JSON.stringify(menu));
+  }
+
+  validateToken() {
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+      return of(false);
+    }
+
+    return this.http.get(`${base_url}/login/renew`, this.headers).pipe(
+      map((resp: any) => {
+        console.log(resp)
+        const { email, google, nombre, role, id } = resp.usuario;
+        const usuario = new User(nombre, email, '', google, role, id);
+        this.usuarioSubject.next(usuario);
+
+        this.guardarLocalStorage(resp.token, resp.menu)
+        return true;
+      }),
+      catchError(() => of(false))
+    )
   }
 }

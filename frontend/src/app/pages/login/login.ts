@@ -1,10 +1,12 @@
-import { Component } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, NgZone, ViewChild } from '@angular/core';
 import { UserService } from '../../services/user-service';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { toast } from 'ngx-sonner';
 import { NgIcon } from '@ng-icons/core';
+
+declare const google: any;
 
 @Component({
   selector: 'app-login',
@@ -13,9 +15,20 @@ import { NgIcon } from '@ng-icons/core';
   styleUrl: './login.css',
 })
 
-export class Login {
+export class Login implements AfterViewInit {
 
-  constructor( private userService: UserService, private router: Router) {}
+  @ViewChild('googleLoginBtn', { static: false }) googleLoginBtn!: ElementRef;
+  @ViewChild('googleRegisterBtn', { static: false }) googleRegisterBtn!: ElementRef;
+
+  loginData = { email: localStorage.getItem('email') || 'm@gmail.com', password: '1234', rememberMe: !!localStorage.getItem('email') };
+  registerData = { nombre: 'Juan', email: 'juan@gmail.com', password: '1234' };
+  loading = false;
+
+  constructor( private userService: UserService, private router: Router, private ngZone: NgZone) {}
+
+  ngAfterViewInit(): void {
+    this.googleInit();
+  }
   
   isActive = false;
   showRegister(){
@@ -25,9 +38,39 @@ export class Login {
     this.isActive = false;
   }
 
-  loginData = { email: 'm@gmail.com', password: '1234' };
-  registerData = { nombre: 'Juan', email: 'juan@gmail.com', password: '1234' };
-  loading = false;
+  googleInit() {
+    google.accounts.id.initialize({
+      client_id: "886871992771-peo1cq8l376htch5obf47coce16o9ue0.apps.googleusercontent.com",
+      callback: (response: any) => this.handleCredentialResponse(response)
+    });
+
+    google.accounts.id.renderButton(
+      this.googleRegisterBtn.nativeElement,
+      { type: "icon", theme: "outline", size: "large", shape: "circle" }
+    );
+
+    google.accounts.id.renderButton(
+      this.googleLoginBtn.nativeElement,
+      { type: "icon", theme: "outline", size: "large", shape: "circle" }
+    );
+  }
+
+  handleCredentialResponse(response: any) {
+    this.loading = true;
+    this.ngZone.run(() => {
+      this.userService.loginGoogle(response.credential).subscribe({
+        next: () => {
+          this.loading = false;
+          toast.success('Login con google exitoso');
+          // this.router.navigateByUrl('/');
+        },
+        error: (err) => {
+          this.loading = false;
+          toast.error('Error de autenticación');
+        }
+      });
+    });
+  }
 
   login() {
     this.loading = true;
@@ -35,12 +78,17 @@ export class Login {
     this.userService.login(this.loginData).subscribe({
       next: (res) => {
         this.loading = false;
-        toast.success('', { description: 'Login exitoso' });
+        if (this.loginData.rememberMe) {
+          localStorage.setItem('email', this.loginData.email);
+        } else {
+          localStorage.removeItem('email');
+        }
+        toast.success('Login exitoso');
         // this.router.navigate(['/dashboard']);
       },
       error: (err) => {
         this.loading = false;
-        const msg = err.error.errors?.email?.msg || 'Error en el formulario';
+        const msg = err.error.msg || err.error.errors?.email?.msg || 'Error en el formulario';
         toast.error('Error', { description: msg });
         console.log(err)
       }
@@ -58,11 +106,10 @@ export class Login {
       },
       error: (err) => {
         this.loading = false;
-        const msg = err.error.errors?.email?.msg || 'Error en el formulario';
+        const msg = err.error.msg || err.error.errors?.email?.msg || 'Error en el formulario';
         toast.error('Error', { description: msg });
         console.log(err.error.errors)
       }
     });
   }
-
 }
