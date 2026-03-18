@@ -1,10 +1,10 @@
-import { AfterViewInit, Component, ElementRef, NgZone, ViewChild } from '@angular/core';
-import { UserService } from '../../services/user-service';
+import { AfterViewInit, Component, ElementRef, inject, NgZone, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { toast } from 'ngx-sonner';
 import { NgIcon } from '@ng-icons/core';
+import { UserService } from '../../services/user-service';
 
 declare const google: any;
 
@@ -16,6 +16,9 @@ declare const google: any;
 })
 
 export class Login implements AfterViewInit {
+  private userService = inject(UserService);
+  private router = inject(Router);
+  private ngZone = inject(NgZone); 
 
   @ViewChild('googleLoginBtn', { static: false }) googleLoginBtn!: ElementRef;
   @ViewChild('googleRegisterBtn', { static: false }) googleRegisterBtn!: ElementRef;
@@ -23,26 +26,25 @@ export class Login implements AfterViewInit {
   loginData = { email: localStorage.getItem('email') || 'm@gmail.com', password: '1234', rememberMe: !!localStorage.getItem('email') };
   registerData = { nombre: 'Juan', email: 'juan@gmail.com', password: '1234' };
   loading = false;
-
-  constructor( private userService: UserService, private router: Router, private ngZone: NgZone) {}
-
+  isActive = false;
+  
   ngAfterViewInit(): void {
     this.googleInit();
   }
-  
-  isActive = false;
-  showRegister(){
-    this.isActive = true;
-  }
-  showLogin(){
-    this.isActive = false;
-  }
+
 
   googleInit() {
-    google.accounts.id.initialize({
-      client_id: "886871992771-peo1cq8l376htch5obf47coce16o9ue0.apps.googleusercontent.com",
-      callback: (response: any) => this.handleCredentialResponse(response)
-    });
+    if (typeof google === 'undefined') {
+      setTimeout(() => this.googleInit(), 100);
+      return;
+    }
+
+    try {
+      google.accounts.id.initialize({
+        client_id: "886871992771-peo1cq8l376htch5obf47coce16o9ue0.apps.googleusercontent.com",
+        callback: (response: any) => this.handleCredentialResponse(response)
+      });
+    } catch (e) {}
 
     google.accounts.id.renderButton(
       this.googleRegisterBtn.nativeElement,
@@ -55,14 +57,23 @@ export class Login implements AfterViewInit {
     );
   }
 
+  showRegister(){
+    this.isActive = true;
+  }
+  showLogin(){
+    this.isActive = false;
+  }
+
   handleCredentialResponse(response: any) {
+    if (this.loading) return;
     this.loading = true;
+
     this.ngZone.run(() => {
       this.userService.loginGoogle(response.credential).subscribe({
         next: () => {
           this.loading = false;
           toast.success('Login con google exitoso');
-          // this.router.navigateByUrl('/');
+          this.router.navigateByUrl('/');
         },
         error: (err) => {
           this.loading = false;
@@ -73,6 +84,7 @@ export class Login implements AfterViewInit {
   }
 
   login() {
+    if (this.loading) return;
     this.loading = true;
 
     this.userService.login(this.loginData).subscribe({
@@ -84,7 +96,7 @@ export class Login implements AfterViewInit {
           localStorage.removeItem('email');
         }
         toast.success('Login exitoso');
-        // this.router.navigate(['/dashboard']);
+        this.router.navigateByUrl('/');
       },
       error: (err) => {
         this.loading = false;
@@ -96,13 +108,14 @@ export class Login implements AfterViewInit {
   }
 
   register() {
+    if (this.loading) return;
     this.loading = true;
 
     this.userService.register(this.registerData).subscribe({
       next: (res) => {
         this.loading = false;
-        toast.success('Usuario creado', { description: 'El registro se completó correctamente.' });
-        // this.router.navigate(['/dashboard']);
+        toast.success('Registro exitoso');
+        this.router.navigateByUrl('/');
       },
       error: (err) => {
         this.loading = false;

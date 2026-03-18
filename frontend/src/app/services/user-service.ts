@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject, catchError, map, of, tap } from 'rxjs';
 
 import { environment } from '../../environments/environment';
@@ -12,10 +12,11 @@ const base_url = environment.base_url;
 })
 export class UserService {
 
+  private http = inject(HttpClient);
+  
   private usuarioSubject = new BehaviorSubject<User | null>(null);
   public usuario$ = this.usuarioSubject.asObservable();
 
-  constructor(private http: HttpClient) {}
 
   setUsuario(usuario: User) {
     this.usuarioSubject.next(usuario);
@@ -57,6 +58,7 @@ export class UserService {
   logout(): void {
     localStorage.removeItem('token');
     localStorage.removeItem('menu');
+    this.usuarioSubject.next(null);
   }
 
   guardarLocalStorage (token: string, menu: any) {
@@ -73,7 +75,6 @@ export class UserService {
 
     return this.http.get(`${base_url}/login/renew`, this.headers).pipe(
       map((resp: any) => {
-        console.log(resp)
         const { email, google, nombre, role, id } = resp.usuario;
         const usuario = new User(nombre, email, '', google, role, id);
         this.usuarioSubject.next(usuario);
