@@ -121,7 +121,7 @@ export class Login implements AfterViewInit {
         this.loading = false;
         const msg = err.error.msg || err.error.errors?.email?.msg || 'Error en el formulario';
         toast.error('Error', { description: msg });
-        console.log(err.error.errors)
+        console.log(err.error)
       }
     });
   }

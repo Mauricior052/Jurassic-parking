@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject, catchError, map, of, tap } from 'rxjs';
 
@@ -6,6 +6,11 @@ import { environment } from '../../environments/environment';
 import { User } from '../models/user';
 
 const base_url = environment.base_url;
+
+interface UsersResponse {
+  users: User[];
+  total: number;
+}
 
 @Injectable({
   providedIn: 'root',
@@ -17,21 +22,22 @@ export class UserService {
   private usuarioSubject = new BehaviorSubject<User | null>(null);
   public usuario$ = this.usuarioSubject.asObservable();
 
-
-  setUsuario(usuario: User) {
-    this.usuarioSubject.next(usuario);
-  }
-
   get usuario(): User | null {
     return this.usuarioSubject.value;
   }
-
+  setUsuario(usuario: User) {
+    this.usuarioSubject.next(usuario);
+  }
   get headers() {
     return {
-      headers: { 'token': localStorage.getItem('token') || '' }
-    }
+      headers: new HttpHeaders({
+        'token': localStorage.getItem('token') || ''
+      })
+    };
   }
 
+
+  // AUTH
   login(credentials: { email: string; password: string }) {
     return this.http.post(`${base_url}/login`, credentials).pipe(
       tap((resp: any) => {
@@ -61,23 +67,14 @@ export class UserService {
     this.usuarioSubject.next(null);
   }
 
-  guardarLocalStorage (token: string, menu: any) {
-    localStorage.setItem('token', token);
-    localStorage.setItem('menu', JSON.stringify(menu));
-  }
-
   validateToken() {
     const token = localStorage.getItem('token');
 
-    if (!token) {
-      return of(false);
-    }
+    if (!token)  return of(false);
 
     return this.http.get(`${base_url}/login/renew`, this.headers).pipe(
       map((resp: any) => {
-        const { email, google, nombre, role, id } = resp.usuario;
-        const usuario = new User(nombre, email, '', google, role, id);
-        this.usuarioSubject.next(usuario);
+        this.usuarioSubject.next(this.createObject(resp.usuario));
 
         this.guardarLocalStorage(resp.token, resp.menu)
         return true;
@@ -85,4 +82,45 @@ export class UserService {
       catchError(() => of(false))
     )
   }
+
+
+  // CRUD
+  getUsers(desde: number = 0) {
+    return this.http.get<UsersResponse>(`${base_url}/users?desde=${desde}`, this.headers).pipe(
+      map(resp => {
+        return {
+          total: resp.total,
+          users: resp.users.map(user => this.createObject(user))
+        };
+      })
+    );
+  }
+
+  createUser(data: { nombre: string; email: string; password: string; role?: string }) {
+    return this.http.post(`${base_url}/users`, data, this.headers).pipe(
+      map((resp: any) => this.createObject(resp.usuario))
+    );
+  }
+
+  updateUser(user: User) {
+    return this.http.put(`${base_url}/users/${user.id}`, user, this.headers);
+  }
+
+  deleteUser(uid: string) {
+    return this.http.delete(`${base_url}/users/${uid}`, this.headers);
+  }
+
+  
+  private createObject(usuario: any): User {
+    const { nombre, email, google, role, id } = usuario;
+    return new User(nombre, email, '', google, role, id);
+  }
+
+  private guardarLocalStorage (token: string, menu: any) {
+    localStorage.setItem('token', token);
+    localStorage.setItem('menu', JSON.stringify(menu));
+  }
+
+  
+
 }

@@ -4,7 +4,7 @@ export class User {
     public email: string,
     public password: string,
     public google: boolean,
-    public role: string,
+    public rol: string,
     public id: string
   ) {}
 }
