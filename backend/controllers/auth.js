@@ -22,7 +22,7 @@ export const login = async (req, res) => {
 
     res.status(200).json({ 
         token, 
-        menu: menuOptions(user.role) 
+        menu: menuOptions(user.rol) 
     });
 
   } catch (error) {
@@ -49,7 +49,7 @@ export const googleSignIn = async (req, res) => {
 
     res.status(200).json({ 
         token, 
-        menu: menuOptions(usuario.role) 
+        menu: menuOptions(usuario.rol) 
     });
 
   } catch (error) {

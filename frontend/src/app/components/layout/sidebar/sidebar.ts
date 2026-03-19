@@ -1,10 +1,24 @@
+import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { NgIcon } from '@ng-icons/core';
 
 @Component({
   selector: 'app-sidebar',
-  imports: [RouterLink, RouterLinkActive, NgIcon],
+  imports: [CommonModule, RouterLink, RouterLinkActive, NgIcon],
   templateUrl: './sidebar.html',
 })
-export class Sidebar {}
+export class Sidebar {
+  isCollapsed = false;
+
+  toggleSidebar() {
+    this.isCollapsed = !this.isCollapsed;
+  }
+
+  links = [
+    { label: 'Dashboard', icon: 'lucideLayoutDashboard', link: '/' },
+    { label: 'Entradas/Salidas', icon: 'lucideParkingCircle', link: '/entradas' },
+    { label: 'Historial', icon: 'lucideClock', link: '/historial' },
+    { label: 'Usuarios', icon: 'lucideUser', link: '/users' }
+  ];
+}

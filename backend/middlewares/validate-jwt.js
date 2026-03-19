@@ -53,7 +53,7 @@ export const validateCurrent = async (req, res, next) => {
       return res.status(404).json({ msg: "Usuario no encontrado" });
     }
 
-    if (userDB.role === "ADMIN_ROLE" || id === idParam) {
+    if (userDB.rol === "admin" || id === idParam) {
       return next();
     }
 

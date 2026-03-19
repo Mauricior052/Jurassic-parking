@@ -1,5 +1,5 @@
 
-export const menuOptions = (role) => {
+export const menuOptions = (rol) => {
     const menu = [
     {
       title: 'Dashboard',
@@ -19,7 +19,7 @@ export const menuOptions = (role) => {
     }
   ];
 
-  if (role === 'admin') {
+  if (rol === 'admin') {
     menu[1].submenu.push({ title: 'Usuarios', url: 'usuarios' })
   }
 
