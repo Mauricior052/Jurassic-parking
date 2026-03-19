@@ -1,10 +1,7 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap');
+@import "tailwindcss";
 
-*{
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Montserrat', sans-serif;
+* {
+  font-family: 'Montserrat', sans-serif;
 }
 
 [data-sonner-toast] {
@@ -12,4 +9,27 @@
   padding: 20px !important;
 }
 
+@theme {
+  /* Fondo base y superficies */
+  --color-parking-dark: #0a0505;
+  --color-parking-surface: #160a0a;
+  
+  /* Identidad Visual (Jurassic Rojo) */
+  --color-parking-primary: #e11d48;
+  --color-parking-accent: #361c1c;
+  
+  /* Estados y Bordes */
+  --color-parking-border: #3f2525;
+  --color-parking-available: #22c55e;
+  --color-parking-occupied: #ef4444;
+  
+  /* Texto */
+  --color-parking-muted: #94a3b8;
+
+  /* Sombras personalizadas */
+  --shadow-glow: 0 0 15px rgba(225, 29, 72, 0.3);
+
+  --color-parking-light-bg: #f8fafc;
+  --color-parking-card-white: #ffffff;
+}
 

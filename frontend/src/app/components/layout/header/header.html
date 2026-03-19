@@ -1,65 +1,90 @@
-<header class="main-header">
-  <div class="header-container">
-    <div class="logo-section" (click)="goToHome()">
-      <div class="icon-wrapper">
-        <ng-icon name="lucideParkingCircle"></ng-icon>
+<header class="sticky top-0 z-50 bg-parking-dark border-b border-parking-border px-4 py-3 text-[#f8fafc]">
+  <div class="flex items-center justify-between max-w-350 mx-auto">
+    
+    <div class="flex items-center gap-3 cursor-pointer group" (click)="goToHome()">
+      <div class="bg-parking-primary text-white p-2 rounded-xl flex items-center shadow-glow group-hover:scale-105 transition-transform">
+        <ng-icon name="lucideParkingCircle" class="text-xl"></ng-icon>
       </div>
-      <h1 class="brand-name">Jurassic <span>Parking</span></h1>
+      <h1 class="text-xl font-extrabold tracking-tight">
+        Jurassic <span class="text-parking-primary">Parking</span>
+      </h1>
     </div>
 
-    <div class="search-section">
-      <div class="search-bar">
-        <ng-icon name="lucideSearch" class="search-icon"></ng-icon>
-        <input type="text" placeholder="Buscar placa o ticket..." />
+    <div class="hidden md:block">
+      <div class="relative group">
+        <ng-icon name="lucideSearch" class="absolute left-3 top-1/2 -translate-y-1/2 text-parking-muted group-focus-within:text-parking-primary transition-colors"></ng-icon>
+        <input 
+          type="text" 
+          placeholder="Buscar placa o ticket..." 
+          class="w-80 bg-parking-accent border border-parking-border rounded-xl py-2 pl-10 pr-4 text-sm outline-none focus:border-parking-primary focus:bg-parking-surface focus:ring-4 focus:ring-parking-primary/10 transition-all placeholder:text-[#6b4c4c]"
+        />
       </div>
     </div>
 
-    <div class="actions-section">
-      <div class="status-badge">
-        <span class="dot"></span>
+    <div class="flex items-center gap-5">
+      <div class="flex items-center gap-2 bg-parking-available/10 text-parking-available px-3 py-1.5 rounded-full text-xs font-semibold border border-parking-available/20">
+        <span class="w-2 h-2 bg-parking-available rounded-full animate-pulse shadow-[0_0_8px_var(--color-parking-available)]"></span>
         {{ espaciosDisponibles }} libres
       </div>
 
-      <div class="divider"></div>
+      <div class="w-px h-6 bg-parking-border"></div>
 
       @if (user$ | async; as user) {
-        <div class="user-profile-container">
-          <div class="user-profile" (click)="toggleMenu()">
-            <div class="user-info">
-              <span class="user-name">{{ user.nombre }}</span>
-              <span class="user-role">{{ user.role }}</span>
+        <div class="relative">
+          <div 
+            class="flex items-center gap-3 cursor-pointer p-1.5 rounded-xl hover:bg-parking-accent transition-colors" 
+            (click)="toggleMenu()"
+          >
+            <div class="hidden sm:flex flex-col text-right">
+              <span class="text-sm font-semibold leading-none">{{ user.nombre }}</span>
+              <span class="text-[0.7rem] text-parking-muted mt-1 uppercase tracking-wider">{{ user.role }}</span>
             </div>
 
-            <div class="avatar-wrapper">
-              <img src="https://ui-avatars.com/api/?name={{ user.nombre }}&background=e11d48&color=fff" alt="Avatar" />
-              <ng-icon name="lucideChevronDown" [class.rotated]="isMenuOpen"></ng-icon>
+            <div class="flex items-center gap-1">
+              <img 
+                src="https://ui-avatars.com/api/?name={{ user.nombre }}&background=e11d48&color=fff" 
+                alt="Avatar" 
+                class="w-8 h-8 rounded-full border border-parking-border object-cover"
+              />
+              <ng-icon 
+                name="lucideChevronDown" 
+                class="text-xs text-parking-muted transition-transform duration-200"
+                [class.rotate-180]="isMenuOpen"
+              ></ng-icon>
             </div>
           </div>
 
           @if (isMenuOpen) {
-            <div class="dropdown-menu">
-              <div class="dropdown-header">
-                <p class="user-email">{{ user.email }}</p>
+            <div class="absolute top-[calc(100%+0.5rem)] right-0 w-56 bg-parking-surface border border-parking-border rounded-xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 z-50">
+              <div class="px-4 py-3 border-b border-parking-border">
+                <p class="text-[0.7rem] text-parking-muted truncate">{{ user.email }}</p>
               </div>
 
-              <div class="dropdown-divider"></div>
+              <div class="p-1">
+                <button class="w-full flex items-center gap-3 px-3 py-2.5 text-sm rounded-lg hover:bg-parking-accent transition-colors">
+                  <ng-icon name="lucideUser" class="text-parking-muted"></ng-icon>
+                  <span>Mi Perfil</span>
+                </button>
+              </div>
 
-              <button class="dropdown-item">
-                <ng-icon name="lucideUser"></ng-icon>
-                <span>Mi Perfil</span>
-              </button>
+              <div class="h-px bg-parking-border my-1"></div>
 
-              <div class="dropdown-divider"></div>
-
-              <button class="dropdown-item logout" (click)="logout()">
-                <ng-icon name="lucideLogOut"></ng-icon>
-                <span>Cerrar Sesión</span>
-              </button>
+              <div class="p-1">
+                <button 
+                  class="w-full flex items-center gap-3 px-3 py-2.5 text-sm rounded-lg text-parking-occupied hover:bg-parking-occupied/10 transition-colors" 
+                  (click)="logout()"
+                >
+                  <ng-icon name="lucideLogOut"></ng-icon>
+                  <span>Cerrar Sesión</span>
+                </button>
+              </div>
             </div>
           }
         </div>
       } @else {
-        <button class="login-btn">Iniciar Sesión</button>
+        <button class="bg-parking-primary hover:bg-parking-primary/90 text-white px-5 py-2 rounded-xl text-sm font-bold transition-all active:scale-95 shadow-glow">
+          Iniciar Sesión
+        </button>
       }
     </div>
   </div>

@@ -1,12 +1,9 @@
 {
   "name": "jurassic-parking",
   "version": "1.0.0",
-  "description": "Angular",
-  "workspaces": [
-    "frontend",
-    "backend"
-  ],
+  "description": "Angular+Node",
   "scripts": {
+    "install-all": "concurrently \"cd backend && npm i\" \"cd frontend && npm i\"",
     "dev": "concurrently \"cd backend && npm run dev\" \"cd frontend && npm start -- -o\""
   },
   "keywords": [],

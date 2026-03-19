@@ -1,0 +1,81 @@
+<div class="space-y-6">
+  <div class="flex items-center justify-between">
+    <h1 class="text-2xl font-black text-slate-900 tracking-tight">Gestión de Usuarios</h1>
+    <span class="text-xs font-bold text-parking-muted bg-slate-100 px-3 py-1 rounded-full border border-slate-200">
+      {{ users.length }} usuarios registrados
+    </span>
+  </div>
+
+  <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+    <form (ngSubmit)="save()" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="relative">
+        <input
+          type="text"
+          placeholder="Nombre completo"
+          [(ngModel)]="form.nombre"
+          name="name"
+          required
+          class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 pl-4 text-sm outline-none focus:border-parking-primary focus:ring-4 focus:ring-parking-primary/5 transition-all"
+        />
+      </div>
+
+      <div class="relative">
+        <input
+          type="email"
+          placeholder="Correo electrónico"
+          [(ngModel)]="form.email"
+          name="email"
+          required
+          class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 pl-4 text-sm outline-none focus:border-parking-primary focus:ring-4 focus:ring-parking-primary/5 transition-all"
+        />
+      </div>
+
+      <button
+        type="submit"
+        class="bg-parking-primary text-white font-bold rounded-xl px-6 py-3 hover:bg-rose-700 shadow-glow active:scale-95 transition-all flex items-center justify-center gap-2"
+      >
+        <ng-icon [name]="editing ? 'lucideRefreshCw' : 'lucideUserPlus'"></ng-icon>
+        {{ editing ? 'Actualizar Usuario' : 'Crear Usuario' }}
+      </button>
+    </form>
+  </div>
+
+  <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr class="bg-slate-50 border-b border-slate-200 text-slate-500">
+            <th class="p-4 text-xs uppercase tracking-widest font-black">Nombre</th>
+            <th class="p-4 text-xs uppercase tracking-widest font-black">Email</th>
+            <th class="p-4 text-xs uppercase tracking-widest font-black text-center">Acciones</th>
+          </tr>
+        </thead>
+        <tbody class="text-slate-700 text-sm">
+          @for (user of users; track user.id) {
+            <tr class="border-b border-slate-100 hover:bg-slate-50/50 transition-colors group">
+              <td class="p-4 font-semibold text-slate-900">{{ user.nombre }}</td>
+              <td class="p-4 text-slate-500">{{ user.email }}</td>
+              <td class="p-4 flex justify-center gap-2">
+                <button
+                  (click)="edit()"
+                  class="flex items-center gap-1 bg-amber-50 text-amber-600 px-4 py-2 rounded-lg hover:bg-amber-100 transition-colors border border-amber-200/50 font-bold text-xs"
+                >
+                  <ng-icon name="lucidePencil" size="14"></ng-icon>
+                  Editar
+                </button>
+
+                <button
+                  (click)="delete()"
+                  class="flex items-center gap-1 bg-rose-50 text-rose-600 px-4 py-2 rounded-lg hover:bg-rose-100 transition-colors border border-rose-200/50 font-bold text-xs"
+                >
+                  <ng-icon name="lucideTrash2" size="14"></ng-icon>
+                  Eliminar
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

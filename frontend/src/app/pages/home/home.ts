@@ -5,6 +5,5 @@ import { NgIcon } from '@ng-icons/core';
   selector: 'app-home',
   imports: [NgIcon],
   templateUrl: './home.html',
-  styleUrl: './home.css',
 })
 export class Home {}

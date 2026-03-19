@@ -1,66 +1,68 @@
-<div class="container">
-  <aside class="sidebar">
-    <div class="logo">
-      <h2><ng-icon name="lucideParkingCircle"></ng-icon> ParkMaster</h2>
+<main class="flex-1 p-8">
+  <header class="flex justify-between items-center mb-10">
+    <div>
+      <h1 class="text-3xl font-black tracking-tight text-slate-900">Panel de Inicio</h1>
+      <p class="text-slate-500 text-sm mt-1">Bienvenido al sistema de gestión Jurassic Parking</p>
     </div>
-    <nav>
-      <ul>
-        <li class="active">
-          <a href="#"><ng-icon name="lucideCar" size="24" color="#3498db"></ng-icon> Dashboard</a>
-        </li>
-        <li>
-          <a href="#"><ng-icon name="lucideParkingCircle" size="24" color="#3498db"></ng-icon> Entradas/Salidas</a>
-        </li>
-        <li>
-          <a href="#"><ng-icon name="lucideClock" size="24" color="#3498db"></ng-icon> Historial</a>
-        </li>
-        <li>
-          <a href="#"><ng-icon name="lucideSettings" size="24" color="#3498db"></ng-icon> Configuración</a>
-        </li>
-      </ul>
-    </nav>
-  </aside>
 
-  <main class="main-content">
-    <header class="top-bar">
-      <h1>Panel de Inicio</h1>
-      <div class="user-info">
-        <span>Admin</span>
-        <div class="avatar"></div>
+    <div class="flex items-center gap-4 bg-white p-2 pr-4 rounded-2xl border border-slate-200 shadow-sm">
+      <div class="w-10 h-10 bg-parking-primary/10 rounded-xl flex items-center justify-center">
+          <ng-icon name="lucideUser" class="text-parking-primary text-xl"></ng-icon>
       </div>
-    </header>
+      <div class="flex flex-col">
+        <span class="font-bold text-slate-800 text-xs">Admin</span>
+        <span class="text-[0.6rem] text-slate-400 uppercase font-bold">En línea</span>
+      </div>
+    </div>
+  </header>
 
-    <section class="stats-container">
-      <div class="card stat-card">
-        <h3>Espacios Totales</h3>
-        <p class="number">50</p>
-      </div>
-      <div class="card stat-card available">
-        <h3>Disponibles</h3>
-        <p class="number">12</p>
-      </div>
-      <div class="card stat-card occupied">
-        <h3>Ocupados</h3>
-        <p class="number">38</p>
-      </div>
-      <div class="card stat-card revenue">
-        <h3>Ganancia Hoy</h3>
-        <p class="number">$1,250</p>
-      </div>
-    </section>
+  <section class="grid grid-cols-[repeat(auto-fit,minmax(15rem,1fr))] gap-6 mb-10">
+    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+      <h3 class="text-slate-400 font-bold text-xs uppercase tracking-widest">Espacios Totales</h3>
+      <p class="text-4xl font-black mt-2 text-slate-900">50</p>
+    </div>
 
-    <section class="parking-overview card">
-      <h2>Estado de los Lugares</h2>
-      <div class="parking-grid">
-        <div class="slot occupied">A1</div>
-        <div class="slot available">A2</div>
-        <div class="slot occupied">A3</div>
-        <div class="slot available">A4</div>
-        <div class="slot available">A5</div>
-        <div class="slot occupied">A6</div>
-        <div class="slot available">A7</div>
-        <div class="slot available">A8</div>
+    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm border-b-4 border-b-parking-available">
+      <h3 class="text-slate-400 font-bold text-xs uppercase tracking-widest">Disponibles</h3>
+      <p class="text-4xl font-black mt-2 text-parking-available">12</p>
+    </div>
+
+    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm border-b-4 border-b-parking-occupied">
+      <h3 class="text-slate-400 font-bold text-xs uppercase tracking-widest">Ocupados</h3>
+      <p class="text-4xl font-black mt-2 text-parking-occupied">38</p>
+    </div>
+
+    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm border-b-4 border-b-parking-primary">
+      <h3 class="text-slate-400 font-bold text-xs uppercase tracking-widest">Ganancia Hoy</h3>
+      <p class="text-4xl font-black mt-2 text-slate-900">$1,250</p>
+    </div>
+  </section>
+
+  <section class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm">
+    <div class="flex items-center justify-between mb-8">
+      <h2 class="text-xl font-extrabold text-slate-900 flex items-center gap-2">
+        <ng-icon name="lucideMapPin" class="text-parking-primary"></ng-icon>
+        Estado de los Lugares
+      </h2>
+      <div class="flex gap-2">
+          <span class="flex items-center gap-1 text-xs font-bold text-slate-400">
+            <span class="w-2 h-2 rounded-full bg-parking-available"></span> Libre
+          </span>
+          <span class="flex items-center gap-1 text-xs font-bold text-slate-400 ml-3">
+            <span class="w-2 h-2 rounded-full bg-parking-occupied"></span> Ocupado
+          </span>
       </div>
-    </section>
-  </main>
-</div>
+    </div>
+
+    <div class="grid grid-cols-[repeat(auto-fill,minmax(6rem,1fr))] gap-5">
+      <div class="h-20 flex flex-col items-center justify-center rounded-2xl font-bold border-2 bg-slate-50 text-parking-occupied border-slate-200 hover:border-parking-occupied/50 transition-all cursor-pointer">
+        <span class="text-xs text-slate-400">Slot</span>
+        A1
+      </div>
+      <div class="h-20 flex flex-col items-center justify-center rounded-2xl font-bold border-2 bg-white text-parking-available border-slate-200 hover:border-parking-available/50 transition-all cursor-pointer">
+        <span class="text-xs text-slate-400">Slot</span>
+        A2
+      </div>
+      </div>
+  </section>
+</main>
