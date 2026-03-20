@@ -2,14 +2,9 @@ import bcryptjs from 'bcryptjs';
 import User from '../models/user.js';
 import { generateJWT } from '../helpers/generate-jwt.js';
 
-export const getUsers = async (req, res) => {
-  const from = Number(req.query.from) || 0;
-  
+export const getUsers = async (req, res) => {  
   const [users, total] = await Promise.all([
-    User
-      .find({ activo: true }, 'nombre email rol google favoritos')
-      .skip(from)
-      .limit(5),
+    User.find({ activo: true }, 'nombre email rol google favoritos'),
     User.countDocuments()
   ]);
 

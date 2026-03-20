@@ -85,8 +85,8 @@ export class UserService {
 
 
   // CRUD
-  getUsers(desde: number = 0) {
-    return this.http.get<UsersResponse>(`${base_url}/users?desde=${desde}`, this.headers).pipe(
+  getUsers() {
+    return this.http.get<UsersResponse>(`${base_url}/users`, this.headers).pipe(
       map(resp => {
         return {
           total: resp.total,
@@ -96,7 +96,7 @@ export class UserService {
     );
   }
 
-  createUser(data: { nombre: string; email: string; password: string; role?: string }) {
+  createUser(data: { nombre: string; email: string; password: string; rol?: string }) {
     return this.http.post(`${base_url}/users`, data, this.headers).pipe(
       map((resp: any) => this.createObject(resp.usuario))
     );
@@ -112,8 +112,8 @@ export class UserService {
 
   
   private createObject(usuario: any): User {
-    const { nombre, email, google, role, id } = usuario;
-    return new User(nombre, email, '', google, role, id);
+    const { nombre, email, google, rol, id } = usuario;
+    return new User(nombre, email, '', google, rol, id);
   }
 
   private guardarLocalStorage (token: string, menu: any) {

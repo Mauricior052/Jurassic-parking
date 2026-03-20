@@ -1,0 +1,15 @@
+<div class="p-1 flex justify-center gap-2 h-full">
+  <button
+    (click)="onEdit()"
+    class="flex items-center gap-1 bg-amber-50 text-amber-700 px-2 py-1 rounded-lg hover:bg-amber-100 transition-colors border border-amber-200/50 font-bold text-xs cursor-pointer">
+    
+    <ng-icon name="lucidePencil" size="20"></ng-icon>
+  </button>
+
+  <button
+    (click)="onDelete()"
+    class="flex items-center gap-1 bg-rose-50 text-rose-700 px-2 py-1 rounded-lg hover:bg-rose-100 transition-colors border border-rose-200/50 font-bold text-xs cursor-pointer">
+    
+    <ng-icon name="lucideTrash2" size="20"></ng-icon>
+  </button>
+</div>
