@@ -1,87 +1,190 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { AsyncPipe } from '@angular/common';
 import { NgIcon } from '@ng-icons/core';
 import { AgGridAngular } from 'ag-grid-angular';
-import type { ColDef } from 'ag-grid-community';
+import type { ColDef, GridApi } from 'ag-grid-community';
 
 import { User } from '../../models/user';
 import { UserService } from '../../services/user-service';
 import { Actions } from '../../components/actions/actions';
+import { toast } from 'ngx-sonner';
 
 @Component({
   selector: 'app-users',
-  imports: [FormsModule, AsyncPipe, NgIcon, AgGridAngular],
+  standalone: true,
+  imports: [FormsModule, AgGridAngular, NgIcon],
   templateUrl: './users.html',
 })
 export class Users {
+  private cdr = inject(ChangeDetectorRef);
   private userService = inject(UserService);
-  rowData: any[] = [];
 
+  rowData = signal<User[]>([]);
+  users$ = this.userService.getUsers();
+
+  gridApi!: GridApi;
+
+  form: User = this.getEmptyUser();
+  editing = false;
+  isModalOpen = false;
+  loading = false;
+
+  // ------------------- INIT -------------------
   ngOnInit() {
+    this.loadUsers();
+  }
+
+  loadUsers() {
     this.userService.getUsers().subscribe((res: any) => {
-      this.rowData = res.users;
+      this.rowData.set(res.users);
     });
   }
 
-  users$ = this.userService.getUsers();
+  // ------------------- GRID -------------------
   columnDefs: ColDef[] = [
     { field: 'nombre', headerName: 'Nombre', flex: 2, minWidth: 150 },
     { field: 'email', headerName: 'Email', flex: 3, minWidth: 200 },
-    { field: 'google', headerName: 'Google', cellRenderer: (p: boolean) => p ? 'Sí' : 'No', width: 100 },
-    { field: 'rol', headerName: 'Rol', cellClass: 'capitalize', width: 100 },
+    {
+      field: 'google',
+      headerName: 'Google',
+      cellRenderer: (params: any) => (params.value ? 'Sí' : 'No'),
+      width: 100
+    },
+    { field: 'rol', headerName: 'Rol', valueFormatter: (p) => p.value?.charAt(0).toUpperCase() + p.value?.slice(1).toLowerCase(), width: 120 },
     {
       headerName: 'Acciones',
       cellRenderer: Actions,
       cellRendererParams: {
-        onEdit: (data: any) => this.edit(data),
-        onDelete: (data: any) => this.delete(data)
+        onEdit: (data: User) => this.edit(data),
+        onDelete: (data: User) => this.delete(data)
       },
       sortable: false,
       filter: false,
+      resizable: false,
       width: 120
     }
   ];
+
   defaultColDef: ColDef = {
     sortable: true,
     filter: true
   };
 
-  form: User = {
-    nombre: '',
-    email: '',
-    password: '',
-    google: false,
-    rol: '',
-    id: ''
-  };
-  editing = false;
-  loading = false;
-  constructor() {
-    this.userService.getUsers().subscribe(resp => {
-  });
-  }
-
-  save() {
-    console.log('save');
-  }
-
-  edit(data: User) {
-    console.log(data);
-  }
-
-  delete(data: User) {
-    console.log(data);
-  }
-
-
-  gridApi: any;
   onGridReady(params: any) {
     this.gridApi = params.api;
   }
+
   onSearch(event: any) {
     const value = event.target.value;
     this.gridApi.setGridOption('quickFilterText', value);
   }
 
+  // ------------------- MODAL -------------------
+  openModal() {
+    this.editing = false;
+    this.form = this.getEmptyUser();
+    this.isModalOpen = true;
+  }
+
+  edit(user: User) {
+    this.editing = true;
+    this.form = { ...user };
+    this.isModalOpen = true;
+  }
+
+  closeModal() {
+    this.isModalOpen = false;
+    this.cdr.detectChanges();
+    setTimeout(() => {
+      this.form = this.getEmptyUser();
+      this.editing = false;
+    }, 100);
+  }
+
+  // ------------------- CRUD -------------------
+  save() {
+    if (this.loading) return;
+    this.loading = true;
+
+    if (!this.form.nombre || !this.form.email) {
+      toast.error('Completa nombre y correo');
+      return;
+    }
+    if (!this.editing && !this.form.password) {
+      toast.error('La contraseña es obligatoria');
+      return;
+    }
+
+    if (this.editing) {
+      if (!this.form.id) return;
+      const { password, ...userToUpdate } = this.form;
+      this.userService.updateUser(userToUpdate).subscribe({
+        next: () => {
+          this.loading = false;
+          toast.success('Usuario actualizado correctamente');
+          this.loadUsers();
+          this.closeModal();
+        },
+        error: (err) => {
+          this.loading = false;
+          const msg = err?.error?.msg || err?.error?.errors?.email?.msg || 'Error al actualizar usuario';
+          toast.error(msg);
+          console.log(err)
+        }
+      });
+
+    } else {
+      this.userService.createUser(this.form).subscribe({
+        next: () => {
+          this.loading = false;
+          toast.success('Usuario creado correctamente');
+          this.loadUsers();
+          this.closeModal();
+        },
+        error: (err) => {
+          this.loading = false;
+          const msg = err?.error?.msg || err?.error?.errors?.email?.msg || 'Error al crear usuario';
+          toast.error(msg);
+          console.log(err)
+        }
+      });
+    }
+  }
+
+  delete(user: User) {
+    if (!user.id) {
+      toast.error('Usuario inválido');
+      return;
+    }
+
+    toast(`¿Eliminar a ${user.nombre}?`, {
+      action: {
+        label: 'Eliminar',
+        onClick: () => {
+          this.userService.deleteUser(user.id!).subscribe({
+            next: () => {
+              toast.success('Usuario eliminado');
+              this.loadUsers();
+            },
+            error: (err) => {
+              const msg = err?.error?.msg || err?.error?.errors?.email?.msg || 'Error al eliminar usuario';
+              toast.error(msg);
+            }
+          });
+        }
+      }
+    });
+  }
+
+  // ------------------- HELPERS -------------------
+  getEmptyUser(): User {
+    return {
+      nombre: '',
+      email: '',
+      password: '',
+      google: false,
+      rol: 'cliente',
+      id: ''
+    };
+  }
 }

@@ -9,7 +9,7 @@ import { NgIcon } from '@ng-icons/core';
   templateUrl: './sidebar.html',
 })
 export class Sidebar {
-  isCollapsed = false;
+  isCollapsed = true;
 
   toggleSidebar() {
     this.isCollapsed = !this.isCollapsed;
@@ -19,6 +19,6 @@ export class Sidebar {
     { label: 'Dashboard', icon: 'lucideLayoutDashboard', link: '/' },
     { label: 'Entradas/Salidas', icon: 'lucideParkingCircle', link: '/entradas' },
     { label: 'Historial', icon: 'lucideClock', link: '/historial' },
-    { label: 'Usuarios', icon: 'lucideUser', link: '/users' }
+    { label: 'Usuarios', icon: 'lucideUsers', link: '/users' }
   ];
 }

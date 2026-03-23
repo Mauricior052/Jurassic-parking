@@ -1,82 +1,168 @@
 <div class="space-y-6">
   <div class="flex items-center justify-between">
     <div>
-      <h1 class="text-2xl font-black text-slate-900 tracking-tight">Gestión de Usuarios</h1>
-      <p class="text-sm text-parking-muted">Administra los accesos y roles del personal.</p>
+      <h1 class="flex items-center gap-3 pl-2 text-2xl font-black text-slate-900"><ng-icon name="lucideUsers" size="20"></ng-icon>Gestión de Usuarios</h1>
+      <p class="pl-2 text-sm text-slate-500">Administra los usuarios del sistema.</p>
     </div>
-    <span class="text-xs font-bold text-parking-primary bg-parking-primary/10 px-4 py-2 rounded-full border border-parking-primary/20">
-      {{ (users$ | async)?.total }} registrados
-    </span>
+
+    <button (click)="openModal()"
+      class="flex items-center gap-2 bg-parking-primary text-white px-4 py-2 rounded-lg font-bold cursor-pointer
+         hover:bg-parking-primary/70
+         active:scale-94 active:bg-parking-primary/70
+         transition-all duration-200">
+      <ng-icon name="lucidePlus" size="18"></ng-icon>
+      Nuevo Usuario
+    </button>
   </div>
 
-  <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-    <h2 class="text-sm font-bold text-slate-700 mb-4 flex items-center gap-2">
-      <ng-icon name="lucideUserPlus" class="text-parking-primary"></ng-icon>
-      {{ editing ? 'Editar información' : 'Nuevo registro' }}
-    </h2>
-    
-    <form (ngSubmit)="save()" class="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <div class="relative group">
-        <ng-icon name="lucideUser" class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-parking-primary transition-colors"></ng-icon>
-        <input
-          type="text"
-          placeholder="Nombre completo"
-          [(ngModel)]="form.nombre"
-          name="name"
-          required
-          class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 pl-11 text-sm outline-none focus:border-parking-primary focus:ring-4 focus:ring-parking-primary/5 transition-all"
-        />
-      </div>
+  <!-- BUSCADOR -->
+  <input
+    type="text"
+    placeholder="Buscar usuarios..."
+    (input)="onSearch($event)"
+    class="px-3 py-1.5 rounded-lg w-full text-[14px] mb-2 outline-none transition-all border border-slate-400/60 focus:border-parking-primary/50 focus:ring-2 focus:ring-parking-primary/10"
+  />
 
-      <div class="relative group">
-        <ng-icon name="lucideMail" class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-parking-primary transition-colors"></ng-icon>
-        <input
-          type="email"
-          placeholder="Correo electrónico"
-          [(ngModel)]="form.email"
-          name="email"
-          required
-          class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 pl-11 text-sm outline-none focus:border-parking-primary focus:ring-4 focus:ring-parking-primary/5 transition-all"
-        />
-      </div>
+  <!-- GRID -->
+  <ag-grid-angular
+    class="ag-theme-alpine w-full"
+    style="height: 513px;"
+    [rowData]="rowData()"
+    [columnDefs]="columnDefs"
+    [defaultColDef]="defaultColDef"
+    [pagination]="true"
+    [paginationPageSize]="10"
+    [paginationPageSizeSelector]="[10, 20, 50, 100]"
+    (gridReady)="onGridReady($event)">
+  </ag-grid-angular>
+</div>
 
-      <button
-        type="submit"
-        [disabled]="!form.nombre || !form.email"
-        class="bg-parking-primary text-white font-bold rounded-xl px-6 py-3 hover:bg-rose-700 shadow-glow active:scale-95 disabled:opacity-50 disabled:pointer-events-none transition-all flex items-center justify-center gap-2"
-      >
-        <ng-icon [name]="editing ? 'lucideRefreshCw' : 'lucideCheckCircle'"></ng-icon>
-        {{ editing ? 'Actualizar' : 'Registrar' }}
+<!-- MODAL -->
+@if (isModalOpen) {
+<div #backdrop (click)="$event.target === backdrop && closeModal()" class="fixed inset-0 z-100 flex items-center justify-center bg-slate-900/40 backdrop-blur-[2px] p-4">  
+  <div (click)="$event.stopPropagation()" class="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden animate-enter">
+
+    <!-- HEADER -->
+    <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-white">
+      <h2 class="text-lg font-extrabold text-slate-800 tracking-tight flex items-center gap-2">
+        <ng-icon [name]="editing ? 'lucideEdit3' : 'lucideUserPlus'" class="text-parking-primary"></ng-icon>
+        {{ editing ? 'Editar Usuario' : 'Nuevo Usuario' }}
+      </h2>
+
+      <button (click)="closeModal()"
+        class="text-slate-400 hover:text-slate-600 transition cursor-pointer">
+        <ng-icon name="lucideX" size="22"></ng-icon>
       </button>
+    </div>
+
+    <!-- BODY -->
+    <form (ngSubmit)="save()" class="p-6 space-y-3">
+      <div class="space-y-1">
+        <label class="text-xs font-bold text-slate-500 uppercase ml-1">Nombre</label>
+        <div class="relative group">
+          <ng-icon name="lucideUser"
+            class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-parking-primary transition">
+          </ng-icon>
+          <input
+            type="text"
+            [(ngModel)]="form.nombre"
+            name="nombre"
+            required
+            placeholder="Juan Pérez"
+            class="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3 pl-11 pr-4 text-sm outline-none
+                   focus:border-parking-primary focus:ring-4 focus:ring-parking-primary/10 transition-all"
+          />
+        </div>
+      </div>
+
+      <div class="space-y-1">
+        <label class="text-xs font-bold text-slate-500 uppercase ml-1">Email</label>
+        <div class="relative group">
+          <ng-icon name="lucideMail"
+            class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-parking-primary transition">
+          </ng-icon>
+          <input
+            type="email"
+            [(ngModel)]="form.email"
+            name="email"
+            required
+            placeholder="correo@ejemplo.com"
+            class="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3 pl-11 pr-4 text-sm outline-none
+                   focus:border-parking-primary focus:ring-4 focus:ring-parking-primary/10 transition-all"
+          />
+        </div>
+      </div>
+
+      @if (!editing) {
+      <div class="space-y-1">
+        <label class="text-xs font-bold text-slate-500 uppercase ml-1">Contraseña</label>
+        <div class="relative group">
+          <ng-icon name="lucideLock"
+            class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-parking-primary transition">
+          </ng-icon>
+          <input
+            type="password"
+            [(ngModel)]="form.password"
+            name="password"
+            required
+            placeholder="••••••••"
+            class="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3 pl-11 pr-4 text-sm outline-none
+                   focus:border-parking-primary focus:ring-4 focus:ring-parking-primary/10 transition-all"
+          />
+        </div>
+      </div>
+      }
+
+      <div class="space-y-2">
+        <label class="text-xs font-bold text-slate-500 uppercase ml-1">Rol</label>
+        <div class="grid grid-cols-2 gap-3">
+          <label class="cursor-pointer">
+            <input type="radio" [(ngModel)]="form.rol" name="rol" value="cliente" class="hidden peer" />
+
+            <div class="flex items-center justify-center gap-2 p-3 rounded-2xl border border-slate-200 text-sm font-semibold
+                        peer-checked:border-parking-primary 
+                        peer-checked:bg-parking-primary/10 
+                        peer-checked:text-parking-primary
+                        hover:border-slate-300 transition-all">
+              <ng-icon name="lucideUser" size="18"></ng-icon>
+              Cliente
+            </div>
+          </label>
+
+          <label class="cursor-pointer">
+            <input type="radio" [(ngModel)]="form.rol" name="rol" value="admin" class="hidden peer" />
+
+            <div class="flex items-center justify-center gap-2 p-3 rounded-2xl border border-slate-200 text-sm font-semibold
+                        peer-checked:border-parking-primary 
+                        peer-checked:bg-parking-primary/10 
+                        peer-checked:text-parking-primary
+                        hover:border-slate-300 transition-all">
+              <ng-icon name="lucideShield" size="18"></ng-icon>
+              Admin
+            </div>
+          </label>
+
+        </div>
+      </div>
+
+      <!-- BOTONES -->
+      <div class="flex gap-3 pt-6 mt-2 border-t border-slate-100">
+
+        <button type="button" (click)="closeModal()"
+          class="flex-1 py-3 rounded-2xl font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 transition-all flex items-center justify-center gap-2 cursor-pointer">
+          <ng-icon name="lucideX" size="18"></ng-icon>
+          Cancelar
+        </button>
+
+        <button type="submit"
+          class="flex-1 py-3 rounded-2xl font-bold text-white bg-parking-primary hover:bg-rose-700 shadow-lg hover:shadow-xl active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer">
+          <ng-icon [name]="editing ? 'lucideRefreshCw' : 'lucideCheckCircle'" size="18"></ng-icon>
+          {{ editing ? 'Actualizar' : 'Guardar' }}
+        </button>
+
+      </div>
+
     </form>
   </div>
-
-  <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-    <div class="p-4 border-b border-slate-100 bg-slate-50/50 flex flex-col md:flex-row md:items-center justify-between gap-4">
-      <div class="relative flex-1 max-w-md">
-        <ng-icon name="lucideSearch" class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></ng-icon>
-        <input
-          type="text"
-          placeholder="Buscar por nombre o correo..."
-          (input)="onSearch($event)"
-          class="w-full bg-white border border-slate-200 pl-10 pr-4 py-2 rounded-lg text-sm outline-none focus:border-parking-primary transition-all"
-        />
-      </div>
-      <div class="flex gap-2">
-         </div>
-    </div>
-
-    <div class="overflow-x-auto">
-      <ag-grid-angular
-        class="ag-theme-alpine w-full"
-        style="height: 400px;"
-        [rowData]="rowData"
-        [columnDefs]="columnDefs"
-        [defaultColDef]="defaultColDef"
-        [pagination]="true"
-        [paginationPageSize]="10"
-        (gridReady)="onGridReady($event)">
-      </ag-grid-angular>
-    </div>
-  </div>
 </div>
+}

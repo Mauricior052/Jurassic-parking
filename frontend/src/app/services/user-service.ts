@@ -96,10 +96,8 @@ export class UserService {
     );
   }
 
-  createUser(data: { nombre: string; email: string; password: string; rol?: string }) {
-    return this.http.post(`${base_url}/users`, data, this.headers).pipe(
-      map((resp: any) => this.createObject(resp.usuario))
-    );
+  createUser(user: User) {
+    return this.http.post(`${base_url}/users`, user, this.headers);
   }
 
   updateUser(user: User) {
@@ -112,8 +110,14 @@ export class UserService {
 
   
   private createObject(usuario: any): User {
-    const { nombre, email, google, rol, id } = usuario;
-    return new User(nombre, email, '', google, rol, id);
+    return {
+      id: usuario.id || '',
+      nombre: usuario.nombre,
+      email: usuario.email,
+      google: usuario.google,
+      rol: usuario.rol,
+      password: ''
+    };
   }
 
   private guardarLocalStorage (token: string, menu: any) {

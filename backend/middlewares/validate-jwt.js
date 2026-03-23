@@ -20,8 +20,6 @@ export const validateJWT = async (req, res, next) => {
 
 export const validateAdmin = async (req, res, next) => {
   const id = req.id;
-  console.log(id);
-
   try {
     const userDB = await User.findById(id);
 
