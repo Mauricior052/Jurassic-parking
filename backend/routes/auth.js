@@ -1,9 +1,10 @@
 // Ruta: /api/login
 import { Router } from 'express';
 import { check } from 'express-validator';
-import { login, googleSignIn, renewToken } from '../controllers/auth.js';
+
 import { validateFields } from '../middlewares/validate-fields.js';
 import { validateJWT } from '../middlewares/validate-jwt.js';
+import { login, googleSignIn, renewToken } from '../controllers/auth.js';
 
 const router = Router();
 

@@ -4,8 +4,8 @@ import { generateJWT } from '../helpers/generate-jwt.js';
 
 export const getUsers = async (req, res) => {  
   const [users, total] = await Promise.all([
-    User.find({ activo: true }, 'nombre email rol google favoritos'),
-    User.countDocuments()
+    User.find({ active: true }, 'name email role google favorites'),
+    User.countDocuments({ active: true })
   ]);
 
   res.json({ users, total });
@@ -22,7 +22,6 @@ export const createUser = async (req, res) => {
 
     const user = new User(req.body);
 
-    // Encrypt password
     const salt = bcryptjs.genSaltSync();
     user.password = bcryptjs.hashSync(password, salt);
 
@@ -48,7 +47,7 @@ export const updateUser = async (req, res) => {
 
     const { password, google, email, ...fields } = req.body;
 
-    if (userDB.email !== email) {
+    if (email && userDB.email !== email) {
       if (userDB.google) {
         return res.status(400).json({ msg: 'Usuarios de Google no pueden cambiar su correo' });
       }
@@ -80,8 +79,8 @@ export const deleteUser = async (req, res) => {
       return res.status(404).json({ msg: 'No existe un usuario con ese id' });
     }
 
-    await User.findByIdAndDelete(id);
-    res.json({ msg: 'Usuario eliminado' });
+    const deactivatedUser = await User.findByIdAndUpdate(id, { active: false }, { returnDocument: 'after' });
+    res.json({ deactivatedUser });
 
   } catch (error) {
     console.log(error);

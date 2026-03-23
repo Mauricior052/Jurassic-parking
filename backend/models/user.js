@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(
   {
-    nombre: {
+    name: {
       type: String,
       required: true,
       trim: true,
@@ -19,22 +19,22 @@ const userSchema = new mongoose.Schema(
       required: true,
       minlength: 4,
     },
-    rol: {
+    role: {
       type: String,
-      enum: ["admin", "cliente"],
-      default: "cliente",
+      enum: ["admin", "client"],
+      default: "client",
     },
     google: {
       type: Boolean,
       default: false,
     },
-    favoritos: [
+    favorites: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Parking",
       },
     ],
-    activo: {
+    active: {
       type: Boolean,
       default: true,
     },

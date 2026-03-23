@@ -23,15 +23,24 @@ export class Login implements AfterViewInit {
   @ViewChild('googleLoginBtn', { static: false }) googleLoginBtn!: ElementRef;
   @ViewChild('googleRegisterBtn', { static: false }) googleRegisterBtn!: ElementRef;
 
-  loginData = { email: localStorage.getItem('email') || 'm@gmail.com', password: '1234', rememberMe: !!localStorage.getItem('email') };
-  registerData = { nombre: 'Juan', email: 'juan@gmail.com', password: '1234' };
+  loginData = { 
+    email: localStorage.getItem('email') || 'm@gmail.com', 
+    password: '1234', 
+    rememberMe: !!localStorage.getItem('email') 
+  };
+  
+  registerData = { 
+    name: 'Juan', 
+    email: 'juan@gmail.com', 
+    password: '1234' 
+  };
+  
   loading = false;
   isActive = false;
   
   ngAfterViewInit(): void {
     this.googleInit();
   }
-
 
   googleInit() {
     if (typeof google === 'undefined') {

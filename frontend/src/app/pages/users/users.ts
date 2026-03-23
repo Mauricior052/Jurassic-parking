@@ -29,7 +29,6 @@ export class Users {
   isModalOpen = false;
   loading = false;
 
-  // ------------------- INIT -------------------
   ngOnInit() {
     this.loadUsers();
   }
@@ -40,9 +39,8 @@ export class Users {
     });
   }
 
-  // ------------------- GRID -------------------
   columnDefs: ColDef[] = [
-    { field: 'nombre', headerName: 'Nombre', flex: 2, minWidth: 150 },
+    { field: 'name', headerName: 'Nombre', flex: 2, minWidth: 150 },
     { field: 'email', headerName: 'Email', flex: 3, minWidth: 200 },
     {
       field: 'google',
@@ -50,7 +48,12 @@ export class Users {
       cellRenderer: (params: any) => (params.value ? 'Sí' : 'No'),
       width: 100
     },
-    { field: 'rol', headerName: 'Rol', valueFormatter: (p) => p.value?.charAt(0).toUpperCase() + p.value?.slice(1).toLowerCase(), width: 120 },
+    { 
+      field: 'role', 
+      headerName: 'Rol', 
+      valueFormatter: (p) => p.value?.charAt(0).toUpperCase() + p.value?.slice(1).toLowerCase(), 
+      width: 120 
+    },
     {
       headerName: 'Acciones',
       cellRenderer: Actions,
@@ -79,7 +82,6 @@ export class Users {
     this.gridApi.setGridOption('quickFilterText', value);
   }
 
-  // ------------------- MODAL -------------------
   openModal() {
     this.editing = false;
     this.form = this.getEmptyUser();
@@ -101,12 +103,10 @@ export class Users {
     }, 100);
   }
 
-  // ------------------- CRUD -------------------
   save() {
     if (this.loading) return;
-    this.loading = true;
-
-    if (!this.form.nombre || !this.form.email) {
+    
+    if (!this.form.name || !this.form.email) {
       toast.error('Completa nombre y correo');
       return;
     }
@@ -114,6 +114,8 @@ export class Users {
       toast.error('La contraseña es obligatoria');
       return;
     }
+
+    this.loading = true;
 
     if (this.editing) {
       if (!this.form.id) return;
@@ -157,7 +159,7 @@ export class Users {
       return;
     }
 
-    toast(`¿Eliminar a ${user.nombre}?`, {
+    toast(`¿Eliminar a ${user.name}?`, {
       action: {
         label: 'Eliminar',
         onClick: () => {
@@ -176,14 +178,13 @@ export class Users {
     });
   }
 
-  // ------------------- HELPERS -------------------
   getEmptyUser(): User {
     return {
-      nombre: '',
+      name: '',
       email: '',
       password: '',
       google: false,
-      rol: 'cliente',
+      role: 'client',
       id: ''
     };
   }

@@ -1,8 +1,8 @@
 export interface User {
   id?: string;
-  nombre: string;
+  name: string;
   email: string;
   password?: string;
   google: boolean;
-  rol: string;
+  role: string;
 }

@@ -2,58 +2,60 @@ import mongoose from "mongoose";
 
 const parkingSchema = new mongoose.Schema(
   {
-    nombre: {
+    name: {
       type: String,
       required: true,
       trim: true,
     },
-    direccion: {
+    address: {
       type: String,
       required: true,
     },
-    coordenadas: {
-      type: [Number], // [longitud, latitud]
-      required: true,
+    location: {
+      type: {
+        type: String,
+        enum: ['Point'],
+        default: 'Point'
+      },
+      coordinates: {
+        type: [Number], // [lng, lat]
+        required: true
+      }
     },
-    precio: {
+    price: {
       type: Number,
       required: true,
       min: 0,
     },
-    totalEspacios: {
+    totalSpaces: {
       type: Number,
       required: true,
       min: 1,
     },
-    espaciosDisponibles: {
-      type: Number,
-      required: true,
-      min: 0,
-    },
-    seguridad: {
+    security: {
       type: Boolean,
       default: false,
     },
-    horario: {
-      apertura: {
+    schedule: {
+      opening: {
         type: String,
       },
-      cierre: {
+      closing: {
         type: String,
       },
     },
-    propietario: {
+    owner: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
-    calificacion: {
+    rating: {
       type: Number,
       default: 0,
       min: 0,
       max: 5,
     },
-    activo: {
+    active: {
       type: Boolean,
       default: true,
     },
@@ -61,19 +63,6 @@ const parkingSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// const cercanos = await Parking.find({
-//   coordenadas: {
-//     $near: {
-//       $geometry: {
-//         type: "Point",
-//         coordinates: [-103.34, 20.67] // Tu ubicación actual [lng, lat]
-//       },
-//       $maxDistance: 1000 // Distancia en metros
-//     }
-//   }
-// });
-
-// Índice geoespacial
-parkingSchema.index({ coordenadas: "2dsphere" });
+parkingSchema.index({ location: "2dsphere" });
 
 export default mongoose.model("Parking", parkingSchema);

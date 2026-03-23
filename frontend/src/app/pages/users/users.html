@@ -65,7 +65,7 @@
           </ng-icon>
           <input
             type="text"
-            [(ngModel)]="form.nombre"
+            [(ngModel)]="form.name"
             name="nombre"
             required
             placeholder="Juan Pérez"
@@ -117,7 +117,7 @@
         <label class="text-xs font-bold text-slate-500 uppercase ml-1">Rol</label>
         <div class="grid grid-cols-2 gap-3">
           <label class="cursor-pointer">
-            <input type="radio" [(ngModel)]="form.rol" name="rol" value="cliente" class="hidden peer" />
+            <input type="radio" [(ngModel)]="form.role" name="role" value="client" class="hidden peer" />
 
             <div class="flex items-center justify-center gap-2 p-3 rounded-2xl border border-slate-200 text-sm font-semibold
                         peer-checked:border-parking-primary 
@@ -130,7 +130,7 @@
           </label>
 
           <label class="cursor-pointer">
-            <input type="radio" [(ngModel)]="form.rol" name="rol" value="admin" class="hidden peer" />
+            <input type="radio" [(ngModel)]="form.role" name="role" value="admin" class="hidden peer" />
 
             <div class="flex items-center justify-center gap-2 p-3 rounded-2xl border border-slate-200 text-sm font-semibold
                         peer-checked:border-parking-primary 

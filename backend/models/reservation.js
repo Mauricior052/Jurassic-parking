@@ -2,30 +2,30 @@ import mongoose from "mongoose";
 
 const reservationSchema = new mongoose.Schema(
   {
-    usuario: {
+    user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
-    estacionamiento: {
+    parking: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Parking",
       required: true,
     },
-    fechaInicio: {
+    startDate: {
       type: Date,
       required: true,
     },
-    fechaFin: {
+    endDate: {
       type: Date,
       required: true,
     },
-    estado: {
+    status: {
       type: String,
-      enum: ["activa", "finalizada", "cancelada"],
-      default: "activa",
+      enum: ["ACTIVE", "FINISHED", "CANCELLED"],
+      default: "ACTIVE",
     },
-    costo: {
+    cost: {
       type: Number,
       required: true,
       min: 0,
@@ -34,10 +34,10 @@ const reservationSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Validación personalizada para evitar fechas inválidas
+// Custom validation to prevent invalid dates
 reservationSchema.pre("save", function (next) {
-  if (this.fechaFin <= this.fechaInicio) {
-    next(new Error("La fecha de fin debe ser mayor que la fecha de inicio"));
+  if (this.endDate <= this.startDate) {
+    next(new Error("The end date must be after the start date"));
   }
   next();
 });

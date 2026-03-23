@@ -25,9 +25,11 @@ export class UserService {
   get usuario(): User | null {
     return this.usuarioSubject.value;
   }
+
   setUsuario(usuario: User) {
     this.usuarioSubject.next(usuario);
   }
+
   get headers() {
     return {
       headers: new HttpHeaders({
@@ -36,8 +38,6 @@ export class UserService {
     };
   }
 
-
-  // AUTH
   login(credentials: { email: string; password: string }) {
     return this.http.post(`${base_url}/login`, credentials).pipe(
       tap((resp: any) => {
@@ -53,7 +53,7 @@ export class UserService {
       }));
   }
 
-  register(credentials: { nombre: string; email: string; password: string }) {
+  register(credentials: { name: string; email: string; password: string }) {
     return this.http.post(`${base_url}/users`, credentials).pipe(
       tap((resp: any) => {
         this.guardarLocalStorage(resp.token, resp.menu);
@@ -74,8 +74,7 @@ export class UserService {
 
     return this.http.get(`${base_url}/login/renew`, this.headers).pipe(
       map((resp: any) => {
-        this.usuarioSubject.next(this.createObject(resp.usuario));
-
+        this.usuarioSubject.next(this.createObject(resp.user));
         this.guardarLocalStorage(resp.token, resp.menu)
         return true;
       }),
@@ -83,8 +82,6 @@ export class UserService {
     )
   }
 
-
-  // CRUD
   getUsers() {
     return this.http.get<UsersResponse>(`${base_url}/users`, this.headers).pipe(
       map(resp => {
@@ -108,14 +105,13 @@ export class UserService {
     return this.http.delete(`${base_url}/users/${uid}`, this.headers);
   }
 
-  
   private createObject(usuario: any): User {
     return {
-      id: usuario.id || '',
-      nombre: usuario.nombre,
+      id: usuario.id || usuario._id || '',
+      name: usuario.name,
       email: usuario.email,
       google: usuario.google,
-      rol: usuario.rol,
+      role: usuario.role,
       password: ''
     };
   }
@@ -124,7 +120,5 @@ export class UserService {
     localStorage.setItem('token', token);
     localStorage.setItem('menu', JSON.stringify(menu));
   }
-
-  
 
 }
