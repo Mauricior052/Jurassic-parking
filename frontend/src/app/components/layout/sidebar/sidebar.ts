@@ -18,8 +18,8 @@ export class Sidebar {
   links = [
     { label: 'Dashboard', icon: 'lucideLayoutDashboard', link: '/' },
     { label: 'Mapa', icon: 'lucideMap', link: '/map' },
-    { label: 'Entradas/Salidas', icon: 'lucideParkingCircle', link: '/entradas' },
-    { label: 'Historial', icon: 'lucideClock', link: '/historial' },
+    { label: 'Entradas/Salidas', icon: 'LucideArrowLeftRight', link: '/entries' },
+    { label: 'Parking', icon: 'LucideParkingSquare', link: '/parking' },
     { label: 'Usuarios', icon: 'lucideUsers', link: '/users' }
   ];
 }

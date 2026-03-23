@@ -8,7 +8,7 @@ import { active, calculate, cancel, entry, exit } from '../controllers/record.js
 
 const router = Router();
 
-router.get("/active", validateJWT, active);
+router.get("/active/:parking", validateJWT, active);
 
 router.post("/entry", [
     validateJWT,

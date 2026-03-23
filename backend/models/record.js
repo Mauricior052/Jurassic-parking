@@ -7,13 +7,18 @@ const recordSchema = new mongoose.Schema({
     uppercase: true,
   },
 
+  vehicle: {
+    type: String,
+    required: true,
+  },
+
   parking: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Parking",
     required: true,
   },
 
-  usuario: {
+  user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },

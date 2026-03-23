@@ -19,7 +19,7 @@ connectDB();
 app.use('/api/login', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/parking', parkingRoutes);
-app.use('/api/record', recordRoutes);
+app.use('/api/records', recordRoutes);
 
 
 const port = process.env.PORT || 3000;
