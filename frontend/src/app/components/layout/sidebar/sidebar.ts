@@ -17,6 +17,7 @@ export class Sidebar {
 
   links = [
     { label: 'Dashboard', icon: 'lucideLayoutDashboard', link: '/' },
+    { label: 'Mapa', icon: 'lucideMap', link: '/map' },
     { label: 'Entradas/Salidas', icon: 'lucideParkingCircle', link: '/entradas' },
     { label: 'Historial', icon: 'lucideClock', link: '/historial' },
     { label: 'Usuarios', icon: 'lucideUsers', link: '/users' }
