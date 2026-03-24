@@ -1,0 +1,132 @@
+<div class="space-y-6">
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="flex items-center gap-3 pl-2 text-2xl font-black text-slate-900">
+        <ng-icon name="LucideParkingSquare" size="20"></ng-icon>Gestión de Estacionamientos
+      </h1>
+      <p class="pl-2 text-sm text-slate-500">Administra los estacionamientos del sistema.</p>
+    </div>
+
+    <button (click)="openModal()" class="btn-primary">
+      <ng-icon name="lucidePlus" size="18"></ng-icon>
+      Nuevo Estacionamiento
+    </button>
+  </div>
+
+  <div class="relative mb-1">
+    <ng-icon name="lucideSearch"
+      class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+    </ng-icon>
+    <input placeholder="Buscar estacionamientos..." (input)="onSearch($event)" class="px-3 py-2 pl-10 rounded-2xl w-full text-[14px] outline-none bg-parking-light-bg transition-all border border-slate-400/40 focus:border-parking-primary/50 focus:ring-2 focus:ring-parking-primary/10" />
+  </div>
+
+  <div class="rounded-2xl border border-slate-300 overflow-hidden shadow-sm">
+    <ag-grid-angular
+      class="ag-theme-alpine w-full"
+      style="height: 503px;"
+      [rowData]="rowData()"
+      [columnDefs]="columnDefs"
+      [defaultColDef]="defaultColDef"
+      [pagination]="true"
+      [paginationPageSize]="10"
+      [paginationPageSizeSelector]="[10, 20, 50, 100]"
+      [headerHeight]="40"
+      (gridReady)="onGridReady($event)">
+    </ag-grid-angular>
+  </div>
+</div>
+
+@if (isModalOpen) {
+<div #backdrop (click)="$event.target === backdrop && closeModal()" class="fixed inset-0 z-100 flex items-center justify-center bg-slate-900/40 backdrop-blur-[2px] p-4">  
+  <div (click)="$event.stopPropagation()" class="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden animate-enter">
+
+    <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-white">
+      <h2 class="text-lg font-extrabold text-slate-800 tracking-tight flex items-center gap-2">
+        <ng-icon [name]="editing ? 'lucideEdit3' : 'lucideMapPin'" class="text-parking-primary"></ng-icon>
+        {{ editing ? 'Editar Estacionamiento' : 'Nuevo Estacionamiento' }}
+      </h2>
+
+      <button (click)="closeModal()"
+        class="text-slate-400 hover:text-slate-600 transition cursor-pointer">
+        <ng-icon name="lucideX" size="22"></ng-icon>
+      </button>
+    </div>
+
+    <form (ngSubmit)="save()" class="p-6 space-y-3">
+      <div class="space-y-1">
+        <label class="label ml-1">Nombre del Local</label>
+        <div class="relative group">
+          <ng-icon name="lucideWarehouse" class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-parking-primary transition"></ng-icon>
+          <input [(ngModel)]="form.name" name="nombre" required class="input pl-11" />
+        </div>
+      </div>
+
+      <div class="space-y-1">
+        <label class="label ml-1">Dirección</label>
+        <div class="relative group">
+          <ng-icon name="lucideMapPin" class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-parking-primary transition"></ng-icon>
+          <input [(ngModel)]="form.address" name="address" required class="input pl-11" />
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div class="space-y-1">
+          <label class="label ml-1">Precio x Hora</label>
+          <div class="relative group">
+            <ng-icon name="lucideDollarSign" class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-parking-primary transition"></ng-icon>
+            <input type="number" [(ngModel)]="form.price" name="price" required class="input pl-11" />
+          </div>
+        </div>
+
+        <div class="space-y-1">
+          <label class="label ml-1">Total Espacios</label>
+          <div class="relative group">
+            <ng-icon name="lucideCar" class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-parking-primary transition"></ng-icon>
+            <input type="number" [(ngModel)]="form.totalSpaces" name="totalSpaces" required class="input pl-11" />
+          </div>
+        </div>
+      </div>
+
+      <div class="space-y-2">
+        <label class="label ml-1">Seguridad 24/7</label>
+        <div class="grid grid-cols-2 gap-3">
+          <label>
+            <input type="radio" [(ngModel)]="form.security" name="security" [value]="true" class="hidden peer" />
+            <div class="flex items-center justify-center gap-2 p-3 rounded-2xl border border-slate-200 text-sm font-semibold cursor-pointer
+                        peer-checked:border-parking-primary peer-checked:bg-parking-primary/10 peer-checked:text-parking-primary
+                        hover:border-slate-300 hover:bg-slate-50 active:scale-95 transition-all">
+              <ng-icon name="lucideShieldCheck" size="18"></ng-icon>
+              Sí
+            </div>
+          </label>
+
+          <label>
+            <input type="radio" [(ngModel)]="form.security" name="security" [value]="false" class="hidden peer" />
+            <div class="flex items-center justify-center gap-2 p-3 rounded-2xl border border-slate-200 text-sm font-semibold cursor-pointer
+                        peer-checked:border-slate-400 peer-checked:bg-slate-100 peer-checked:text-slate-600
+                        hover:border-slate-300 hover:bg-slate-50 active:scale-95 transition-all">
+              <ng-icon name="lucideShieldOff" size="18"></ng-icon>
+              No
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <div class="flex gap-3 pt-6 mt-2 border-t border-slate-100">
+        <button type="button" (click)="closeModal()"
+          class="flex-1 py-3 rounded-2xl font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 transition-all flex items-center justify-center gap-2 cursor-pointer">
+          <ng-icon name="lucideX" size="18"></ng-icon>
+          Cancelar
+        </button>
+
+        <button type="submit"
+          class="flex-1 py-3 rounded-2xl font-bold text-white bg-parking-primary hover:bg-rose-700 shadow-lg hover:shadow-xl active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer">
+          <ng-icon [name]="editing ? 'lucideRefreshCw' : 'lucideCheckCircle'" size="18"></ng-icon>
+          {{ editing ? 'Actualizar' : 'Guardar' }}
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>
+}

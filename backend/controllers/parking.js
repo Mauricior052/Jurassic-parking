@@ -70,7 +70,7 @@ export const update = async (req, res) => {
     const parking = await Parking.findByIdAndUpdate(
       id,
       req.body,
-      { new: true }
+      { returnDocument: 'after' }
     );
 
     res.json(parking);
@@ -86,7 +86,7 @@ export const remove = async (req, res) => {
     const parking = await Parking.findByIdAndUpdate(
       id,
       { active: false },
-      { new: true }
+      { returnDocument: 'after' }
     );
 
     res.json(parking);

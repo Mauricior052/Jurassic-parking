@@ -1,17 +1,16 @@
 import { ChangeDetectorRef, Component, HostListener, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { NgIcon } from '@ng-icons/core';
 import { AgGridAngular } from 'ag-grid-angular';
 import type { ColDef, GridApi } from 'ag-grid-community';
+import { NgIcon } from '@ng-icons/core';
+import { toast } from 'ngx-sonner';
 
 import { User } from '../../models/user';
 import { UserService } from '../../services/user-service';
 import { Actions } from '../../components/actions/actions';
-import { toast } from 'ngx-sonner';
 
 @Component({
   selector: 'app-users',
-  standalone: true,
   imports: [FormsModule, AgGridAngular, NgIcon],
   templateUrl: './users.html',
 })

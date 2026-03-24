@@ -101,8 +101,8 @@ export class UserService {
     return this.http.put(`${base_url}/users/${user.id}`, user, this.headers);
   }
 
-  deleteUser(uid: string) {
-    return this.http.delete(`${base_url}/users/${uid}`, this.headers);
+  deleteUser(id: string) {
+    return this.http.delete(`${base_url}/users/${id}`, this.headers);
   }
 
   private createObject(usuario: any): User {

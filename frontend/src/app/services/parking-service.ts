@@ -1,6 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { effect, inject, Injectable, signal } from '@angular/core';
 import { environment } from '../../environments/environment.prod';
+import { Parking } from '../models/parking';
 
 const base_url = environment.base_url;
 
@@ -32,5 +33,17 @@ export class ParkingService {
 
   getAll() {
     return this.http.get(`${base_url}/parking`, this.headers);
+  }
+
+  createParking(parking: Parking) {
+    return this.http.post(`${base_url}/parking`, parking, this.headers);
+  }
+
+  updateParking(parking: Parking) {
+    return this.http.put(`${base_url}/parking/${parking.id}`, parking, this.headers);
+  }
+
+  deleteParking(id: string) {
+    return this.http.delete(`${base_url}/parking/${id}`, this.headers);
   }
 }

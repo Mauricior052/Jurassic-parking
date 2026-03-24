@@ -8,6 +8,7 @@ import { Users } from './pages/users/users';
 import { MapComponent } from './pages/map/map';
 import { Records } from './pages/records/records';
 import { History } from './pages/history/history';
+import { ParkingComponent } from './pages/parking/parking';
 
 export const routes: Routes = [
     { path: 'login', component: Login, title: 'Login' },
@@ -20,7 +21,7 @@ export const routes: Routes = [
             { path: 'map', component: MapComponent, title: 'Map' },
             { path: 'entries', component: Records, title: 'Entradas' },
             { path: 'history', component: History, title: 'Historial' },
-            { path: 'parking', component: Users, title: 'Parking' },
+            { path: 'parking', component: ParkingComponent, title: 'Parking' },
             { path: 'users', component: Users, title: 'Users' }
         ]
     },
