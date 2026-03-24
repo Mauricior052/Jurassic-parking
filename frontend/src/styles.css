@@ -4,6 +4,28 @@
   font-family: 'Montserrat', sans-serif;
 }
 
+.input {
+  @apply w-full bg-slate-50 border border-slate-200 rounded-2xl py-3 pl-11 pr-4 text-sm outline-none
+  focus:border-parking-primary focus:ring-4 focus:ring-parking-primary/10 transition-all;
+}
+
+.input-lg {
+  @apply w-full bg-slate-50 border border-slate-200 rounded-2xl py-2 pl-11 pr-4 text-base outline-none font-semibold
+  focus:border-parking-primary focus:ring-4 focus:ring-parking-primary/10 transition-all;
+}
+
+.label {
+  @apply text-xs font-bold text-slate-500 uppercase;
+}
+
+.btn-primary {
+  @apply flex items-center gap-2 bg-parking-primary text-white px-4 py-2 rounded-xl font-semibold cursor-pointer
+  hover:bg-parking-primary/80 shadow-md hover:shadow-lg
+  active:scale-95 active:bg-parking-primary/80
+  transition-all duration-200;
+}
+
+
 [data-sonner-toast] {
   font-size: 16px !important;
   padding: 20px !important;
@@ -33,13 +55,22 @@
   transform: scale(1.05);
 }
 
+.ag-header-cell-label {
+  font-weight: bold;
+}
+
+.ag-root-wrapper {
+  border: none !important;
+  border-radius: 0 !important;
+}
+
 
 @theme {
   /* Fondo base y superficies */
   --color-parking-dark: #0a0505;
   --color-parking-surface: #160a0a;
   
-  /* Identidad Visual (Jurassic Rojo) */
+  /* Identidad Visual */
   --color-parking-primary: #e11d48;
   --color-parking-accent: #361c1c;
   
@@ -62,11 +93,11 @@
   @keyframes enter {
     from {
       opacity: 0;
-      transform: scale(0.9);
+      transform: scale(0.9) translateY(10px);
     }
     to {
       opacity: 1;
-      transform: scale(1);
+      transform: scale(1) translateY(0);
     }
   }
   --animate-enter: enter 0.2s ease-out;

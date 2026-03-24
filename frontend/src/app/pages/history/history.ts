@@ -8,21 +8,25 @@ import { ColDef, GridReadyEvent } from 'ag-grid-community';
 import { Record } from '../../models/record';
 import { toast } from 'ngx-sonner';
 import { Actions } from '../../components/actions/actions';
+import { ParkingService } from '../../services/parking-service';
+import { formatCurrency } from '../../utils/formatter';
 
 @Component({
-  selector: 'app-records',
-  standalone: true,
+  selector: 'app-history',
   imports: [FormsModule, NgIcon, AgGridAngular],
-  templateUrl: './records.html',
+  templateUrl: './history.html',
   providers: [DatePipe]
 })
-export class Records implements OnInit {
+export class History implements OnInit {
   private recordService = inject(RecordService);
+  private parkingService = inject(ParkingService);
   private datePipe = inject(DatePipe);
 
   @ViewChild('plateInput') plateInput!: ElementRef<HTMLInputElement>;
   
   public rowData = signal<any[]>([]);
+  public parkings = signal<any[]>([]);
+
   public record = signal<Record>({
     plate: '',
     vehicle: '',
@@ -32,21 +36,24 @@ export class Records implements OnInit {
 
   public columnDefs: ColDef[] = [
     { headerName: 'Placa', field: 'plate', flex: 1 },
-    { headerName: 'Vehículo', field: 'vehicle', flex: 2 },
+    { headerName: 'Vehículo', field: 'vehicle', flex: 1 },
     { headerName: 'Entrada', field: 'entryTime', flex: 1, valueFormatter: (params) => this.datePipe.transform(params.value, 'shortTime') || ''},
+    { headerName: 'Salida', field: 'exitTime', flex: 1, valueFormatter: (params) => this.datePipe.transform(params.value, 'shortTime') || ''},
     { headerName: 'Tiempo', flex: 1, valueGetter: (params) => this.getDuration(params.data.entryTime) },
-    { headerName: 'Acciones', width: 130,
-      sortable: false,
-      filter: false,
-      resizable: false,
-      cellRenderer: Actions,
-      cellRendererParams: () => ({
-        actions: [
-          { icon: 'lucideLogOut', tooltip: 'Registrar salida', color: 'emerald', action: (data: any) => this.exitById(data) },
-          { icon: 'lucideX', tooltip: 'Cancelar', color: 'rose', action: (data: any) => this.cancelById(data) }
-        ]
-      }),
-    }
+    { headerName: 'Estado', field: 'status', flex: 1 },
+    { headerName: 'Precio', field: 'totalAmount', flex: .7, valueFormatter: (p) => formatCurrency(p.value) },
+    // { headerName: 'Acciones', width: 130,
+    //   sortable: false,
+    //   filter: false,
+    //   resizable: false,
+    //   cellRenderer: Actions,
+    //   cellRendererParams: () => ({
+    //     actions: [
+    //       { icon: 'lucideLogOut', tooltip: 'Registrar salida', color: 'emerald', action: (data: any) => this.exitById(data) },
+    //       { icon: 'lucideX', tooltip: 'Cancelar', color: 'rose', action: (data: any) => this.cancelById(data) }
+    //     ]
+    //   }),
+    // }
   ];
 
   public defaultColDef: ColDef = {
@@ -56,7 +63,8 @@ export class Records implements OnInit {
   };
 
   ngOnInit() {
-    this.loadActive();
+    this.loadParkings();
+    this.loadRecords();
   }
 
   onGridReady(params: GridReadyEvent) {
@@ -68,52 +76,15 @@ export class Records implements OnInit {
     this.gridApi?.setGridOption('quickFilterText', value);
   }
 
-  loadActive() {
-    this.recordService.getActive(this.record().parking).subscribe((res: any) => {
+  loadRecords() {
+    this.recordService.getAll(this.record().parking).subscribe((res: any) => {
       this.rowData.set(res);
     });
   }
 
-  registerEntry() {
-    const current = this.record();
-    if (!current.plate) {
-      toast.warning('Ingresa una placa');
-      return;
-    }
-    if (!current.vehicle) {
-      toast.warning('Ingresa una descripción para el vehículo');
-      return;
-    }
-    this.recordService.entry(current).subscribe({
-    next: () => {
-      toast.success('Vehículo registrado');
-      this.record.update(prev => ({
-        ...prev,
-        plate: '',
-        vehicle: ''
-      }));
-      this.loadActive();
-
-      setTimeout(() => {
-        this.plateInput.nativeElement.focus();
-      });
-    },
-    error: () => {
-      toast.error('Error al registrar entrada');
-    }
-  });
-  }
-
-  exitById(record: Record) {
-    if (!record.id) return;
-    this.recordService.exit(record.id).subscribe({
-      next: (res: any) => {
-        toast.success(`Salida registrada - Total: $${res.totalAmount}`);
-        this.loadActive();
-      },
-      error: () => {
-        toast.error('Error al registrar salida');
-      }
+  loadParkings() {
+    this.parkingService.getAll().subscribe((res: any) => {
+      this.parkings.set(res);
     });
   }
 
@@ -127,7 +98,7 @@ export class Records implements OnInit {
           this.recordService.cancel(id).subscribe({
             next: () => {
               toast.success('Registro cancelado');
-              this.loadActive();
+              this.loadRecords();
             },
             error: (err) => {
               const msg = err?.error?.msg || err?.error?.errors?.email?.msg || 'Error al eliminar usuario';
@@ -147,5 +118,10 @@ export class Records implements OnInit {
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
     return `${hours}h ${mins}m`;
+  }
+
+  onParkingChange(newParkingId: string) {
+    this.record.update(prev => ({ ...prev, parking: newParkingId }));
+    this.loadRecords();
   }
 }

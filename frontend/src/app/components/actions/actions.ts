@@ -1,27 +1,39 @@
+import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { NgIcon } from '@ng-icons/core';
 
 @Component({
   selector: 'app-actions',
-  imports: [NgIcon],
+  imports: [CommonModule, NgIcon],
   templateUrl: './actions.html',
 })
 export class Actions {
   params: any;
+  actions: any[] = [];
+
+  defaultActions = [
+    {
+      icon: 'lucidePencil',
+      tooltip: 'Editar',
+      color: 'amber',
+      action: (data: any) => this.params?.onEdit?.(data)
+    },
+    {
+      icon: 'lucideTrash2',
+      tooltip: 'Eliminar',
+      color: 'rose',
+      action: (data: any) => this.params?.onDelete?.(data)
+    }
+  ];
 
   agInit(params: any): void {
     this.params = params;
+    this.actions = params.actions || params.colDef?.cellRendererParams?.actions || this.defaultActions;
   }
 
-  onEdit() {
-    if (this.params?.onEdit) {
-      this.params.onEdit(this.params.data);
-    }
-  }
-
-  onDelete() {
-    if (this.params?.onDelete) {
-      this.params.onDelete(this.params.data);
+  handleClick(action: any) {
+    if (action?.action) {
+      action.action(this.params.data);
     }
   }
 }

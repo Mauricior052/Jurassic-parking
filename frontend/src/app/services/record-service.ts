@@ -19,6 +19,14 @@ export class RecordService {
     };
   }
 
+  getAll(parking: string) {
+    return this.http.get(`${base_url}/records/${parking}`, this.headers);
+  }
+
+  getActive(parking: string) {
+    return this.http.get(`${base_url}/records/active/${parking}`, this.headers);
+  }
+
   entry(record: Record) {
     return this.http.post(`${base_url}/records/entry`, record, this.headers);
   }
@@ -27,8 +35,8 @@ export class RecordService {
     return this.http.put(`${base_url}/records/exit/${id}`, {}, this.headers);
   }
 
-  getActive(parking: string) {
-    return this.http.get(`${base_url}/records/active/${parking}`, this.headers);
+  cancel(id: string) {
+    return this.http.delete(`${base_url}/records/cancel/${id}`, this.headers);
   }
 
 }

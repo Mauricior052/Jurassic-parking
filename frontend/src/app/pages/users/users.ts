@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, inject, signal } from '@angular/core';
+import { ChangeDetectorRef, Component, HostListener, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgIcon } from '@ng-icons/core';
 import { AgGridAngular } from 'ag-grid-angular';
@@ -42,20 +42,9 @@ export class Users {
   columnDefs: ColDef[] = [
     { field: 'name', headerName: 'Nombre', flex: 2, minWidth: 150 },
     { field: 'email', headerName: 'Email', flex: 3, minWidth: 200 },
-    {
-      field: 'google',
-      headerName: 'Google',
-      cellRenderer: (params: any) => (params.value ? 'Sí' : 'No'),
-      width: 100
-    },
-    { 
-      field: 'role', 
-      headerName: 'Rol', 
-      valueFormatter: (p) => p.value?.charAt(0).toUpperCase() + p.value?.slice(1).toLowerCase(), 
-      width: 120 
-    },
-    {
-      headerName: 'Acciones',
+    { field: 'google', headerName: 'Google', cellRenderer: (params: any) => (params.value ? 'Sí' : 'No'), width: 110 },
+    { field: 'role', headerName: 'Rol', valueFormatter: (p) => p.value?.charAt(0).toUpperCase() + p.value?.slice(1).toLowerCase(), width: 110 },
+    { headerName: 'Acciones',
       cellRenderer: Actions,
       cellRendererParams: {
         onEdit: (data: User) => this.edit(data),
@@ -72,6 +61,11 @@ export class Users {
     sortable: true,
     filter: true
   };
+
+  @HostListener('document:keydown.escape')
+  closeOnEscape() {
+    this.closeModal();
+  }
 
   onGridReady(params: any) {
     this.gridApi = params.api;

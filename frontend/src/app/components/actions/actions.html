@@ -1,15 +1,20 @@
 <div class="py-1 flex justify-center gap-2 h-full items-center">
-  <button
-    (click)="onEdit()"
-    class="group flex items-center justify-center w-10 h-7 border-2 border-amber-400 text-amber-600 bg-transparent rounded-xl transition-all duration-100 ease-in-out hover:bg-amber-500 hover:text-white hover:shadow-lg hover:shadow-amber-200 active:scale-95 cursor-pointer"
-    title="Editar">
-    <ng-icon name="lucidePencil" size="20"></ng-icon>
-  </button>
 
-  <button
-    (click)="onDelete()"
-    class="group flex items-center justify-center w-10 h-7 border-2 border-rose-400 text-rose-600 bg-transparent rounded-xl transition-all duration-100 ease-in-out hover:bg-rose-600 hover:text-white hover:shadow-lg hover:shadow-rose-200 active:scale-95 cursor-pointer"
-    title="Eliminar">
-    <ng-icon name="lucideTrash2" size="20"></ng-icon>
-  </button>
+  @for (action of actions; track action) {
+    <button
+      (click)="handleClick(action)"
+      class="group flex items-center justify-center w-10 h-7 border-2 rounded-xl transition-all duration-100 ease-in-out active:scale-95 cursor-pointer hover:text-white"
+      
+      [ngClass]="{
+        'border-amber-400 text-amber-600 hover:bg-amber-500 hover:text-white hover:shadow-amber-200': action.color === 'amber',
+        'border-rose-400 text-rose-600 hover:bg-rose-600 hover:text-white hover:shadow-rose-200': action.color === 'rose',
+        'border-emerald-400 text-emerald-600 hover:bg-emerald-600 hover:text-white hover:shadow-emerald-200': action.color === 'emerald'
+      }"
+
+      [attr.title]="action.tooltip"
+    >
+      <ng-icon [name]="action.icon" size="20" class="transition-colors group-hover:text-white!"></ng-icon>
+    </button>
+  }
+
 </div>

@@ -1,10 +1,26 @@
 import Record from '../models/record.js';
 import Parking from '../models/parking.js';
 
+export const getAll = async (req, res) => {
+  try {
+    const { parking } = req.params;
+    let records;
+    if (parking) {
+      records = await Record.find({ parking: parking }).sort({ entryTime: -1 });
+    } else {
+      records = await Record.find().sort({ entryTime: -1 });
+    }
+    res.json(records);
+    
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
 export const active = async (req, res) => {  
   try {
     const { parking } = req.params;
-    const records = await Record.find({ parking: parking, status: "ACTIVE", }).sort({ entryTime: 1 });
+    const records = await Record.find({ parking: parking, status: "ACTIVE", }).sort({ entryTime: -1 });
     res.json(records);
     
   } catch (err) {
@@ -14,9 +30,9 @@ export const active = async (req, res) => {
 
 export const entry = async (req, res) => {
   try {
-    const { plate, parking } = req.body;
+    const { plate, vehicle, parking } = req.body;
     const user = req.id;
-    const record = await Record.create({ plate, parking, user, entryTime: new Date() });
+    const record = await Record.create({ plate, vehicle, parking, user, entryTime: new Date() });
 
     res.status(201).json(record);
   } catch (err) {
@@ -39,7 +55,6 @@ export const exit = async (req, res) => {
     record.totalMinutes = minutes;
     record.totalAmount = amount;
     record.status = "FINISHED";
-
     await record.save();
 
     res.json(record);

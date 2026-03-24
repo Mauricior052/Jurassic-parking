@@ -27,7 +27,7 @@ export const validateAdmin = async (req, res, next) => {
       return res.status(404).json({ msg: "No se pudo autenticar usuario" });
     }
 
-    if (userDB.rol !== "admin") {
+    if (userDB.role !== "admin") {
       return res
         .status(403)
         .json({ msg: "No cuenta con privilegios suficientes" });
