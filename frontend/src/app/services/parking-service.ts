@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { effect, inject, Injectable, signal } from '@angular/core';
-import { environment } from '../../environments/environment.prod';
+import { environment } from '../../environments/environment';
 import { Parking } from '../models/parking';
 
 const base_url = environment.base_url;

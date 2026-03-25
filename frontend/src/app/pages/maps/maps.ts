@@ -1,4 +1,5 @@
-import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, inject, ViewChild } from '@angular/core';
+import { MapsService } from '../../services/maps-service';
 
 declare var google: any;
 
@@ -6,13 +7,16 @@ declare var google: any;
   selector: 'app-map',
   template: `<div #map class="w-full h-full"></div>`,
 })
-export class MapComponent implements AfterViewInit {
+export class MapsComponent implements AfterViewInit {
 
   @ViewChild('map') mapElement!: ElementRef;
+  mapsService = inject(MapsService);
 
   map!: any;
 
   async ngAfterViewInit() {
+    await this.mapsService.initGoogleMaps();
+
     const { Map } = await google.maps.importLibrary("maps");
     const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
     const { PlacesService } = await google.maps.importLibrary("places");

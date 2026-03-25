@@ -15,6 +15,9 @@ yarn-error.log*
 # env files
 .env
 
+# Environments
+frontend/src/environments/environment.ts
+
 # IDE
 .vscode/
 .idea/

@@ -5,7 +5,7 @@ import { Login } from './pages/login/login';
 import { Home } from './pages/home/home';
 import { AdminLayout } from './components/layout/admin-layout/admin-layout';
 import { Users } from './pages/users/users';
-import { MapComponent } from './pages/map/map';
+import { MapsComponent } from './pages/maps/maps';
 import { Records } from './pages/records/records';
 import { History } from './pages/history/history';
 import { ParkingComponent } from './pages/parking/parking';
@@ -18,11 +18,11 @@ export const routes: Routes = [
         component: AdminLayout,
         children: [
             { path: '', component: Home, title: 'Home' },
-            { path: 'map', component: MapComponent, title: 'Map' },
+            { path: 'map', component: MapsComponent, title: 'Mapa' },
             { path: 'entries', component: Records, title: 'Entradas' },
             { path: 'history', component: History, title: 'Historial' },
-            { path: 'parking', component: ParkingComponent, title: 'Parking' },
-            { path: 'users', component: Users, title: 'Users' }
+            { path: 'parking', component: ParkingComponent, title: 'Estacionamientos' },
+            { path: 'users', component: Users, title: 'Usuarios' }
         ]
     },
 ];
