@@ -8,6 +8,7 @@ import { toast } from 'ngx-sonner';
 import { Parking } from '../../models/parking';
 import { Actions } from '../../components/actions/actions';
 import { ParkingService } from '../../services/parking-service';
+import { ThemeService } from '../../services/theme-service';
 
 @Component({
   selector: 'app-parking',
@@ -18,6 +19,7 @@ import { ParkingService } from '../../services/parking-service';
 export class ParkingComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private parkingService = inject(ParkingService);
+  protected themeService = inject(ThemeService);
 
   rowData = signal<Parking[]>([]);
   gridApi!: GridApi;

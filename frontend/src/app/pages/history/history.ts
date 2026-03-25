@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, inject, signal, OnInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
+import { Component, inject, signal, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RecordService } from '../../services/record-service';
 import { NgIcon } from '@ng-icons/core';
@@ -7,7 +7,6 @@ import { AgGridAngular } from 'ag-grid-angular';
 import { ColDef, GridReadyEvent } from 'ag-grid-community';
 import { Record } from '../../models/record';
 import { toast } from 'ngx-sonner';
-import { Actions } from '../../components/actions/actions';
 import { ParkingService } from '../../services/parking-service';
 import { formatCurrency } from '../../utils/formatter';
 

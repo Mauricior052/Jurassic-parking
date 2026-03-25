@@ -3,6 +3,7 @@ import { AsyncPipe } from '@angular/common';
 import { NgIcon } from '@ng-icons/core';
 import { UserService } from '../../../services/user-service';
 import { Router } from '@angular/router';
+import { ThemeService } from '../../../services/theme-service';
 
 @Component({
   selector: 'app-header',
@@ -13,6 +14,7 @@ import { Router } from '@angular/router';
 
 export class Header {
   private userService = inject(UserService);
+  public themeService = inject(ThemeService);
   private router = inject(Router);
 
   public user$ = this.userService.usuario$;

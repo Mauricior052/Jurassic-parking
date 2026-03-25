@@ -1,4 +1,4 @@
-<header class="sticky top-0 z-50 bg-parking-dark border-b border-parking-border px-4 py-2 text-parking-light-bg">
+<header class="always-dark sticky top-0 z-50 bg-parking-bg border-b border-parking-border px-4 py-2 text-parking-text">
   <div class="flex items-center justify-between max-w-350 mx-auto">
     
     <div class="flex items-center gap-3 cursor-pointer group" (click)="goToHome()">
@@ -55,12 +55,23 @@
           </div>
 
           @if (isMenuOpen) {
-            <div class="absolute top-[calc(100%+0.5rem)] right-0 w-56 bg-parking-surface border border-parking-border rounded-xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 z-50">
+            <div class="absolute top-[calc(100%+0.5rem)] right-0 w-56 bg-parking-surface border border-parking-border rounded-xl shadow-2xl overflow-hidden animate-slide-down z-50">
               <div class="px-4 py-3 border-b border-parking-border">
                 <p class="text-[0.7rem] text-parking-muted truncate">{{ user.email }}</p>
               </div>
 
               <div class="p-1">
+                <button (click)="themeService.toggleTheme()" class="w-full flex items-center gap-3 px-3 py-2.5 text-sm rounded-lg hover:bg-parking-accent transition-colors">
+                  @if (themeService.isDarkMode()) {
+                    <ng-icon name="LucideSun" class="size-5"></ng-icon>
+                  } @else {
+                    <ng-icon name="LucideMoon" class="size-5"></ng-icon>
+                  }
+                  <span>Cambiar Tema</span>
+                </button>
+              </div>
+
+              <div class="p-1 text-parking-text-base">
                 <button class="w-full flex items-center gap-3 px-3 py-2.5 text-sm rounded-lg hover:bg-parking-accent transition-colors">
                   <ng-icon name="lucideUser" class="text-parking-muted"></ng-icon>
                   <span>Mi Perfil</span>

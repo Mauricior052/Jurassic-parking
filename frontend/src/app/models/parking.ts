@@ -1,5 +1,3 @@
-import { User } from "./user";
-
 export interface Parking {
   id?: string;
   name: string;
@@ -15,6 +13,6 @@ export interface Parking {
     opening: string;
     closing: string;
   };
-  owner: string | User;
+  owner: string;
   rating?: number;
 }

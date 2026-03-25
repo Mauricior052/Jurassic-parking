@@ -8,6 +8,7 @@ import { toast } from 'ngx-sonner';
 import { User } from '../../models/user';
 import { UserService } from '../../services/user-service';
 import { Actions } from '../../components/actions/actions';
+import { ThemeService } from '../../services/theme-service';
 
 @Component({
   selector: 'app-users',
@@ -17,6 +18,7 @@ import { Actions } from '../../components/actions/actions';
 export class Users {
   private cdr = inject(ChangeDetectorRef);
   private userService = inject(UserService);
+  protected themeService = inject(ThemeService);
 
   rowData = signal<User[]>([]);
   users$ = this.userService.getUsers();
@@ -41,8 +43,25 @@ export class Users {
   columnDefs: ColDef[] = [
     { field: 'name', headerName: 'Nombre', flex: 2, minWidth: 150 },
     { field: 'email', headerName: 'Email', flex: 3, minWidth: 200 },
-    { field: 'google', headerName: 'Google', cellRenderer: (params: any) => (params.value ? 'Sí' : 'No'), width: 110 },
-    { field: 'role', headerName: 'Rol', valueFormatter: (p) => p.value?.charAt(0).toUpperCase() + p.value?.slice(1).toLowerCase(), width: 110 },
+    { field: 'google', headerName: 'Cuenta', width: 110, cellRenderer: (params: any) => {
+        return params.value
+          ? `<div class="text-blue-500 text-sm font-semibold h-full flex items-center">Google</div>`
+          : `<div class="text-gray-400 text-sm h-full flex items-center">Email</div>`;
+      }
+    },
+    { field: 'role', headerName: 'Rol', width: 110, cellRenderer: (params: any) => {
+        const role = params.value.toLowerCase();
+        const styles = role === 'admin' ? 'bg-rose-100 text-rose-600' : 'bg-blue-100 text-blue-600';
+        const label = role === 'admin' ? 'Admin' : 'Cliente';
+        return `
+          <div class="flex items-center justify-left w-full h-full">
+            <span class="px-2 py-1 text-xs font-semibold rounded-full ${styles}">
+              ${label}
+            </span>
+          </div>
+        `;
+      }
+     },
     { headerName: 'Acciones',
       cellRenderer: Actions,
       cellRendererParams: {

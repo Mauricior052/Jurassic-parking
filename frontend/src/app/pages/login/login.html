@@ -1,6 +1,6 @@
 <div class="back-gradient flex flex-col items-center justify-center h-screen">
   <div class="container-slider relative overflow-hidden bg-white rounded-[30px] shadow-2xl w-200 max-w-full min-h-120" 
-       [ngClass]="{ active: isActive }">
+       [ngClass]="{ active: isActive() }">
 
     <div class="form-container sign-up h-full absolute top-0 transition-all duration-600 ease-in-out left-0 w-1/2 opacity-0 z-1">
       <form (ngSubmit)="register()" class="bg-white flex flex-col items-center justify-center px-10 h-full">

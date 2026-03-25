@@ -1,28 +1,114 @@
 @import "tailwindcss";
 
+@theme {
+  --color-parking-primary: #e11d48;
+  --color-parking-available: #22c55e;
+  --color-parking-occupied: #ef4444;
+  --shadow-glow: 0 0 15px rgba(225, 29, 72, 0.3);
+
+  --color-parking-bg: #110c0c;
+  --color-parking-surface: #1a1414;
+  --color-parking-border: #3d2b2b;
+  --color-parking-text: #f1f5f9;
+  --color-parking-muted: #94a3b8;
+  --color-parking-accent: #2a1f1f;
+
+  @keyframes enter {
+    from {
+      opacity: 0;
+      transform: scale(0.9) translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+  --animate-enter: enter 0.2s ease-out;
+
+  @keyframes slide-down {
+    from {
+      opacity: 0;
+      transform: translateY(-15px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  --animate-slide-down: slide-down 0.25s ease-out;
+}
+
+.light {
+  --color-parking-bg: #f8fafc;
+  --color-parking-surface: #ffffff;
+  --color-parking-border: #e2e8f0;
+  --color-parking-text: #1e293b;
+  --color-parking-muted: #64748b;
+  --color-parking-accent: #e9edf2;
+}
+
+.always-dark {
+  --color-parking-bg: #070505;
+  --color-parking-surface: #120d0d;
+  --color-parking-border: #4a2d2d;
+  --color-parking-text: #f8fafc;
+  --color-parking-muted: #94a3b8;
+  --color-parking-accent: #251616;
+}
+
+
 * {
   font-family: 'Montserrat', sans-serif;
+  @apply transition-colors duration-200;
+}
+
+main {
+  background-color: var(--color-parking-bg);
+  color: var(--color-parking-text);
+  margin: 0;
+  min-height: 100vh;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .input {
-  @apply w-full bg-slate-50 border border-slate-200 rounded-2xl py-3 pl-11 pr-4 text-sm outline-none
+  background-color: var(--color-parking-surface);
+  border-color: var(--color-parking-border);
+  color: var(--color-parking-text);
+  @apply w-full border rounded-2xl py-3 pl-11 pr-4 text-sm outline-none
   focus:border-parking-primary focus:ring-4 focus:ring-parking-primary/10 transition-all;
 }
 
 .input-lg {
-  @apply w-full bg-slate-50 border border-slate-200 rounded-2xl py-2 pl-11 pr-4 text-base outline-none font-semibold
+  background-color: var(--color-parking-surface);
+  border-color: var(--color-parking-border);
+  color: var(--color-parking-text);
+  @apply w-full border rounded-2xl py-2 pl-11 pr-4 outline-none font-semibold
   focus:border-parking-primary focus:ring-4 focus:ring-parking-primary/10 transition-all;
 }
 
 .label {
-  @apply text-xs font-bold text-slate-500 uppercase;
+  color: var(--color-parking-muted);
+  @apply text-xs font-bold uppercase;
 }
 
 .btn-primary {
-  @apply flex items-center gap-2 bg-parking-primary text-white px-4 py-2 rounded-xl font-semibold cursor-pointer
+  @apply flex items-center justify-center gap-2 bg-parking-primary text-white px-4 py-2 rounded-xl font-bold cursor-pointer
   hover:bg-parking-primary/80 shadow-md hover:shadow-lg
   active:scale-95 active:bg-parking-primary/80
   transition-all duration-200;
+}
+
+.radio-card {
+  @apply flex items-center justify-center gap-2 p-3 rounded-2xl border border-parking-border 
+         text-sm font-semibold cursor-pointer text-parking-muted transition-all duration-200 active:scale-95;
+  .peer:checked + & {
+    @apply border-parking-primary bg-parking-primary/10 text-parking-text;
+    box-shadow: 0 0 4px rgba(225, 29, 72, 0.25);
+  }
+  .peer:not(:checked) + &:hover {
+    @apply border-parking-primary/40 bg-parking-accent/20 text-parking-text;
+    transform: translateY(-1px);
+  }
 }
 
 
@@ -65,40 +151,5 @@
 }
 
 
-@theme {
-  /* Fondo base y superficies */
-  --color-parking-dark: #0a0505;
-  --color-parking-surface: #160a0a;
-  
-  /* Identidad Visual */
-  --color-parking-primary: #e11d48;
-  --color-parking-accent: #361c1c;
-  
-  /* Estados y Bordes */
-  --color-parking-border: #3f2525;
-  --color-parking-available: #22c55e;
-  --color-parking-occupied: #ef4444;
-  
-  /* Texto */
-  --color-parking-muted: #94a3b8;
 
-  /* Sombras personalizadas */
-  --shadow-glow: 0 0 15px rgba(225, 29, 72, 0.3);
 
-  --color-parking-light-bg: #f8fafc;
-  --color-parking-card-white: #ffffff;
-}
-
-@theme {
-  @keyframes enter {
-    from {
-      opacity: 0;
-      transform: scale(0.9) translateY(10px);
-    }
-    to {
-      opacity: 1;
-      transform: scale(1) translateY(0);
-    }
-  }
-  --animate-enter: enter 0.2s ease-out;
-}

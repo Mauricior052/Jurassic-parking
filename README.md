@@ -11,7 +11,10 @@ Node + Express
 To start a local development server, run:
 
 ```bash
-npm install
+npm i
+```
+```bash
+npm install-all
 ```
 ```bash
 npm run dev
