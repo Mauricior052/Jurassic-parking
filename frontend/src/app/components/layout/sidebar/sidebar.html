@@ -1,39 +1,48 @@
-<aside [ngClass]="isCollapsed ? 'w-14' : 'w-56'" class="always-dark h-screen bg-parking-bg border-r border-parking-border flex flex-col sticky top-0 transition-all duration-300 ease-in-out">
+<aside [ngClass]="isCollapsed ? 'w-14' : 'w-56'" class="always-dark h-screen bg-parking-bg border-r border-parking-border flex flex-col sticky top-0 overflow-hidden transition-all duration-300 ease-in-out">
   <div class="flex justify-end p-2">
-    <button
-      (click)="toggleSidebar()"
-      class="p-2 rounded-lg hover:bg-parking-accent group text-parking-muted transition-colors">
-      <ng-icon class="transition-transform duration-300" name="lucideChevronLeft" size="20" [ngClass]="isCollapsed ? 'rotate-180' : ''"></ng-icon>
+    <button (click)="toggleSidebar()"
+      class="flex items-center p-2 rounded-lg hover:bg-parking-accent group text-parking-muted transition-colors">
+      <ng-icon class="transition-transform duration-300" name="lucideChevronLeft" size="21" [ngClass]="isCollapsed ? 'rotate-180' : ''"></ng-icon>
     </button>
   </div>
 
-  <nav class="flex-1 px-2">
+  <nav class="flex-1 px-2 mt-4">
     <ul class="space-y-2">
-      
       @for (item of links; track item.link) {
         <li>
           <a routerLink="{{ item.link }}" 
             #rla="routerLinkActive"
             routerLinkActive="bg-parking-primary text-white shadow-glow"
-            [routerLinkActiveOptions]="{exact: true}"
-            class="flex items-center py-3 rounded-xl text-parking-muted transition-all duration-300 group overflow-hidden"
+            [routerLinkActiveOptions]="{ exact: true }"
+            [attr.title]="isCollapsed ? item.label : null"
+            class="flex items-center justify-start h-11 rounded-xl text-parking-muted transition-all duration-300 group overflow-hidden"
             [ngClass]="[
-              isCollapsed ? 'justify-center px-2 gap-0' : 'px-4 gap-2',
+              isCollapsed ? 'px-0' : 'px-3 gap-3',
               !rla.isActive ? 'hover:bg-parking-accent hover:text-white' : ''
             ]">
-            <ng-icon name="{{ item.icon }}" size="20" class="min-w-6" [ngClass]="rla.isActive ? 'text-white' : ''"></ng-icon>
-            <span class="font-medium transition-all duration-300 overflow-hidden whitespace-nowrap" [ngClass]="isCollapsed ? 'opacity-0 w-0' : 'opacity-100 w-full'">{{ item.label }}</span>
+            <span class="flex items-center justify-center shrink-0 transition-all duration-300" [ngClass]="isCollapsed ? 'w-9.5' : 'w-5'">
+              <ng-icon name="{{ item.icon }}" size="20" [ngClass]="rla.isActive ? 'text-white' : ''"></ng-icon>
+            </span>
+
+            <span class="whitespace-nowrap overflow-hidden transition-all duration-300 ease-in-out"
+              [ngClass]="isCollapsed ? 'opacity-0 w-0' : 'opacity-100 w-auto'">
+              {{ item.label }}
+            </span>
           </a>
         </li>
       }
-
     </ul>
   </nav>
 
   <div class="p-4 border-t border-parking-border/50">
-    <button class="w-full flex items-center py-3 rounded-xl text-parking-occupied hover:bg-parking-occupied/10 transition-colors">
-      <ng-icon name="lucideLogOut" size="20"></ng-icon>
-      <span class="font-medium transition-all duration-200" [ngClass]="isCollapsed ? 'opacity-0 w-0 overflow-hidden' : 'opacity-100 w-auto'">Cerrar Sesión</span>
+    <button 
+      class="w-full flex items-center h-11 rounded-xl text-parking-occupied hover:bg-parking-occupied/10 transition-colors"
+      [ngClass]="isCollapsed ? 'justify-center' : 'px-3'">
+      <ng-icon name="lucideLogOut" size="20" class="shrink-0 w-5"></ng-icon>
+      <span class="transition-all duration-300 ease-in-out whitespace-nowrap overflow-hidden"
+        [ngClass]="isCollapsed ? 'opacity-0 max-w-0 ml-0' : 'opacity-100 max-w-50 ml-3'">
+        Cerrar Sesión
+      </span>
     </button>
   </div>
 </aside>

@@ -5,10 +5,10 @@ export const getAll = async (req, res) => {
   try {
     const { parking } = req.params;
     let records;
-    if (parking) {
-      records = await Record.find({ parking: parking }).sort({ entryTime: -1 });
-    } else {
+    if (parking == "all") {
       records = await Record.find().sort({ entryTime: -1 });
+    } else {
+      records = await Record.find({ parking: parking }).sort({ entryTime: -1 });
     }
     res.json(records);
     
@@ -101,8 +101,6 @@ const calculateMinutes = (entryTime, exitTime) => {
 };
 
 const calculateAmount = (minutes, cost) => {
-  // if (minutes <= 10) return 0;
-
   const hours = Math.ceil(minutes / 60);
   return hours * cost;
 }

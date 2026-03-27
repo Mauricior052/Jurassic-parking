@@ -1,12 +1,14 @@
 import { DatePipe } from '@angular/common';
 import { Component, inject, signal, OnInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RecordService } from '../../services/record-service';
 import { NgIcon } from '@ng-icons/core';
 import { AgGridAngular } from 'ag-grid-angular';
 import { ColDef, GridReadyEvent } from 'ag-grid-community';
-import { Record } from '../../models/record';
 import { toast } from 'ngx-sonner';
+
+import { Record } from '../../models/record';
+import { RecordService } from '../../services/record-service';
+import { ThemeService } from '../../services/theme-service';
 import { Actions } from '../../components/actions/actions';
 
 @Component({
@@ -19,6 +21,7 @@ import { Actions } from '../../components/actions/actions';
 export class Records implements OnInit {
   private recordService = inject(RecordService);
   private datePipe = inject(DatePipe);
+  protected themeService = inject(ThemeService);
 
   @ViewChild('plateInput') plateInput!: ElementRef<HTMLInputElement>;
   
@@ -35,17 +38,14 @@ export class Records implements OnInit {
     { headerName: 'Vehículo', field: 'vehicle', flex: 2 },
     { headerName: 'Entrada', field: 'entryTime', flex: 1, valueFormatter: (params) => this.datePipe.transform(params.value, 'shortTime') || ''},
     { headerName: 'Tiempo', flex: 1, valueGetter: (params) => this.getDuration(params.data.entryTime) },
-    { headerName: 'Acciones', width: 130,
-      sortable: false,
-      filter: false,
-      resizable: false,
-      cellRenderer: Actions,
+    { headerName: 'Acciones', width: 130, cellRenderer: Actions,
       cellRendererParams: () => ({
         actions: [
           { icon: 'lucideLogOut', tooltip: 'Registrar salida', color: 'emerald', action: (data: any) => this.exitById(data) },
           { icon: 'lucideX', tooltip: 'Cancelar', color: 'rose', action: (data: any) => this.cancelById(data) }
         ]
       }),
+      sortable: false, filter: false, resizable: false,
     }
   ];
 

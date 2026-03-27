@@ -7,6 +7,5 @@ import { Sidebar } from '../sidebar/sidebar';
   selector: 'app-admin-layout',
   imports: [Header, Sidebar, RouterOutlet],
   templateUrl: './admin-layout.html',
-  styleUrl: './admin-layout.css',
 })
 export class AdminLayout {}

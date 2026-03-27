@@ -13,12 +13,13 @@
     </button>
   </div>
 
+  <!-- BUSCADOR -->
   <div class="relative mb-1">
     <ng-icon name="lucideSearch" class="absolute left-3 top-1/2 -translate-y-1/2 text-parking-muted"></ng-icon>
-    <input placeholder="Buscar usuarios..." (input)="onSearch($event)" 
-      class="px-3 py-2 pl-10 rounded-2xl w-full text-[14px] outline-none bg-parking-surface transition-all border border-parking-border focus:border-parking-primary/50 focus:ring-2 focus:ring-parking-primary/10 text-parking-text placeholder:text-parking-muted" />
+    <input placeholder="Buscar usuarios..." (input)="onSearch($event)" class="input-search" />
   </div>
 
+  <!-- GRID -->
   <div class="rounded-2xl border border-parking-border overflow-hidden shadow-sm">
     <ag-grid-angular
       class="w-full"

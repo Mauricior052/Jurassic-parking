@@ -1,5 +1,7 @@
+@reference "../../../styles.css";
+
 .back-gradient {
-    background: linear-gradient(to right, #e2e2e2, #c9d6ff);
+    background: linear-gradient(135deg, var(--color-parking-bg) 0%, var(--color-parking-accent) 50%, var(--color-parking-bg) 100%);
 }
 
 .container-slider.active .sign-in {
@@ -15,7 +17,7 @@
 
 .container-slider.active .toggle-container {
     transform: translateX(-100%);
-    border-radius: 0 150px 100px 0;
+    border-radius: 0 150px 150px 0;
 }
 
 .container-slider.active .toggle {
@@ -37,4 +39,20 @@
 @keyframes move-auth {
     0%, 49.99% { opacity: 0; z-index: 1; }
     50%, 100% { opacity: 1; z-index: 5; }
+}
+
+.input-login {
+  background-color: var(--color-parking-input);
+  color: var(--color-parking-text);
+  border: 1px solid var(--color-parking-border);
+  @apply w-full p-3 pr-10 rounded-xl outline-none transition-all text-sm;
+  &:focus {
+    border-color: var(--color-parking-primary);
+    box-shadow: 0 0 0 2px rgba(225, 29, 72, 0.15);
+    background-color: var(--color-parking-accent);
+  }
+  &::placeholder {
+    color: var(--color-parking-muted);
+    opacity: 0.7;
+  }
 }

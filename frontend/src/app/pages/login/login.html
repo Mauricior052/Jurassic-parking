@@ -1,68 +1,67 @@
-<div class="back-gradient flex flex-col items-center justify-center h-screen">
-  <div class="container-slider relative overflow-hidden bg-white rounded-[30px] shadow-2xl w-200 max-w-full min-h-120" 
+<div class="back-gradient text-parking-text flex flex-col items-center justify-center h-screen transition-colors duration-500">
+  <div class="container-slider relative overflow-hidden bg-parking-surface rounded-[30px] shadow-2xl w-200 max-w-full min-h-120 border border-parking-border" 
        [ngClass]="{ active: isActive() }">
 
+    <!-- REGISTER -->
     <div class="form-container sign-up h-full absolute top-0 transition-all duration-600 ease-in-out left-0 w-1/2 opacity-0 z-1">
-      <form (ngSubmit)="register()" class="bg-white flex flex-col items-center justify-center px-10 h-full">
-        <h1 class="text-3xl font-black text-slate-900 mb-2">Crea una Cuenta</h1>
+      <form (ngSubmit)="register()" class="bg-parking-surface flex flex-col items-center justify-center px-10 h-full">
+        <h1 class="text-3xl font-black text-parking-text mb-2">Crea una Cuenta</h1>
         <div class="social-icons my-2">
           <div #googleRegisterBtn></div>
         </div>
-        <span class="text-xs text-slate-500 mb-4">o usa tu email para registrarte</span>
+        <span class="text-xs text-parking-muted mb-4">o usa tu email para registrarte</span>
 
         <div class="input-group relative flex items-center w-full mb-2">
-          <input name="name" placeholder="Nombre" [(ngModel)]="registerData.name" required 
-                 class="w-full bg-slate-100 p-3 pr-10 rounded-xl outline-none border border-transparent focus:border-parking-primary/50 transition-all text-sm" />
-          <ng-icon name="lucideUser" class="absolute right-3 text-slate-400"></ng-icon>
+          <input name="name" placeholder="Nombre" [(ngModel)]="registerData.name" required class="input-login" />
+          <ng-icon name="lucideUser" class="absolute right-3 text-parking-muted"></ng-icon>
         </div>
 
         <div class="input-group relative flex items-center w-full mb-2">
           <input type="email" name="email" placeholder="Email" [(ngModel)]="registerData.email" required 
-                 class="w-full bg-slate-100 p-3 pr-10 rounded-xl outline-none border border-transparent focus:border-parking-primary/50 transition-all text-sm" />
-          <ng-icon name="lucideMail" class="absolute right-3 text-slate-400"></ng-icon>
+                 class="input-login" />
+          <ng-icon name="lucideMail" class="absolute right-3 text-parking-muted"></ng-icon>
         </div>
 
         <div class="input-group relative flex items-center w-full mb-4">
-          <input type="password" name="password" placeholder="Password" [(ngModel)]="registerData.password" required 
-                 class="w-full bg-slate-100 p-3 pr-10 rounded-xl outline-none border border-transparent focus:border-parking-primary/50 transition-all text-sm" />
-          <ng-icon name="lucideLock" class="absolute right-3 text-slate-400"></ng-icon>
+          <input type="password" name="password" placeholder="Contraseña" [(ngModel)]="registerData.password" required class="input-login" />
+          <ng-icon name="lucideLock" class="absolute right-3 text-parking-muted"></ng-icon>
         </div>
 
-        <button type="submit" class="bg-parking-primary text-white text-xs font-bold py-3 px-12 rounded-xl uppercase tracking-widest hover:bg-rose-700 shadow-glow transition-all active:scale-95">
+        <button type="submit" class="bg-parking-primary text-white text-xs font-bold py-3 px-12 rounded-xl uppercase tracking-widest hover:brightness-110 shadow-glow transition-all active:scale-95 cursor-pointer">
           Registrar
         </button>
       </form>
     </div>
 
+
+    <!-- LOGIN -->
     <div class="form-container sign-in h-full absolute top-0 transition-all duration-600 ease-in-out left-0 w-1/2 z-2">
-      <form (ngSubmit)="login()" class="bg-white flex flex-col items-center justify-center px-10 h-full">
-        <h1 class="text-3xl font-black text-slate-900 mb-2">Iniciar Sesión</h1>
+      <form (ngSubmit)="login()" class="bg-parking-surface flex flex-col items-center justify-center px-10 h-full">
+        <h1 class="text-3xl font-black text-parking-text mb-2">Iniciar Sesión</h1>
         <div class="social-icons my-2">
           <div #googleLoginBtn></div>
         </div>
-        <span class="text-xs text-slate-500 mb-4">o usa tu email y contraseña</span>
+        <span class="text-xs text-parking-muted mb-4">o usa tu email y contraseña</span>
 
         <div class="input-group relative flex items-center w-full mb-2">
-          <input type="email" name="email" placeholder="Email" [(ngModel)]="loginData.email" required 
-                 class="w-full bg-slate-100 p-3 pr-10 rounded-xl outline-none border border-transparent focus:border-parking-primary/50 transition-all text-sm" />
-          <ng-icon name="lucideMail" class="absolute right-3 text-slate-400"></ng-icon>
+          <input type="email" name="email" placeholder="Email" [(ngModel)]="loginData.email" required class="input-login" />
+          <ng-icon name="lucideMail" class="absolute right-3 text-parking-muted"></ng-icon>
         </div>
 
         <div class="input-group relative flex items-center w-full mb-2">
-          <input type="password" name="password" placeholder="Password" [(ngModel)]="loginData.password" required 
-                 class="w-full bg-slate-100 p-3 pr-10 rounded-xl outline-none border border-transparent focus:border-parking-primary/50 transition-all text-sm" />
-          <ng-icon name="lucideLock" class="absolute right-3 text-slate-400"></ng-icon>
+          <input type="password" name="password" placeholder="Contraseña" [(ngModel)]="loginData.password" required class="input-login" />
+          <ng-icon name="lucideLock" class="absolute right-3 text-parking-muted"></ng-icon>
         </div>
 
         <div class="flex justify-between items-center w-full my-3">
-          <label class="flex items-center text-xs text-slate-600 cursor-pointer">
+          <label class="flex items-center text-xs text-parking-muted cursor-pointer hover:text-parking-text transition-colors">
             <input type="checkbox" name="remember" [(ngModel)]="loginData.rememberMe" class="mr-2 accent-parking-primary"> 
             Recuérdame
           </label>
-          <a href="#" class="text-xs text-slate-400 hover:text-parking-primary transition-colors">¿Olvidaste tu contraseña?</a>
+          <a href="#" class="text-xs text-parking-muted hover:text-parking-primary transition-colors">¿Olvidaste tu contraseña?</a>
         </div>
 
-        <button type="submit" class="bg-parking-primary text-white text-xs font-bold py-3 px-12 rounded-xl uppercase tracking-widest hover:bg-rose-700 shadow-glow transition-all active:scale-95">
+        <button type="submit" class="bg-parking-primary text-white text-xs font-bold py-3 px-12 rounded-xl uppercase tracking-widest hover:brightness-110 shadow-glow transition-all active:scale-95 cursor-pointer">
           Iniciar Sesión
         </button>
       </form>
@@ -73,16 +72,16 @@
         
         <div class="toggle-panel toggle-left absolute top-0 h-full w-1/2 flex flex-col items-center justify-center px-8 text-center transition-all duration-600 ease-in-out">
           <h1 class="text-3xl font-black mb-4">¡Bienvenido!</h1>
-          <p class="text-sm leading-5 tracking-tight mb-6">Ingresa tus datos personales para usar todas las funciones del sitio</p>
-          <button (click)="showLogin()" class="bg-transparent border-2 border-white text-white text-xs font-bold py-3 px-12 rounded-xl uppercase tracking-widest hover:bg-white hover:text-parking-primary transition-all">
+          <p class="text-sm leading-5 tracking-tight mb-6 text-white/90">Ingresa tus datos personales para usar todas las funciones del sitio</p>
+          <button (click)="showLogin()" class="bg-transparent border-2 border-white text-white text-xs font-bold py-3 px-12 rounded-xl uppercase tracking-widest hover:bg-white hover:text-parking-primary transition-all cursor-pointer">
             Iniciar Sesión
           </button>
         </div>
 
         <div class="toggle-panel toggle-right absolute top-0 right-0 h-full w-1/2 flex flex-col items-center justify-center px-8 text-center transition-all duration-600 ease-in-out">
           <h1 class="text-3xl font-black mb-4">¡Hola de nuevo!</h1>
-          <p class="text-sm leading-5 tracking-tight mb-6">Regístrate con tus datos personales para usar todas las funciones del sitio</p>
-          <button (click)="showRegister()" class="bg-transparent border-2 border-white text-white text-xs font-bold py-3 px-12 rounded-xl uppercase tracking-widest hover:bg-white hover:text-parking-primary transition-all">
+          <p class="text-sm leading-5 tracking-tight mb-6 text-white/90">Regístrate con tus datos personales para usar todas las funciones del sitio</p>
+          <button (click)="showRegister()" class="bg-transparent border-2 border-white text-white text-xs font-bold py-3 px-12 rounded-xl uppercase tracking-widest hover:bg-white hover:text-parking-primary transition-all cursor-pointer">
             Registrar
           </button>
         </div>

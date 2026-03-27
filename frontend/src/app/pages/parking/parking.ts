@@ -6,9 +6,10 @@ import { NgIcon } from '@ng-icons/core';
 import { toast } from 'ngx-sonner';
 
 import { Parking } from '../../models/parking';
-import { Actions } from '../../components/actions/actions';
 import { ParkingService } from '../../services/parking-service';
 import { ThemeService } from '../../services/theme-service';
+import { Actions } from '../../components/actions/actions';
+import { IconComponent } from '../../components/icon/icon-component';
 
 @Component({
   selector: 'app-parking',
@@ -45,30 +46,20 @@ export class ParkingComponent implements OnInit {
   columnDefs: ColDef[] = [
     { field: 'name', headerName: 'Nombre', flex: 2, minWidth: 150 },
     { field: 'address', headerName: 'Dirección', flex: 2, minWidth: 200 },
-    { 
-      field: 'price', 
-      headerName: 'Precio/hr', 
-      width: 110, 
-      valueFormatter: (p) => `$${p.value}` 
-    },
+    { field: 'price', headerName: 'Precio', width: 110, valueFormatter: (p) => `$${p.value}` },
     { field: 'totalSpaces', headerName: 'Cupos', width: 100 },
-    { 
-      field: 'security', 
-      headerName: 'Seguridad', 
-      cellRenderer: (params: any) => (params.value ? '✅' : '❌'), 
-      width: 110 
+    { field: 'security', headerName: 'Seguridad', width: 110, cellRenderer: IconComponent,
+      cellRendererParams: (params: any) => ({
+        icon: params.value ? 'lucideShieldCheck' : 'lucideShieldX',
+        color: params.value ? 'green' : 'red'
+      })
     },
-    {
-      headerName: 'Acciones',
-      cellRenderer: Actions,
+    { headerName: 'Acciones', width: 120, cellRenderer: Actions,
       cellRendererParams: {
         onEdit: (data: Parking) => this.edit(data),
         onDelete: (data: Parking) => this.delete(data)
       },
-      sortable: false,
-      filter: false,
-      resizable: false,
-      width: 120
+      sortable: false, filter: false, resizable: false,
     }
   ];
 
@@ -186,7 +177,7 @@ export class ParkingComponent implements OnInit {
         opening: '08:00',
         closing: '20:00'
       },
-      owner: '' // Aquí deberías asignar el ID del usuario actual si es necesario
+      owner: ''
     };
   }
 }

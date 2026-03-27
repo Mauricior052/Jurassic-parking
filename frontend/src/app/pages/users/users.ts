@@ -7,8 +7,8 @@ import { toast } from 'ngx-sonner';
 
 import { User } from '../../models/user';
 import { UserService } from '../../services/user-service';
-import { Actions } from '../../components/actions/actions';
 import { ThemeService } from '../../services/theme-service';
+import { Actions } from '../../components/actions/actions';
 
 @Component({
   selector: 'app-users',
@@ -62,16 +62,12 @@ export class Users {
         `;
       }
      },
-    { headerName: 'Acciones',
-      cellRenderer: Actions,
+    { headerName: 'Acciones', width: 120, cellRenderer: Actions,
       cellRendererParams: {
         onEdit: (data: User) => this.edit(data),
         onDelete: (data: User) => this.delete(data)
       },
-      sortable: false,
-      filter: false,
-      resizable: false,
-      width: 120
+      sortable: false, filter: false, resizable: false,
     }
   ];
 

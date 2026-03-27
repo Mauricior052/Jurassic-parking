@@ -14,8 +14,8 @@
   </div>
 
   <div class="relative mb-1">
-    <ng-icon name="lucideSearch" class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></ng-icon>
-    <input placeholder="Buscar estacionamientos..." (input)="onSearch($event)" class="px-3 py-2 pl-10 rounded-2xl w-full text-[14px] outline-none bg-parking-light-bg transition-all border border-slate-400/40 focus:border-parking-primary/50 focus:ring-2 focus:ring-parking-primary/10" />
+    <ng-icon name="lucideSearch" class="absolute left-3 top-1/2 -translate-y-1/2 text-parking-muted"></ng-icon>
+    <input placeholder="Buscar estacionamientos..." (input)="onSearch($event)" class="input-search" />
   </div>
 
   <div class="rounded-2xl border border-parking-border overflow-hidden shadow-sm">
@@ -52,10 +52,10 @@
 
     <form (ngSubmit)="save()" class="p-6 space-y-3">
       <div class="space-y-1">
-        <label class="label ml-1">Nombre del Local</label>
+        <label class="label ml-1">Nombre</label>
         <div class="relative group">
           <ng-icon name="lucideWarehouse" class="absolute left-4 top-1/2 -translate-y-1/2 text-parking-muted group-focus-within:text-parking-primary transition"></ng-icon>
-          <input [(ngModel)]="form.name" name="nombre" required class="input pl-11" />
+          <input [(ngModel)]="form.name" name="nombre" required class="input" />
         </div>
       </div>
 
@@ -63,7 +63,7 @@
         <label class="label ml-1">Dirección</label>
         <div class="relative group">
           <ng-icon name="lucideMapPin" class="absolute left-4 top-1/2 -translate-y-1/2 text-parking-muted group-focus-within:text-parking-primary transition"></ng-icon>
-          <input [(ngModel)]="form.address" name="address" required class="input pl-11" />
+          <input [(ngModel)]="form.address" name="address" required class="input" />
         </div>
       </div>
 
@@ -72,7 +72,7 @@
           <label class="label ml-1">Precio x Hora</label>
           <div class="relative group">
             <ng-icon name="lucideDollarSign" class="absolute left-4 top-1/2 -translate-y-1/2 text-parking-muted group-focus-within:text-parking-primary transition"></ng-icon>
-            <input type="number" [(ngModel)]="form.price" name="price" required class="input pl-11" />
+            <input type="number" [(ngModel)]="form.price" name="price" required class="input" />
           </div>
         </div>
 
@@ -80,7 +80,7 @@
           <label class="label ml-1">Total Espacios</label>
           <div class="relative group">
             <ng-icon name="lucideCar" class="absolute left-4 top-1/2 -translate-y-1/2 text-parking-muted group-focus-within:text-parking-primary transition"></ng-icon>
-            <input type="number" [(ngModel)]="form.totalSpaces" name="totalSpaces" required class="input pl-11" />
+            <input type="number" [(ngModel)]="form.totalSpaces" name="totalSpaces" required class="input" />
           </div>
         </div>
       </div>
@@ -91,16 +91,14 @@
           <label>
             <input type="radio" [(ngModel)]="form.security" name="security" [value]="true" class="hidden peer" />
             <div class="radio-card">
-              <ng-icon name="lucideShieldCheck" size="18"></ng-icon>
-              Sí
+              <ng-icon name="lucideShieldCheck" size="18"></ng-icon>Si
             </div>
           </label>
 
           <label>
             <input type="radio" [(ngModel)]="form.security" name="security" [value]="false" class="hidden peer" />
             <div class="radio-card">
-              <ng-icon name="lucideShieldOff" size="18"></ng-icon>
-              No
+              <ng-icon name="lucideShieldOff" size="18"></ng-icon>No
             </div>
           </label>
         </div>

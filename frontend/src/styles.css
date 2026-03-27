@@ -12,6 +12,7 @@
   --color-parking-text: #f1f5f9;
   --color-parking-muted: #94a3b8;
   --color-parking-accent: #2a1f1f;
+  --color-parking-input: #221a1a;
 
   @keyframes enter {
     from {
@@ -45,6 +46,7 @@
   --color-parking-text: #1e293b;
   --color-parking-muted: #64748b;
   --color-parking-accent: #e9edf2;
+  --color-parking-input: #f1f5f9;
 }
 
 .always-dark {
@@ -59,31 +61,32 @@
 
 * {
   font-family: 'Montserrat', sans-serif;
-  @apply transition-colors duration-200;
 }
 
 main {
   background-color: var(--color-parking-bg);
   color: var(--color-parking-text);
-  margin: 0;
-  min-height: 100vh;
-  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .input {
-  background-color: var(--color-parking-surface);
+  background-color: var(--color-parking-input);
   border-color: var(--color-parking-border);
-  color: var(--color-parking-text);
   @apply w-full border rounded-2xl py-3 pl-11 pr-4 text-sm outline-none
-  focus:border-parking-primary focus:ring-4 focus:ring-parking-primary/10 transition-all;
+  focus:border-parking-primary focus:ring-4 focus:ring-parking-primary/10 focus:bg-parking-surface transition-all;
 }
 
 .input-lg {
-  background-color: var(--color-parking-surface);
+  background-color: var(--color-parking-bg);
   border-color: var(--color-parking-border);
-  color: var(--color-parking-text);
   @apply w-full border rounded-2xl py-2 pl-11 pr-4 outline-none font-semibold
   focus:border-parking-primary focus:ring-4 focus:ring-parking-primary/10 transition-all;
+}
+
+.input-search {
+  background-color: var(--color-parking-surface);
+  border-color: var(--color-parking-border);
+  @apply w-full border rounded-2xl py-2 pl-10 pr-5 outline-none text-[14px]
+  focus:border-parking-primary/50 focus:ring-2 focus:ring-parking-primary/10 focus:bg-parking-bg placeholder:text-parking-muted transition-all;
 }
 
 .label {

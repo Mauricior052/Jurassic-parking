@@ -1,14 +1,17 @@
 import { DatePipe } from '@angular/common';
 import { Component, inject, signal, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RecordService } from '../../services/record-service';
 import { NgIcon } from '@ng-icons/core';
 import { AgGridAngular } from 'ag-grid-angular';
 import { ColDef, GridReadyEvent } from 'ag-grid-community';
-import { Record } from '../../models/record';
 import { toast } from 'ngx-sonner';
+
+import { Record } from '../../models/record';
+import { RecordService } from '../../services/record-service';
 import { ParkingService } from '../../services/parking-service';
+import { ThemeService } from '../../services/theme-service';
 import { formatCurrency } from '../../utils/formatter';
+import { IconComponent } from '../../components/icon/icon-component';
 
 @Component({
   selector: 'app-history',
@@ -19,6 +22,7 @@ import { formatCurrency } from '../../utils/formatter';
 export class History implements OnInit {
   private recordService = inject(RecordService);
   private parkingService = inject(ParkingService);
+  protected themeService = inject(ThemeService);
   private datePipe = inject(DatePipe);
 
   @ViewChild('plateInput') plateInput!: ElementRef<HTMLInputElement>;
@@ -39,19 +43,23 @@ export class History implements OnInit {
     { headerName: 'Entrada', field: 'entryTime', flex: 1, valueFormatter: (params) => this.datePipe.transform(params.value, 'shortTime') || ''},
     { headerName: 'Salida', field: 'exitTime', flex: 1, valueFormatter: (params) => this.datePipe.transform(params.value, 'shortTime') || ''},
     { headerName: 'Tiempo', flex: 1, valueGetter: (params) => this.getDuration(params.data.entryTime) },
-    { headerName: 'Estado', field: 'status', flex: 1 },
-    { headerName: 'Precio', field: 'totalAmount', flex: .7, valueFormatter: (p) => formatCurrency(p.value) },
-    // { headerName: 'Acciones', width: 130,
-    //   sortable: false,
-    //   filter: false,
-    //   resizable: false,
-    //   cellRenderer: Actions,
+    { headerName: 'Estado', field: 'status', flex: 1, minWidth: 110, cellRenderer: IconComponent, 
+      cellRendererParams: (params: any) => {
+        const status = params.value;
+        if (status === 'FINISHED') return { icon: 'lucideCheckCircle2', color: '#3b82f6', text: 'Finalizado', size: '18' };
+        if (status === 'CANCELLED') return { icon: 'lucideXCircle', color: '#ef4444', text: 'Cancelado', size: '18' };
+        return { icon: 'lucideCirclePlay', color: '#16a34a', text: 'En curso', size: '18' };
+      }
+    },
+    { headerName: 'Precio', field: 'totalAmount', width: 100, valueFormatter: (p) => formatCurrency(p.value, 0) },
+    // { headerName: 'Acciones', width: 130, cellRenderer: Actions,
     //   cellRendererParams: () => ({
     //     actions: [
     //       { icon: 'lucideLogOut', tooltip: 'Registrar salida', color: 'emerald', action: (data: any) => this.exitById(data) },
     //       { icon: 'lucideX', tooltip: 'Cancelar', color: 'rose', action: (data: any) => this.cancelById(data) }
     //     ]
     //   }),
+    //   sortable: false, filter: false, resizable: false,
     // }
   ];
 
