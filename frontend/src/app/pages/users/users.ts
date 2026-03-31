@@ -9,6 +9,7 @@ import { User } from '../../models/user';
 import { UserService } from '../../services/user-service';
 import { ThemeService } from '../../services/theme-service';
 import { Actions } from '../../components/actions/actions';
+import { IconComponent } from '../../components/icon/icon-component';
 
 @Component({
   selector: 'app-users',
@@ -49,19 +50,27 @@ export class Users {
           : `<div class="text-gray-400 text-sm h-full flex items-center">Email</div>`;
       }
     },
-    { field: 'role', headerName: 'Rol', width: 110, cellRenderer: (params: any) => {
-        const role = params.value.toLowerCase();
-        const styles = role === 'admin' ? 'bg-rose-100 text-rose-600' : 'bg-blue-100 text-blue-600';
-        const label = role === 'admin' ? 'Admin' : 'Cliente';
-        return `
-          <div class="flex items-center justify-left w-full h-full">
-            <span class="px-2 py-1 text-xs font-semibold rounded-full ${styles}">
-              ${label}
-            </span>
-          </div>
-        `;
+    // { field: 'role', headerName: 'Rol', width: 110, cellRenderer: (params: any) => {
+    //     const role = params.value.toLowerCase();
+    //     const styles = role === 'admin' ? 'bg-rose-100 text-rose-600' : 'bg-blue-100 text-blue-600';
+    //     const label = role === 'admin' ? 'Admin' : 'Cliente';
+    //     return `
+    //       <div class="flex items-center justify-left w-full h-full">
+    //         <span class="px-2 py-1 text-xs font-semibold rounded-full ${styles}">
+    //           ${label}
+    //         </span>
+    //       </div>
+    //     `;
+    //   }
+    //  },
+    { headerName: 'Rol', field: 'role', width: 80, cellRenderer: IconComponent, 
+      cellRendererParams: (params: any) => {
+        const role = params.value;
+        if (role === 'admin') return { icon: 'lucideShield', color: '#fb7185' };
+        if (role === 'client') return { icon: 'lucideUser', color: '#38bdf8' };
+        return { icon: 'lucideCircle', color: '#9ca3af' };
       }
-     },
+    },
     { headerName: 'Acciones', width: 120, cellRenderer: Actions,
       cellRendererParams: {
         onEdit: (data: User) => this.edit(data),

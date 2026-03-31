@@ -10,6 +10,7 @@ import { ParkingService } from '../../services/parking-service';
 import { ThemeService } from '../../services/theme-service';
 import { Actions } from '../../components/actions/actions';
 import { IconComponent } from '../../components/icon/icon-component';
+import { MapsService } from '../../services/maps-service';
 
 @Component({
   selector: 'app-parking',
@@ -20,6 +21,7 @@ import { IconComponent } from '../../components/icon/icon-component';
 export class ParkingComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private parkingService = inject(ParkingService);
+  private mapsService = inject(MapsService);
   protected themeService = inject(ThemeService);
 
   rowData = signal<Parking[]>([]);
@@ -28,6 +30,7 @@ export class ParkingComponent implements OnInit {
   form: Parking = this.getEmptyParking();
   editing = false;
   isModalOpen = false;
+  isMapOpen = false;
   loading = false;
 
   ngOnInit() {
@@ -42,6 +45,31 @@ export class ParkingComponent implements OnInit {
       error: () => toast.error('Error al cargar los estacionamientos')
     });
   }
+
+  async openMap() {
+    this.isMapOpen = true;
+    await this.mapsService.initGoogleMaps();
+    setTimeout(() => {
+      this.mapsService.initMap(
+        'location-map',
+        this.form.location.coordinates[0] !== 0
+          ? { lat: this.form.location.coordinates[1], lng: this.form.location.coordinates[0] }
+          : { lat: 20.563, lng: -102.986 },
+        // Callback: actualiza form cuando el usuario mueve el pin
+        (lat, lng, address) => {
+          this.form.address = address;
+          this.form.location = {
+            type: 'Point',
+            coordinates: [lng, lat]
+          };
+        }
+      );
+    }, 100);
+  }
+
+  closeMap() { this.isMapOpen = false; }
+  confirmLocation() { this.isMapOpen = false; }
+
 
   columnDefs: ColDef[] = [
     { field: 'name', headerName: 'Nombre', flex: 2, minWidth: 150 },
@@ -180,4 +208,7 @@ export class ParkingComponent implements OnInit {
       owner: ''
     };
   }
+
+
+  
 }

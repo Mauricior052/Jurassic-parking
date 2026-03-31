@@ -61,10 +61,24 @@
 
       <div class="space-y-1">
         <label class="label ml-1">Dirección</label>
-        <div class="relative group">
-          <ng-icon name="lucideMapPin" class="absolute left-4 top-1/2 -translate-y-1/2 text-parking-muted group-focus-within:text-parking-primary transition"></ng-icon>
-          <input [(ngModel)]="form.address" name="address" required class="input" />
+        <div class="flex gap-2">
+          <div class="relative group flex-1">
+            <ng-icon name="lucideMapPin" class="absolute left-4 top-1/2 -translate-y-1/2 text-parking-muted group-focus-within:text-parking-primary transition"></ng-icon>
+            <input [(ngModel)]="form.address" name="address" required class="input" placeholder="Selecciona en el mapa..." readonly />
+          </div>
+          <button type="button" (click)="openMap()"
+            class="px-3 rounded-2xl bg-parking-primary text-white hover:opacity-80 transition flex items-center gap-1.5 text-sm font-semibold cursor-pointer">
+            <ng-icon name="lucideMap" size="16"></ng-icon>
+            Mapa
+          </button>
         </div>
+
+        <!-- Coordenadas -->
+        @if (form.location.coordinates[0] !== 0) {
+          <p class="text-xs text-parking-muted ml-1 mt-1">
+            📍 {{ form.location.coordinates[1] }}, {{ form.location.coordinates[0] }}
+          </p>
+        }
       </div>
 
       <div class="grid grid-cols-2 gap-4">
@@ -115,6 +129,49 @@
       </div>
 
     </form>
+    @if (isMapOpen) {
+      <div class="fixed inset-0 z-110 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+        <div class="w-full max-w-lg bg-parking-surface rounded-3xl shadow-2xl border border-parking-border overflow-hidden animate-enter">
+
+          <!-- Header -->
+          <div class="px-5 py-4 border-b border-parking-border flex items-center justify-between bg-parking-bg">
+            <h3 class="font-extrabold text-parking-text flex items-center gap-2">
+              <ng-icon name="lucideMapPin" class="text-parking-primary"></ng-icon>
+              Seleccionar Ubicación
+            </h3>
+            <button type="button" (click)="closeMap()" class="text-parking-muted hover:text-parking-primary transition cursor-pointer">
+              <ng-icon name="lucideX" size="20"></ng-icon>
+            </button>
+          </div>
+
+          <!-- Mapa -->
+          <div id="location-map" class="w-full h-72"></div>
+
+          <!-- Dirección detectada -->
+          <div class="px-5 py-3 bg-parking-bg border-t border-parking-border">
+            <p class="text-xs text-parking-muted mb-0.5">Dirección detectada</p>
+            <p class="text-sm font-semibold text-parking-text truncate">
+              {{ form.address || 'Arrastra el pin o toca el mapa...' }}
+            </p>
+          </div>
+
+          <!-- Acciones -->
+          <div class="flex gap-3 px-5 py-4 border-t border-parking-border">
+            <button type="button" (click)="closeMap()"
+              class="flex-1 py-2.5 rounded-2xl font-bold text-parking-text bg-parking-accent hover:opacity-80 transition cursor-pointer">
+              Cancelar
+            </button>
+            <button type="button" (click)="confirmLocation()"
+              [disabled]="!form.location.coordinates[0]"
+              class="flex-1 btn-primary disabled:opacity-40 disabled:cursor-not-allowed">
+              <ng-icon name="lucideCheckCircle" size="16"></ng-icon>
+              Confirmar
+            </button>
+          </div>
+
+        </div>
+      </div>
+    }
   </div>
 </div>
 }
