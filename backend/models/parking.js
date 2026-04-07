@@ -43,6 +43,10 @@ const parkingSchema = new mongoose.Schema(
       closing: {
         type: String,
       },
+      days: {
+        type: [String],
+        enum: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'],
+      },
     },
     owner: {
       type: mongoose.Schema.Types.ObjectId,

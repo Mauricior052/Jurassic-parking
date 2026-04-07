@@ -61,7 +61,7 @@
               </div>
 
               <div class="p-1">
-                <button (click)="themeService.toggleTheme()" class="w-full flex items-center gap-3 px-3 py-2.5 text-sm rounded-lg hover:bg-parking-accent transition-colors">
+                <button (click)="themeService.toggleTheme()" class="w-full flex items-center gap-3 px-3 py-2.5 text-sm rounded-lg hover:bg-parking-accent transition-colors cursor-pointer">
                   @if (themeService.isDarkMode()) {
                     <ng-icon name="LucideSun" class="size-5"></ng-icon>
                   } @else {
@@ -71,8 +71,8 @@
                 </button>
               </div>
 
-              <div class="p-1 text-parking-text-base">
-                <button class="w-full flex items-center gap-3 px-3 py-2.5 text-sm rounded-lg hover:bg-parking-accent transition-colors">
+              <div class="p-1">
+                <button class="w-full flex items-center gap-3 px-3 py-2.5 text-sm rounded-lg hover:bg-parking-accent transition-colors cursor-pointer">
                   <ng-icon name="lucideUser" class="text-parking-muted"></ng-icon>
                   <span>Mi Perfil</span>
                 </button>
@@ -81,10 +81,7 @@
               <div class="h-px bg-parking-border my-1"></div>
 
               <div class="p-1">
-                <button 
-                  class="w-full flex items-center gap-3 px-3 py-2.5 text-sm rounded-lg text-parking-occupied hover:bg-parking-occupied/10 transition-colors" 
-                  (click)="logout()"
-                >
+                <button (click)="logout()" class="w-full flex items-center gap-3 px-3 py-2.5 text-sm rounded-lg text-parking-occupied hover:bg-parking-occupied/10 transition-colors cursor-pointer">
                   <ng-icon name="lucideLogOut"></ng-icon>
                   <span>Cerrar Sesión</span>
                 </button>

@@ -49,13 +49,18 @@ export class ParkingComponent implements OnInit {
   async openMap() {
     this.isMapOpen = true;
     await this.mapsService.initGoogleMaps();
+
+    const arandasCoords = { lat: 20.702, lng: -102.346 };
+    const hasLocation = this.form.location.coordinates[0] !== 0 && 
+                        this.form.location.coordinates[1] !== 0;
+    const targetCoords = hasLocation 
+      ? { lat: this.form.location.coordinates[1], lng: this.form.location.coordinates[0] }
+      : arandasCoords;
+
     setTimeout(() => {
       this.mapsService.initMap(
         'location-map',
-        this.form.location.coordinates[0] !== 0
-          ? { lat: this.form.location.coordinates[1], lng: this.form.location.coordinates[0] }
-          : { lat: 20.563, lng: -102.986 },
-        // Callback: actualiza form cuando el usuario mueve el pin
+        targetCoords,
         (lat, lng, address) => {
           this.form.address = address;
           this.form.location = {
@@ -64,7 +69,7 @@ export class ParkingComponent implements OnInit {
           };
         }
       );
-    }, 100);
+    }, 150);
   }
 
   closeMap() { this.isMapOpen = false; }
@@ -73,9 +78,9 @@ export class ParkingComponent implements OnInit {
 
   columnDefs: ColDef[] = [
     { field: 'name', headerName: 'Nombre', flex: 2, minWidth: 150 },
-    { field: 'address', headerName: 'Dirección', flex: 2, minWidth: 200 },
-    { field: 'price', headerName: 'Precio', width: 110, valueFormatter: (p) => `$${p.value}` },
-    { field: 'totalSpaces', headerName: 'Cupos', width: 100 },
+    { field: 'address', headerName: 'Dirección', flex: 3, minWidth: 200 },
+    { field: 'price', headerName: 'Precio', width: 100, valueFormatter: (p) => `$${p.value}` },
+    { field: 'totalSpaces', headerName: 'Cupos', width: 95 },
     { field: 'security', headerName: 'Seguridad', width: 110, cellRenderer: IconComponent,
       cellRendererParams: (params: any) => ({
         icon: params.value ? 'lucideShieldCheck' : 'lucideShieldX',
@@ -153,6 +158,7 @@ export class ParkingComponent implements OnInit {
         error: (err) => {
           this.loading = false;
           toast.error(err?.error?.msg || 'Error al actualizar estacionamiento');
+          console.log(err);
         }
       });
     } else {
@@ -174,7 +180,7 @@ export class ParkingComponent implements OnInit {
   delete(parking: Parking) {
     if (!parking.id) return;
 
-    toast(`¿Eliminar parqueo "${parking.name}"?`, {
+    toast(`¿Eliminar estacionamiento "${parking.name}"?`, {
       action: {
         label: 'Eliminar',
         onClick: () => {
@@ -203,12 +209,32 @@ export class ParkingComponent implements OnInit {
       security: false,
       schedule: {
         opening: '08:00',
-        closing: '20:00'
+        closing: '20:00',
+        days: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday']
       },
       owner: ''
     };
   }
 
+  days = [
+    { label: 'Lu', value: 'monday' },
+    { label: 'Ma', value: 'tuesday' },
+    { label: 'Mi', value: 'wednesday' },
+    { label: 'Ju', value: 'thursday' },
+    { label: 'Vi', value: 'friday' },
+    { label: 'Sá', value: 'saturday' },
+    { label: 'Do', value: 'sunday' },
+  ];
 
+  isDaySelected(day: string): boolean {
+    return this.form.schedule.days?.includes(day) ?? false;
+  }
+
+  toggleDay(day: string) {
+    const days = this.form.schedule.days ?? [];
+    this.form.schedule.days = days.includes(day)
+      ? days.filter(d => d !== day)
+      : [...days, day];
+  }
   
 }

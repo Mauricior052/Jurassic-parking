@@ -1,8 +1,6 @@
 import { AfterViewInit, Component, ElementRef, inject, ViewChild } from '@angular/core';
 import { MapsService } from '../../services/maps-service';
 
-declare var google: any;
-
 @Component({
   selector: 'app-map',
   template: `<div #map class="w-full h-full"></div>`,
@@ -10,55 +8,38 @@ declare var google: any;
 export class MapsComponent implements AfterViewInit {
 
   @ViewChild('map') mapElement!: ElementRef;
-  mapsService = inject(MapsService);
+  private mapsService = inject(MapsService);
 
-  map!: any;
+  map!: google.maps.Map;
 
   async ngAfterViewInit() {
-    await this.mapsService.initGoogleMaps();
+    try {
+      await this.mapsService.initGoogleMaps();
 
-    const { Map } = await google.maps.importLibrary("maps");
-    const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
-    const { PlacesService } = await google.maps.importLibrary("places");
+      const { Map } = await google.maps.importLibrary('maps') as google.maps.MapsLibrary;
+      const { AdvancedMarkerElement } = await google.maps.importLibrary('marker') as google.maps.MarkerLibrary;
 
-    let center = { lat: 20.70592, lng: -102.34513 };
+      const center = { lat: 20.70592, lng: -102.34513 };
+      
+      this.map = new Map(this.mapElement.nativeElement, {
+        center,
+        zoom: 15,
+        mapId: 'DEMO_MAP_ID'
+      });
 
-    // if (navigator.geolocation) {
-    //   navigator.geolocation.getCurrentPosition(
-    //     (position) => {
-    //       center = {
-    //         lat: position.coords.latitude,
-    //         lng: position.coords.longitude,
-    //       };
-
-    //       this.initMap(Map, AdvancedMarkerElement, PlacesService, center);
-    //     },
-    //     () => {
-    //       this.initMap(Map, AdvancedMarkerElement, PlacesService, center);
-    //     },
-    //     {
-    //       enableHighAccuracy: true
-    //     }
-    //   );
-    // } else {
-      this.initMap(Map, AdvancedMarkerElement, PlacesService, center);
-    // }
+      new AdvancedMarkerElement({
+        position: center,
+        map: this.map,
+        title: 'Jurassic Parking HQ',
+      });
+      
+    } catch (error) {
+      console.error("Error cargando el mapa:", error);
+    }
   }
 
-  initMap(Map: any, AdvancedMarkerElement: any, PlacesService: any, center: { lat: number; lng: number }) {
-    this.map = new Map(this.mapElement.nativeElement, {
-      center,
-      zoom: 15,
-      mapId: "DEMO_MAP_ID"
-    });
 
-    new AdvancedMarkerElement({
-      position: center,
-      map: this.map,
-      title: 'Tu ubicación',
-    });
-
-    // const service = new PlacesService(this.map);
+    // const service = new google.maps.places.PlacesService(this.map);
 
     // service.nearbySearch(
     //   {
@@ -78,5 +59,5 @@ export class MapsComponent implements AfterViewInit {
     //     }
     //   }
     // )
-  }
+  // }
 }

@@ -2,6 +2,6 @@
 export const environment = {
     production: true,
     base_url: '',
-    clien_id: '',
+    client_id: '',
     googleMapsApiKey: ''
 }

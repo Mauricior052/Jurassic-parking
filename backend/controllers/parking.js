@@ -18,8 +18,7 @@ export const create = async (req, res) => {
 
 export const getAll = async (req, res) => {
   try {
-    const parkings = await Parking.find({ active: true })
-      .populate('owner', 'nombre email');
+    const parkings = await Parking.find({ active: true });
 
     res.json(parkings);
   } catch (err) {

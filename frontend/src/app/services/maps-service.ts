@@ -3,37 +3,45 @@ import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class MapsService {
-  private isLoaded = false;
+  private loadPromise: Promise<void> | null = null;
   private map!: google.maps.Map;
   private marker!: google.maps.marker.AdvancedMarkerElement;
   private geocoder!: google.maps.Geocoder;
 
   async initGoogleMaps(): Promise<void> {
-    if (this.isLoaded) return;
+    if (this.loadPromise) return this.loadPromise;
 
-    return new Promise((resolve, reject) => {
-      if (document.getElementById('google-maps-script')) {
-        this.isLoaded = true;
-        return resolve();
-      }
+    this.loadPromise = new Promise((resolve, reject) => {
+      if (typeof window.google?.maps?.importLibrary === 'function') return resolve();
 
       const script = document.createElement('script');
       script.id = 'google-maps-script';
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${environment.googleMapsApiKey}&libraries=places,marker&v=weekly`;
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${environment.googleMapsApiKey}&libraries=places,marker&v=weekly&loading=async`;
       script.async = true;
       script.defer = true;
       script.onload = () => {
-        this.isLoaded = true;
-        resolve();
+        const waitForImportLibrary = (retries = 10) => {
+          if (typeof window.google?.maps?.importLibrary === 'function') {
+            resolve();
+          } else if (retries > 0) {
+            setTimeout(() => waitForImportLibrary(retries - 1), 100);
+          } else {
+            reject(new Error('importLibrary no disponible'));
+          }
+        };
+        waitForImportLibrary();
       };
-      script.onerror = (error) => reject(error);
+
+      script.onerror = (err) => reject(err);
       document.head.appendChild(script);
     });
+
+    return this.loadPromise;
   }
 
   async initMap(
     elementId: string,
-    coords: { lat: number; lng: number } = { lat: 20.563, lng: -102.986 },
+    coords: { lat: number; lng: number },
     onLocationSelect: (lat: number, lng: number, address: string) => void
   ): Promise<void> {
     const mapElement = document.getElementById(elementId);
@@ -46,10 +54,14 @@ export class MapsService {
 
     this.map = new Map(mapElement, {
       center: coords,
-      zoom: 15,
+      zoom: 16,
+      mapId: 'DEMO_MAP_ID',
       disableDefaultUI: true,
       zoomControl: true
     });
+
+    google.maps.event.trigger(this.map, 'resize');
+    this.map.setCenter(coords);
 
     this.marker = new AdvancedMarkerElement({
       map: this.map,

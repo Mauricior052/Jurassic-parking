@@ -12,6 +12,7 @@ export interface Parking {
   schedule: {
     opening: string;
     closing: string;
+    days?: string[];
   };
   owner: string;
   rating?: number;

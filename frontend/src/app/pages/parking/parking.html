@@ -100,6 +100,40 @@
       </div>
 
       <div class="space-y-2">
+        <label class="label ml-1">Horario</label>
+        <div class="grid grid-cols-2 gap-4">
+          <div class="space-y-1">
+            <label class="label ml-1 text-xs">Apertura</label>
+            <div class="relative group">
+              <ng-icon name="lucideSunrise" class="absolute left-4 top-1/2 -translate-y-1/2 text-parking-muted group-focus-within:text-parking-primary transition"></ng-icon>
+              <input type="time" [(ngModel)]="form.schedule.opening" name="opening" class="input" />
+            </div>
+          </div>
+          <div class="space-y-1">
+            <label class="label ml-1 text-xs">Cierre</label>
+            <div class="relative group">
+              <ng-icon name="lucideSunset" class="absolute left-4 top-1/2 -translate-y-1/2 text-parking-muted group-focus-within:text-parking-primary transition"></ng-icon>
+              <input type="time" [(ngModel)]="form.schedule.closing" name="closing" class="input" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="space-y-2">
+        <label class="label ml-1">Días de operación</label>
+        <div class="grid grid-cols-7 gap-1">
+          @for (day of days; track day.value) {
+            <label class="cursor-pointer">
+              <input type="checkbox" [checked]="isDaySelected(day.value)" (change)="toggleDay(day.value)" class="hidden peer" />
+              <div class="peer-checked:border-parking-primary peer-checked:text-parking-primary peer-checked:bg-parking-primary/10 border border-transparent text-parking-muted bg-parking-accent rounded-xl py-2 text-center text-xs font-bold transition hover:opacity-80 select-none">
+                {{ day.label }}
+              </div>
+            </label>
+          }
+        </div>
+      </div>
+
+      <div class="space-y-2">
         <label class="label ml-1">Seguridad 24/7</label>
         <div class="grid grid-cols-2 gap-3">
           <label>
@@ -131,7 +165,7 @@
     </form>
     @if (isMapOpen) {
       <div class="fixed inset-0 z-110 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-        <div class="w-full max-w-lg bg-parking-surface rounded-3xl shadow-2xl border border-parking-border overflow-hidden animate-enter">
+        <div class="w-full max-w-2xl bg-parking-surface rounded-3xl shadow-2xl border border-parking-border overflow-hidden animate-enter">
 
           <!-- Header -->
           <div class="px-5 py-4 border-b border-parking-border flex items-center justify-between bg-parking-bg">
@@ -145,7 +179,7 @@
           </div>
 
           <!-- Mapa -->
-          <div id="location-map" class="w-full h-72"></div>
+          <div id="location-map" class="w-full h-100"></div>
 
           <!-- Dirección detectada -->
           <div class="px-5 py-3 bg-parking-bg border-t border-parking-border">
