@@ -10,6 +10,7 @@ import { Record } from '../../models/record';
 import { RecordService } from '../../services/record-service';
 import { ThemeService } from '../../services/theme-service';
 import { Actions } from '../../components/actions/actions';
+import { formatCurrency } from '../../utils/formatter';
 
 @Component({
   selector: 'app-records',
@@ -29,15 +30,19 @@ export class Records implements OnInit {
   public record = signal<Record>({
     plate: '',
     vehicle: '',
-    parking: '69c17b82e4f3717ef313b881'
+    parking: {
+      id: '69c17b82e4f3717ef313b881'
+    }
   });
   private gridApi: any;
+  private intervalId: any;
 
   public columnDefs: ColDef[] = [
-    { headerName: 'Placa', field: 'plate', flex: 1 },
-    { headerName: 'Vehículo', field: 'vehicle', flex: 2 },
-    { headerName: 'Entrada', field: 'entryTime', flex: 1, valueFormatter: (params) => this.datePipe.transform(params.value, 'shortTime') || ''},
-    { headerName: 'Tiempo', flex: 1, valueGetter: (params) => this.getDuration(params.data.entryTime) },
+    { headerName: 'Placa', field: 'plate', flex: 2 },
+    { headerName: 'Vehículo', field: 'vehicle', flex: 3 },
+    { headerName: 'Entrada', field: 'entryTime', width: 120, valueFormatter: (params) => this.datePipe.transform(params.value, 'shortTime') || ''},
+    { headerName: 'Tiempo', width: 110, valueGetter: (params) => this.getDuration(params.data.entryTime) },
+    { headerName: 'A pagar', width: 100, valueGetter: (p) => this.getAmount(p.data) },
     { headerName: 'Acciones', width: 130, cellRenderer: Actions,
       cellRendererParams: () => ({
         actions: [
@@ -57,6 +62,17 @@ export class Records implements OnInit {
 
   ngOnInit() {
     this.loadActive();
+    this.intervalId = setInterval(() => {
+      if (this.gridApi) {
+        this.gridApi.refreshCells({ force: true }); 
+      }
+    }, 10000);
+  }
+
+  ngOnDestroy() {
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
+    }
   }
 
   onGridReady(params: GridReadyEvent) {
@@ -69,7 +85,7 @@ export class Records implements OnInit {
   }
 
   loadActive() {
-    this.recordService.getActive(this.record().parking).subscribe((res: any) => {
+    this.recordService.getActive(this.record().parking.id).subscribe((res: any) => {
       this.rowData.set(res);
     });
   }
@@ -84,6 +100,7 @@ export class Records implements OnInit {
       toast.warning('Ingresa una descripción para el vehículo');
       return;
     }
+    console.log(current)
     this.recordService.entry(current).subscribe({
     next: () => {
       toast.success('Vehículo registrado');
@@ -98,8 +115,9 @@ export class Records implements OnInit {
         this.plateInput.nativeElement.focus();
       });
     },
-    error: () => {
+    error: (err) => {
       toast.error('Error al registrar entrada');
+      console.log(err)
     }
   });
   }
@@ -147,5 +165,14 @@ export class Records implements OnInit {
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
     return `${hours}h ${mins}m`;
+  }
+
+  getAmount(record: Record) {
+    if (!record.entryTime) return formatCurrency(0, 0);
+    const diff = Date.now() - new Date(record.entryTime).getTime();
+    const minutes = Math.ceil(diff / 60000);
+    if (minutes <= 5) return formatCurrency(0, 0);
+    const amount = Math.ceil(minutes / 60) * record.parking.price!;
+    return formatCurrency(amount, 0);
   }
 }

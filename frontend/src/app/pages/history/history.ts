@@ -33,34 +33,28 @@ export class History implements OnInit {
   public record = signal<Record>({
     plate: '',
     vehicle: '',
-    parking: '69c17b82e4f3717ef313b881'
+    parking: {
+      id: '69c17b82e4f3717ef313b881'
+    }
   });
   private gridApi: any;
 
   public columnDefs: ColDef[] = [
-    { headerName: 'Placa', field: 'plate', flex: 1 },
-    { headerName: 'Vehículo', field: 'vehicle', flex: 1 },
-    { headerName: 'Entrada', field: 'entryTime', flex: 1, valueFormatter: (params) => this.datePipe.transform(params.value, 'shortTime') || ''},
-    { headerName: 'Salida', field: 'exitTime', flex: 1, valueFormatter: (params) => this.datePipe.transform(params.value, 'shortTime') || ''},
-    { headerName: 'Tiempo', flex: 1, valueGetter: (params) => this.getDuration(params.data.entryTime) },
-    { headerName: 'Estado', field: 'status', flex: 1, minWidth: 110, cellRenderer: IconComponent, 
+    { headerName: 'Fecha', field: 'entryTime', width: 110, valueFormatter: (params) => this.datePipe.transform(params.value, 'dd/MM/yy') || '' },
+    { headerName: 'Placa', field: 'plate', flex: 2 },
+    { headerName: 'Vehículo', field: 'vehicle', flex: 3 },
+    { headerName: 'Entrada', field: 'entryTime', width: 110, valueFormatter: (params) => this.datePipe.transform(params.value, 'shortTime') || ''},
+    { headerName: 'Salida', field: 'exitTime', width: 110, valueFormatter: (p) => p.value ? (this.datePipe.transform(p.value, 'shortTime') ?? '-') : '-'},
+    { headerName: 'Tiempo', field: 'totalMinutes', width: 110, valueFormatter: (p) => p.value ? this.formatMinutes(p.value) : this.getDuration(p.data) },
+    { headerName: 'Estado', field: 'status', width: 118, cellRenderer: IconComponent, 
       cellRendererParams: (params: any) => {
         const status = params.value;
-        if (status === 'FINISHED') return { icon: 'lucideCheckCircle2', color: '#3b82f6', text: 'Finalizado', size: '18' };
-        if (status === 'CANCELLED') return { icon: 'lucideXCircle', color: '#ef4444', text: 'Cancelado', size: '18' };
-        return { icon: 'lucideCirclePlay', color: '#16a34a', text: 'En curso', size: '18' };
+        if (status === 'FINISHED') return { icon: 'lucideCheckCircle2', color: '#3b82f6', text: 'Finalizado', size: '17' };
+        if (status === 'CANCELLED') return { icon: 'lucideXCircle', color: '#ef4444', text: 'Cancelado', size: '17' };
+        return { icon: 'lucideCirclePlay', color: '#16a34a', text: 'En curso', size: '17' };
       }
     },
-    { headerName: 'Precio', field: 'totalAmount', width: 100, valueFormatter: (p) => formatCurrency(p.value, 0) },
-    // { headerName: 'Acciones', width: 130, cellRenderer: Actions,
-    //   cellRendererParams: () => ({
-    //     actions: [
-    //       { icon: 'lucideLogOut', tooltip: 'Registrar salida', color: 'emerald', action: (data: any) => this.exitById(data) },
-    //       { icon: 'lucideX', tooltip: 'Cancelar', color: 'rose', action: (data: any) => this.cancelById(data) }
-    //     ]
-    //   }),
-    //   sortable: false, filter: false, resizable: false,
-    // }
+    { headerName: 'Precio', field: 'totalAmount', width: 100, valueFormatter: (p) => p.value ? formatCurrency(p.value, 0) : '-' },
   ];
 
   public defaultColDef: ColDef = {
@@ -84,7 +78,7 @@ export class History implements OnInit {
   }
 
   loadRecords() {
-    this.recordService.getAll(this.record().parking).subscribe((res: any) => {
+    this.recordService.getAll(this.record().parking.id).subscribe((res: any) => {
       this.rowData.set(res);
     });
   }
@@ -95,40 +89,23 @@ export class History implements OnInit {
     });
   }
 
-  cancelById(record: Record) {
-    const id = record.id;
-    if (!id) return;
-    toast(`Cancelar registro de ${record.plate}?`, {
-      action: {
-        label: 'Cancelar',
-        onClick: () => {
-          this.recordService.cancel(id).subscribe({
-            next: () => {
-              toast.success('Registro cancelado');
-              this.loadRecords();
-            },
-            error: (err) => {
-              const msg = err?.error?.msg || err?.error?.errors?.email?.msg || 'Error al eliminar usuario';
-              toast.error(msg);
-            }
-          });
-        }
-      }
-    });
-  }
-
-
-  getDuration(entryTime: string) {
-    if (!entryTime) return '0h 0m';
-    const diff = Date.now() - new Date(entryTime).getTime();
-    const minutes = Math.floor(diff / 60000);
-    const hours = Math.floor(minutes / 60);
-    const mins = minutes % 60;
+  formatMinutes(totalMinutes: number): string {
+    if (!totalMinutes || totalMinutes < 0) return '0h 0m';
+    const hours = Math.floor(totalMinutes / 60);
+    const mins = Math.floor(totalMinutes % 60);
     return `${hours}h ${mins}m`;
   }
 
+  getDuration(record: Record) {
+    if (!record.entryTime) return '-';
+    if (record.status === 'CANCELLED') return '-';
+    const diff = Date.now() - new Date(record.entryTime).getTime();
+    const minutes = Math.floor(diff / 60000);
+    return this.formatMinutes(minutes);
+  }
+
   onParkingChange(newParkingId: string) {
-    this.record.update(prev => ({ ...prev, parking: newParkingId }));
+    this.record.update(prev => ({ ...prev, parking: { ...prev.parking, id: newParkingId } }));
     this.loadRecords();
   }
 }

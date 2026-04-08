@@ -10,13 +10,13 @@
 
   <!-- FORMULARIO -->
   <div class="px-4 pb-3 pt-1 mb-4 gap-4 grid grid-cols-1 lg:grid-cols-12 items-center bg-parking-surface rounded-2xl border border-parking-border shadow-sm">
-    <div class="lg:col-span-8 flex flex-wrap md:flex-nowrap items-end gap-3">
+    <div class="lg:col-span-10 flex flex-wrap md:flex-nowrap items-end gap-3">
       
       <div class="w-full md:w-48 group">
         <label class="label pl-3 tracking-wider">Placa</label>
         <div class="relative">
           <ng-icon name="lucideSquareChartGantt" class="absolute left-4 top-1/2 -translate-y-1/2 text-parking-muted group-focus-within:text-parking-primary transition"></ng-icon>
-          <input #plateInput [(ngModel)]="record().plate" (keyup.enter)="registerEntry()" class="input-lg" />
+          <input #plateInput [(ngModel)]="record().plate" (input)="record().plate = $any($event.target).value.toUpperCase()" (keyup.enter)="registerEntry()" class="input-lg" />
         </div>
       </div>
 

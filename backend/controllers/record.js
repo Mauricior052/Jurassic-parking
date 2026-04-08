@@ -6,9 +6,9 @@ export const getAll = async (req, res) => {
     const { parking } = req.params;
     let records;
     if (parking == "all") {
-      records = await Record.find().sort({ entryTime: -1 });
+      records = await Record.find().populate('parking', 'price').sort({ entryTime: -1 });
     } else {
-      records = await Record.find({ parking: parking }).sort({ entryTime: -1 });
+      records = await Record.find({ parking: parking }).populate('parking', 'price').sort({ entryTime: -1 });
     }
     res.json(records);
     
@@ -20,7 +20,7 @@ export const getAll = async (req, res) => {
 export const active = async (req, res) => {  
   try {
     const { parking } = req.params;
-    const records = await Record.find({ parking: parking, status: "ACTIVE", }).sort({ entryTime: -1 });
+    const records = await Record.find({ parking: parking, status: "ACTIVE", }).populate('parking', 'price').sort({ entryTime: -1 });
     res.json(records);
     
   } catch (err) {
@@ -32,7 +32,7 @@ export const entry = async (req, res) => {
   try {
     const { plate, vehicle, parking } = req.body;
     const user = req.id;
-    const record = await Record.create({ plate, vehicle, parking, user, entryTime: new Date() });
+    const record = await Record.create({ plate, vehicle, parking: parking.id, user, entryTime: new Date() });
 
     res.status(201).json(record);
   } catch (err) {

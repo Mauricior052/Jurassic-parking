@@ -16,7 +16,7 @@ router.post("/entry", [
     validateJWT,
     check('plate', 'La placa es obligatoria').not().isEmpty(), 
     check('vehicle', 'La descripción del vehículo es obligatoria').not().isEmpty(),
-    check('parking', 'El ID del estacionamiento es obligatorio').isMongoId(),
+    check('parking.id', 'El ID del estacionamiento es obligatorio').isMongoId(),
     validateFields
 ], entry);
 

@@ -2,7 +2,11 @@ export interface Record {
   id?: string;
   plate: string;
   vehicle: string;
-  parking: string;
+  parking: {
+    id: string;
+    name?: string;
+    price?: number;
+  };
   user?: string;
   entryTime?: Date;
   exitTime?: Date;
