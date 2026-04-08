@@ -9,7 +9,7 @@
     "test": "ng test"
   },
   "private": true,
-  "packageManager": "npm@11.9.0",
+  "packageManager": "npm@11.12.1",
   "dependencies": {
     "@angular/common": "^21.2.0",
     "@angular/compiler": "^21.2.0",
@@ -19,21 +19,21 @@
     "@angular/router": "^21.2.0",
     "@ng-icons/core": "^33.1.0",
     "@ng-icons/lucide": "^33.1.0",
-    "@tailwindcss/postcss": "^4.2.2",
     "ag-grid-angular": "^35.1.0",
     "ngx-sonner": "^3.1.0",
-    "postcss": "^8.5.8",
     "rxjs": "~7.8.0",
-    "tailwindcss": "^4.2.2",
     "tslib": "^2.3.0"
   },
   "devDependencies": {
     "@angular/build": "^21.2.1",
     "@angular/cli": "^21.2.1",
     "@angular/compiler-cli": "^21.2.0",
+    "@tailwindcss/postcss": "^4.2.2",
     "@types/google.maps": "^3.58.1",
     "jsdom": "^29.0.1",
+    "postcss": "^8.5.9",
     "prettier": "^3.8.1",
+    "tailwindcss": "^4.2.2",
     "typescript": "~5.9.3",
     "vitest": "^4.0.8"
   }
