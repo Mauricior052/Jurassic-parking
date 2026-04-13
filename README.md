@@ -14,7 +14,7 @@ To start a local development server, run:
 npm i
 ```
 ```bash
-npm install-all
+npm run install-all
 ```
 ```bash
 npm run dev

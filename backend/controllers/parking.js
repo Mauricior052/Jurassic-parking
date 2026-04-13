@@ -19,8 +19,8 @@ export const create = async (req, res) => {
 export const getAll = async (req, res) => {
   try {
     const parkings = await Parking.find({ active: true });
-
     res.json(parkings);
+    
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

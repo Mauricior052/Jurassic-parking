@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, inject, signal, OnInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
+import { Component, inject, signal, OnInit, ViewChild, ElementRef, ChangeDetectorRef, effect } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgIcon } from '@ng-icons/core';
 import { AgGridAngular } from 'ag-grid-angular';
@@ -11,6 +11,7 @@ import { RecordService } from '../../services/record-service';
 import { ThemeService } from '../../services/theme-service';
 import { Actions } from '../../components/actions/actions';
 import { formatCurrency } from '../../utils/formatter';
+import { ParkingService } from '../../services/parking-service';
 
 @Component({
   selector: 'app-records',
@@ -19,23 +20,38 @@ import { formatCurrency } from '../../utils/formatter';
   templateUrl: './records.html',
   providers: [DatePipe]
 })
-export class Records implements OnInit {
+export class Records {
   private recordService = inject(RecordService);
+  private parkingService = inject(ParkingService);
   private datePipe = inject(DatePipe);
   protected themeService = inject(ThemeService);
 
   @ViewChild('plateInput') plateInput!: ElementRef<HTMLInputElement>;
   
   public rowData = signal<any[]>([]);
-  public record = signal<Record>({
+  public record = signal<Partial<Record>>({
     plate: '',
-    vehicle: '',
-    parking: {
-      id: '69c17b82e4f3717ef313b881'
-    }
+    vehicle: ''
   });
   private gridApi: any;
   private intervalId: any;
+
+  constructor() {
+    effect(() => {
+      const id = this.parkingService.selectedParkingId();
+      this.loadActive(id);
+    });
+
+    this.intervalId = setInterval(() => {
+      if (this.gridApi) {
+        this.gridApi.refreshCells({ force: true });
+      }
+    }, 10000);
+  }
+
+  ngOnDestroy() {
+    if (this.intervalId) clearInterval(this.intervalId);
+  }
 
   public columnDefs: ColDef[] = [
     { headerName: 'Placa', field: 'plate', flex: 2 },
@@ -60,21 +76,6 @@ export class Records implements OnInit {
     resizable: true,
   };
 
-  ngOnInit() {
-    this.loadActive();
-    this.intervalId = setInterval(() => {
-      if (this.gridApi) {
-        this.gridApi.refreshCells({ force: true }); 
-      }
-    }, 10000);
-  }
-
-  ngOnDestroy() {
-    if (this.intervalId) {
-      clearInterval(this.intervalId);
-    }
-  }
-
   onGridReady(params: GridReadyEvent) {
     this.gridApi = params.api;
   }
@@ -84,42 +85,31 @@ export class Records implements OnInit {
     this.gridApi?.setGridOption('quickFilterText', value);
   }
 
-  loadActive() {
-    this.recordService.getActive(this.record().parking.id).subscribe((res: any) => {
+  loadActive(parkingId: string = this.parkingService.selectedParkingId()) {
+    this.recordService.getActive(parkingId).subscribe((res: any) => {
       this.rowData.set(res);
     });
   }
 
   registerEntry() {
-    const current = this.record();
-    if (!current.plate) {
-      toast.warning('Ingresa una placa');
-      return;
-    }
-    if (!current.vehicle) {
-      toast.warning('Ingresa una descripción para el vehículo');
-      return;
-    }
-    console.log(current)
-    this.recordService.entry(current).subscribe({
-    next: () => {
-      toast.success('Vehículo registrado');
-      this.record.update(prev => ({
-        ...prev,
-        plate: '',
-        vehicle: ''
-      }));
-      this.loadActive();
+    const { plate, vehicle } = this.record();
+    const parkingId = this.parkingService.selectedParkingId();
+    
+    if (!plate) { toast.warning('Ingresa una placa'); return; }
+    if (!vehicle) { toast.warning('Ingresa una descripción'); return; }
 
-      setTimeout(() => {
-        this.plateInput.nativeElement.focus();
-      });
-    },
-    error: (err) => {
-      toast.error('Error al registrar entrada');
-      console.log(err)
-    }
-  });
+    this.recordService.entry({ plate, vehicle, parking: { id: parkingId } }).subscribe({
+      next: () => {
+        toast.success('Vehículo registrado');
+        this.record.set({ plate: '', vehicle: '' });
+        this.loadActive();
+        setTimeout(() => this.plateInput.nativeElement.focus());
+      },
+      error: (err) => {
+        toast.error('Error al registrar entrada');
+        console.log(err)
+      }
+    });
   }
 
   exitById(record: Record) {

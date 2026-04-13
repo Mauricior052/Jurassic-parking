@@ -1,5 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { effect, inject, Injectable, signal } from '@angular/core';
+import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { Parking } from '../models/parking';
 
@@ -11,7 +11,11 @@ const base_url = environment.base_url;
 export class ParkingService {
   private http = inject(HttpClient);
 
+  public parkings = signal<Parking[]>([]);
   public selectedParkingId = signal<string>(localStorage.getItem('parking') || '');
+  public selectedParking = computed(() =>
+    this.parkings().find(p => p.id === this.selectedParkingId()) ?? null
+  );
 
   constructor() {
     effect(() => {
@@ -21,6 +25,16 @@ export class ParkingService {
 
   setParking(id: string) {
     this.selectedParkingId.set(id);
+  }
+
+  loadParkings() {
+    this.getAll().subscribe((res: any) => {
+      this.parkings.set(res);
+
+      if (!this.selectedParkingId() && res.length > 0) {
+        this.setParking(res[0].id);
+      }
+    });
   }
 
   get headers() {

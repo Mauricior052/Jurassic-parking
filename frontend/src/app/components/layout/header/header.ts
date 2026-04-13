@@ -4,10 +4,12 @@ import { NgIcon } from '@ng-icons/core';
 import { UserService } from '../../../services/user-service';
 import { Router } from '@angular/router';
 import { ThemeService } from '../../../services/theme-service';
+import { ParkingService } from '../../../services/parking-service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-header',
-  imports: [AsyncPipe, NgIcon],
+  imports: [FormsModule, AsyncPipe, NgIcon],
   templateUrl: './header.html',
   styleUrl: './header.css',
 })
@@ -15,6 +17,7 @@ import { ThemeService } from '../../../services/theme-service';
 export class Header {
   private userService = inject(UserService);
   public themeService = inject(ThemeService);
+  public parkingService = inject(ParkingService);
   private router = inject(Router);
 
   public user$ = this.userService.usuario$;

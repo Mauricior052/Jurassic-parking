@@ -1,10 +1,9 @@
 import { DatePipe } from '@angular/common';
-import { Component, inject, signal, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, inject, signal, ViewChild, ElementRef, effect } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgIcon } from '@ng-icons/core';
 import { AgGridAngular } from 'ag-grid-angular';
 import { ColDef, GridReadyEvent } from 'ag-grid-community';
-import { toast } from 'ngx-sonner';
 
 import { Record } from '../../models/record';
 import { RecordService } from '../../services/record-service';
@@ -19,7 +18,7 @@ import { IconComponent } from '../../components/icon/icon-component';
   templateUrl: './history.html',
   providers: [DatePipe]
 })
-export class History implements OnInit {
+export class History {
   private recordService = inject(RecordService);
   private parkingService = inject(ParkingService);
   protected themeService = inject(ThemeService);
@@ -28,16 +27,14 @@ export class History implements OnInit {
   @ViewChild('plateInput') plateInput!: ElementRef<HTMLInputElement>;
   
   public rowData = signal<any[]>([]);
-  public parkings = signal<any[]>([]);
-
-  public record = signal<Record>({
-    plate: '',
-    vehicle: '',
-    parking: {
-      id: '69c17b82e4f3717ef313b881'
-    }
-  });
   private gridApi: any;
+
+  constructor() {
+    effect(() => {
+      const id = this.parkingService.selectedParkingId();
+      this.loadRecords(id);
+    });
+  }
 
   public columnDefs: ColDef[] = [
     { headerName: 'Fecha', field: 'entryTime', width: 110, valueFormatter: (params) => this.datePipe.transform(params.value, 'dd/MM/yy') || '' },
@@ -63,11 +60,6 @@ export class History implements OnInit {
     resizable: true,
   };
 
-  ngOnInit() {
-    this.loadParkings();
-    this.loadRecords();
-  }
-
   onGridReady(params: GridReadyEvent) {
     this.gridApi = params.api;
   }
@@ -77,15 +69,9 @@ export class History implements OnInit {
     this.gridApi?.setGridOption('quickFilterText', value);
   }
 
-  loadRecords() {
-    this.recordService.getAll(this.record().parking.id).subscribe((res: any) => {
+  loadRecords(parkingId: string = this.parkingService.selectedParkingId()) {
+    this.recordService.getAll(parkingId).subscribe((res: any) => {
       this.rowData.set(res);
-    });
-  }
-
-  loadParkings() {
-    this.parkingService.getAll().subscribe((res: any) => {
-      this.parkings.set(res);
     });
   }
 
@@ -102,10 +88,5 @@ export class History implements OnInit {
     const diff = Date.now() - new Date(record.entryTime).getTime();
     const minutes = Math.floor(diff / 60000);
     return this.formatMinutes(minutes);
-  }
-
-  onParkingChange(newParkingId: string) {
-    this.record.update(prev => ({ ...prev, parking: { ...prev.parking, id: newParkingId } }));
-    this.loadRecords();
   }
 }

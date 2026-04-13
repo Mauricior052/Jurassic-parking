@@ -2,12 +2,14 @@
   <header class="flex justify-between items-center mb-10">
     <div>
       <h1 class="text-3xl font-black tracking-tight">Panel de Inicio</h1>
-      <p class="text-parking-muted text-sm mt-1">Bienvenido al sistema de gestión Jurassic Parking</p>
+      <p class="text-parking-muted text-sm mt-1">
+        {{ parking()?.name ?? 'Cargando...' }} — ${{ parking()?.price ?? 0 }}/hr
+      </p>
     </div>
 
     <div class="flex items-center gap-4 bg-parking-surface p-2 pr-4 rounded-2xl border border-parking-border shadow-sm">
       <div class="w-10 h-10 bg-parking-primary/10 rounded-xl flex items-center justify-center">
-          <ng-icon name="lucideUser" class="text-parking-primary text-xl"></ng-icon>
+        <ng-icon name="lucideUser" class="text-parking-primary text-xl"></ng-icon>
       </div>
       <div class="flex flex-col">
         <span class="font-bold text-xs">Admin</span>
@@ -19,22 +21,22 @@
   <section class="grid grid-cols-[repeat(auto-fit,minmax(15rem,1fr))] gap-6 mb-10">
     <div class="bg-parking-surface p-6 rounded-2xl border border-parking-border shadow-sm hover:shadow-md transition-shadow">
       <h3 class="text-parking-muted font-bold text-xs uppercase tracking-widest">Espacios Totales</h3>
-      <p class="text-4xl font-black mt-2">50</p>
+      <p class="text-4xl font-black mt-2">{{ capacity() }}</p>
     </div>
 
     <div class="bg-parking-surface p-6 rounded-2xl border border-parking-border shadow-sm border-b-4 border-b-parking-available">
       <h3 class="text-parking-muted font-bold text-xs uppercase tracking-widest">Disponibles</h3>
-      <p class="text-4xl font-black mt-2 text-parking-available">12</p>
+      <p class="text-4xl font-black mt-2 text-parking-available">{{ available() }}</p>
     </div>
 
     <div class="bg-parking-surface p-6 rounded-2xl border border-parking-border shadow-sm border-b-4 border-b-parking-occupied">
       <h3 class="text-parking-muted font-bold text-xs uppercase tracking-widest">Ocupados</h3>
-      <p class="text-4xl font-black mt-2 text-parking-occupied">38</p>
+      <p class="text-4xl font-black mt-2 text-parking-occupied">{{ occupied() }}</p>
     </div>
 
     <div class="bg-parking-surface p-6 rounded-2xl border border-parking-border shadow-sm border-b-4 border-b-parking-primary">
-      <h3 class="text-parking-muted font-bold text-xs uppercase tracking-widest">Ganancia Hoy</h3>
-      <p class="text-4xl font-black mt-2">$1,250</p>
+      <h3 class="text-parking-muted font-bold text-xs uppercase tracking-widest">Ganancia Estimada</h3>
+      <p class="text-4xl font-black mt-2">{{ formatCurrency(todayEarnings(), 0) }}</p>
     </div>
   </section>
 
@@ -45,24 +47,38 @@
         Estado de los Lugares
       </h2>
       <div class="flex gap-2">
-          <span class="flex items-center gap-1 text-xs font-bold text-parking-muted">
-            <span class="w-2 h-2 rounded-full bg-parking-available"></span> Libre
-          </span>
-          <span class="flex items-center gap-1 text-xs font-bold text-parking-muted ml-3">
-            <span class="w-2 h-2 rounded-full bg-parking-occupied"></span> Ocupado
-          </span>
+        <span class="flex items-center gap-1 text-xs font-bold text-parking-muted">
+          <span class="w-2 h-2 rounded-full bg-parking-available"></span> Libre
+        </span>
+        <span class="flex items-center gap-1 text-xs font-bold text-parking-muted ml-3">
+          <span class="w-2 h-2 rounded-full bg-parking-occupied"></span> Ocupado
+        </span>
       </div>
     </div>
 
     <div class="grid grid-cols-[repeat(auto-fill,minmax(6rem,1fr))] gap-5">
-      <div class="h-20 flex flex-col items-center justify-center rounded-2xl font-bold border-2 bg-parking-accent text-parking-occupied border-parking-border hover:border-parking-occupied/50 transition-all cursor-pointer">
-        <span class="text-xs text-slate-400">Slot</span>
-        A1
-      </div>
-      <div class="h-20 flex flex-col items-center justify-center rounded-2xl font-bold border-2 bg-parking-surface text-parking-available border-parking-border hover:border-parking-available/50 transition-all cursor-pointer">
-        <span class="text-xs text-slate-400">Slot</span>
-        A2
-      </div>
-      </div>
+      @for (slot of slots(); track slot.code) {
+        <!-- <div class="h-20 flex flex-col items-center justify-center rounded-2xl font-bold border-2 transition-all cursor-pointer"
+          [class]="slot.occupied
+            ? 'bg-parking-accent text-parking-occupied border-parking-border hover:border-parking-occupied/50'
+            : 'bg-parking-surface text-parking-available border-parking-border hover:border-parking-available/50'">
+          <span class="text-xs text-slate-400">Slot</span>
+          {{ slot.code }}
+        </div> -->
+        <div class="h-24 flex flex-col items-center justify-between p-3 rounded-xl border-2 transition-all"
+          [class]="slot.occupied ? 'bg-red-50/10 border-red-500/50' : 'bg-emerald-50/10 border-emerald-500/50'">
+          
+          <span class="text-[10px] uppercase tracking-wider opacity-60">{{ slot.code }}</span>
+          
+          <ng-icon [name]="slot.occupied ? 'lucideCar' : 'lucideCircle'" 
+                  [class]="slot.occupied ? 'text-red-500 text-2xl' : 'text-emerald-500 text-xl'">
+          </ng-icon>
+
+          <span class="text-[9px] font-medium">
+            {{ slot.occupied ? 'OCUPADO' : 'LIBRE' }}
+          </span>
+        </div>
+      }
+    </div>
   </section>
 </main>
