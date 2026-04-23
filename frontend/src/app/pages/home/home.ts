@@ -1,17 +1,23 @@
 import { Component, inject, signal, effect, computed } from '@angular/core';
 import { NgIcon } from '@ng-icons/core';
+import { toast } from 'ngx-sonner';
+
 import { RecordService } from '../../services/record-service';
 import { ParkingService } from '../../services/parking-service';
+import { ParkingLayoutService } from '../../services/parking-layout-service';
+import { ParkingLayout } from '../../models/parking-layout';
+import { ParkingMapComponent } from '../../components/parking-map/parking-map';
 import { formatCurrency } from '../../utils/formatter';
 
 @Component({
   selector: 'app-home',
-  imports: [NgIcon],
+  imports: [NgIcon, ParkingMapComponent],
   templateUrl: './home.html',
 })
 export class Home {
   private recordService = inject(RecordService);
   protected parkingService = inject(ParkingService);
+  protected layoutService = inject(ParkingLayoutService);
 
   public rowData = signal<any[]>([]);
 
@@ -49,7 +55,10 @@ export class Home {
   constructor() {
     effect(() => {
       const id = this.parkingService.selectedParkingId();
-      if (id) this.loadActive(id);
+      if (id) {
+        this.loadActive(id);
+        this.loadLayout(id);
+    }
     });
   }
 
@@ -58,4 +67,26 @@ export class Home {
       this.rowData.set(res);
     });
   }
+
+  loadLayout(parkingId: string) {
+    this.layoutService.getLayout(parkingId, this.capacity()).subscribe({
+      next: (layout) => {
+        // Si el servicio devuelve null o vacío, podrías setear un default aquí
+        this.currentLayout.set(layout);
+      },
+      error: () => toast.error('Error al cargar el mapa')
+    });
+  }
+
+  protected currentLayout = signal<ParkingLayout | null>(null);
+
+  protected occupiedSet = computed(() =>
+    new Set(this.rowData().map(r => r.slotCode).filter(Boolean))
+  );
+
+  onLayoutSaved(layout: ParkingLayout) {
+  this.layoutService.saveLayout(layout).subscribe(() => {
+    toast.success('Layout saved')
+  });
+}
 }

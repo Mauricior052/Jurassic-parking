@@ -18,29 +18,51 @@
     </div>
   </header>
 
-  <section class="grid grid-cols-[repeat(auto-fit,minmax(15rem,1fr))] gap-6 mb-10">
-    <div class="bg-parking-surface p-6 rounded-2xl border border-parking-border shadow-sm hover:shadow-md transition-shadow">
+  <section class="grid grid-cols-[repeat(auto-fit,minmax(12rem,1fr))] gap-6 mb-10">
+    <div class="bg-parking-surface p-4 rounded-2xl border border-parking-border shadow-sm hover:shadow-md transition-shadow">
       <h3 class="text-parking-muted font-bold text-xs uppercase tracking-widest">Espacios Totales</h3>
-      <p class="text-4xl font-black mt-2">{{ capacity() }}</p>
+      <p class="text-3xl font-black mt-2">{{ capacity() }}</p>
     </div>
 
-    <div class="bg-parking-surface p-6 rounded-2xl border border-parking-border shadow-sm border-b-4 border-b-parking-available">
+    <div class="bg-parking-surface p-4 rounded-2xl border border-parking-border shadow-sm border-b-4 border-b-parking-available">
       <h3 class="text-parking-muted font-bold text-xs uppercase tracking-widest">Disponibles</h3>
-      <p class="text-4xl font-black mt-2 text-parking-available">{{ available() }}</p>
+      <p class="text-3xl font-black mt-2 text-parking-available">{{ available() }}</p>
     </div>
 
-    <div class="bg-parking-surface p-6 rounded-2xl border border-parking-border shadow-sm border-b-4 border-b-parking-occupied">
+    <div class="bg-parking-surface p-4 rounded-2xl border border-parking-border shadow-sm border-b-4 border-b-parking-occupied">
       <h3 class="text-parking-muted font-bold text-xs uppercase tracking-widest">Ocupados</h3>
-      <p class="text-4xl font-black mt-2 text-parking-occupied">{{ occupied() }}</p>
+      <p class="text-3xl font-black mt-2 text-parking-occupied">{{ occupied() }}</p>
     </div>
 
-    <div class="bg-parking-surface p-6 rounded-2xl border border-parking-border shadow-sm border-b-4 border-b-parking-primary">
+    <div class="bg-parking-surface p-4 rounded-2xl border border-parking-border shadow-sm border-b-4 border-b-parking-primary">
       <h3 class="text-parking-muted font-bold text-xs uppercase tracking-widest">Ganancia Estimada</h3>
-      <p class="text-4xl font-black mt-2">{{ formatCurrency(todayEarnings(), 0) }}</p>
+      <p class="text-3xl font-black mt-2">{{ formatCurrency(todayEarnings(), 0) }}</p>
     </div>
   </section>
 
   <section class="bg-parking-surface p-8 rounded-3xl border border-parking-border shadow-sm">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-xl font-extrabold flex items-center gap-2">
+        <ng-icon name="lucideMapPin" class="text-parking-primary"></ng-icon>
+        Estado del Estacionamiento
+      </h2>
+    </div>
+
+    <div class="w-full aspect-video bg-zinc-900 rounded-lg overflow-hidden border border-zinc-800">
+      @if (currentLayout()) {
+        <app-parking-map
+          [layout]="currentLayout()!"
+          (layoutChange)="onLayoutSaved($event)"/>
+      } @else {
+        <div class="w-full h-full flex items-center justify-center text-zinc-500">
+          <span class="animate-pulse">Cargando mapa...</span>
+        </div>
+      }
+    </div>
+    
+  </section>
+
+  <!-- <section class="bg-parking-surface p-8 rounded-3xl border border-parking-border shadow-sm">
     <div class="flex items-center justify-between mb-8">
       <h2 class="text-xl font-extrabold flex items-center gap-2">
         <ng-icon name="lucideMapPin" class="text-parking-primary"></ng-icon>
@@ -58,13 +80,6 @@
 
     <div class="grid grid-cols-[repeat(auto-fill,minmax(6rem,1fr))] gap-5">
       @for (slot of slots(); track slot.code) {
-        <!-- <div class="h-20 flex flex-col items-center justify-center rounded-2xl font-bold border-2 transition-all cursor-pointer"
-          [class]="slot.occupied
-            ? 'bg-parking-accent text-parking-occupied border-parking-border hover:border-parking-occupied/50'
-            : 'bg-parking-surface text-parking-available border-parking-border hover:border-parking-available/50'">
-          <span class="text-xs text-slate-400">Slot</span>
-          {{ slot.code }}
-        </div> -->
         <div class="h-24 flex flex-col items-center justify-between p-3 rounded-xl border-2 transition-all"
           [class]="slot.occupied ? 'bg-red-50/10 border-red-500/50' : 'bg-emerald-50/10 border-emerald-500/50'">
           
@@ -80,5 +95,5 @@
         </div>
       }
     </div>
-  </section>
+  </section> -->
 </main>
