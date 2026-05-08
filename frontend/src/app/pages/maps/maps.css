@@ -1,0 +1,92 @@
+/* Contenedor del pin (el diamante azul) */
+.marker-pin {
+  background: #4F46E5;
+  color: white;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.4);
+  border: 2px solid white;
+  cursor: pointer;
+}
+
+.marker-pin span {
+  transform: rotate(45deg);
+  font-size: 16px;
+}
+
+/* El cuadro de información (Tooltip) */
+.marker-tooltip {
+  display: none;
+  position: absolute;
+  bottom: 52px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: white;
+  border-radius: 10px;
+  padding: 12px 14px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  min-width: 220px;
+  z-index: 9999;
+  border: 1px solid #e5e7eb;
+  pointer-events: auto; /* IMPORTANTE: permite clics dentro */
+}
+
+/* Flecha inferior del tooltip */
+.tooltip-arrow {
+  position: absolute;
+  bottom: -7px;
+  left: 50%;
+  transform: translateX(-50%) rotate(45deg);
+  width: 12px;
+  height: 12px;
+  background: white;
+  border-right: 1px solid #e5e7eb;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* Botones y Links */
+.action-btn {
+  background: #4F46E5;
+  color: white !important;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  transition: background 0.2s;
+}
+
+.action-btn:hover {
+  background: #3730a3;
+}
+
+.btn-secondary {
+  background: #f3f4f6;
+  color: #374151 !important;
+}
+
+.btn-secondary:hover {
+  background: #e5e7eb;
+}
+
+/* Badges de información */
+.badge {
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.badge-price { background: #EEF2FF; color: #4F46E5; }
+.badge-spaces { background: #F3F4F6; color: #374151; }
+.badge-schedule { background: #FFF7ED; color: #C2410C; }
+

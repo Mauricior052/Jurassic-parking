@@ -40,7 +40,7 @@ export class ParkingComponent implements OnInit {
   loadParkings() {
     this.parkingService.getAll().subscribe({
       next: (res: any) => {
-        this.rowData.set(res.parkings || res); 
+        this.rowData.set(res.parkings || res);
       },
       error: () => toast.error('Error al cargar los estacionamientos')
     });

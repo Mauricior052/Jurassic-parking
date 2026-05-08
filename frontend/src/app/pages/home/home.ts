@@ -85,8 +85,8 @@ export class Home {
   );
 
   onLayoutSaved(layout: ParkingLayout) {
-  this.layoutService.saveLayout(layout).subscribe(() => {
-    toast.success('Layout saved')
-  });
+  //this.layoutService.saveLayout(layout).subscribe(() => {
+    toast.success('Layout guardado')
+  //});
 }
 }

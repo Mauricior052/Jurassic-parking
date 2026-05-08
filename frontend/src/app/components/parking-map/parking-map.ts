@@ -159,8 +159,11 @@ export class ParkingMapComponent{
   }
 
   save() {
-    this.layoutChange.emit({ ...this.layout(), slots: this.slots() });
-    this.statusMsg.set('Layout guardado.');
+    this.layoutChange.emit({ 
+      ...this.layout(), 
+      slots: this.slots() 
+    });
+    this.statusMsg.set('Cambios preparados para guardar...');
   }
 
   getTransform(slot: SlotLayout): string {
