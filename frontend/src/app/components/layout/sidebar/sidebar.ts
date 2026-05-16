@@ -18,9 +18,10 @@ export class Sidebar {
   links = [
     { label: 'Dashboard', icon: 'lucideLayoutDashboard', link: '/' },
     { label: 'Mapa', icon: 'lucideMap', link: '/map' },
+    { label: 'Reservas', icon: 'lucideCalendar', link: '/reservation' },
     { label: 'Entradas/Salidas', icon: 'LucideArrowLeftRight', link: '/entries' },
     { label: 'Historial', icon: 'LucideHistory', link: '/history' },
     { label: 'Estacionamientos', icon: 'LucideParkingSquare', link: '/parking' },
-    { label: 'Usuarios', icon: 'lucideUsers', link: '/users' }
+    { label: 'Usuarios', icon: 'lucideUsers', link: '/users' },
   ];
 }

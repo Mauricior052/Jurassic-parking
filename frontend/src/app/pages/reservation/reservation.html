@@ -1,0 +1,79 @@
+<div class="space-y-6">
+  <!-- ENCABEZADO -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="flex items-center gap-3 pl-2 text-2xl font-black">
+        <ng-icon name="lucidePlusCircle" class="text-parking-primary"></ng-icon>Registro de Ingreso
+      </h1>
+      <p class="pl-2 text-sm text-parking-muted">Asignación de espacio y ticket para nuevos vehículos.</p>
+    </div>
+  </div>
+
+  <!-- FORMULARIO DE REGISTRO COMPLETO -->
+  <div class="p-6 bg-parking-surface rounded-2xl border border-parking-border shadow-sm">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-5 items-end">
+      
+      <!-- Campo: Placa -->
+      <div class="w-full lg:col-span-3 group">
+        <label class="label pl-3 tracking-wider">Placa</label>
+        <div class="relative">
+          <ng-icon name="lucideSquareChartGantt" class="absolute left-4 top-1/2 -translate-y-1/2 text-parking-muted group-focus-within:text-parking-primary transition"></ng-icon>
+          <input #plateInput [(ngModel)]="record().plate" (input)="record().plate = $any($event.target).value.toUpperCase()" placeholder="AAA-1234" class="input-lg w-full" />
+        </div>
+      </div>
+
+      <!-- Campo: Lugar Asignado -->
+      <div class="w-full lg:col-span-3 group">
+        <label class="label pl-3 tracking-wider">Lugar / Cajón</label>
+        <div class="relative">
+          <ng-icon name="lucideMapPin" size="18" class="absolute left-4 top-1/2 -translate-y-1/2 text-parking-muted group-focus-within:text-parking-primary transition"></ng-icon>
+          <input [(ngModel)]="record().slot" placeholder="Ej: A-12" class="input-lg w-full" />
+        </div>
+      </div>
+
+      <!-- Botones de Acción -->
+      <div class="w-full lg:col-span-3 flex gap-3">
+        <button (click)="clearForm()" class="btn-secondary h-10.5 flex-1 justify-center">
+          Limpiar
+        </button>
+        <button (click)="generateTicket()" class="btn-primary h-10.5 flex-1 justify-center gap-2">
+          <ng-icon name="lucideTicket" size="18"></ng-icon>Ingresar
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SECCIÓN INFORMATIVA: ESTADO DE CAJONES (OPCIONAL/COMPLEMENTARIO) -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div class="p-4 bg-parking-surface border border-parking-border rounded-xl flex items-center gap-4 shadow-sm">
+      <div class="p-3 bg-emerald-500/10 text-emerald-500 rounded-xl">
+        <ng-icon name="lucideCheckCircle" size="24"></ng-icon>
+      </div>
+      <div>
+        <p class="text-sm text-parking-muted font-medium">Espacios Libres</p>
+        <h3 class="text-2xl font-black">42</h3>
+      </div>
+    </div>
+
+    <div class="p-4 bg-parking-surface border border-parking-border rounded-xl flex items-center gap-4 shadow-sm">
+      <div class="p-3 bg-amber-500/10 text-amber-500 rounded-xl">
+        <ng-icon name="lucideActivity" size="24"></ng-icon>
+      </div>
+      <div>
+        <p class="text-sm text-parking-muted font-medium">Ocupación Actual</p>
+        <h3 class="text-2xl font-black">78%</h3>
+      </div>
+    </div>
+
+    <div class="p-4 bg-parking-surface border border-parking-border rounded-xl flex items-center gap-4 shadow-sm">
+      <div class="p-3 bg-parking-primary/10 text-parking-primary rounded-xl">
+        <ng-icon name="lucideClock" size="24"></ng-icon>
+      </div>
+      <div>
+        <p class="text-sm text-parking-muted font-medium">Hora de Pico Promedio</p>
+        <h3 class="text-2xl font-black">14:30</h3>
+      </div>
+    </div>
+  </div>
+</div>

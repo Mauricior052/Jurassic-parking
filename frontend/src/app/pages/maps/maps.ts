@@ -88,10 +88,12 @@ export class MapsComponent implements AfterViewInit {
           </div>
 
           <div style="display: flex; gap: 8px;">
-            <a class="action-btn" target="_blank" href="https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}">
+            <a class="action-btn" target="_blank" href="/reservation?parking=${parking.id}">
+              Reservar
+            </a>
+            <a class="action-btn btn-secondary" target="_blank" href="https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}">
               Cómo llegar
             </a>
-            <button class="action-btn btn-secondary">Ver más</button>
           </div>
           
           <div class="tooltip-arrow"></div>

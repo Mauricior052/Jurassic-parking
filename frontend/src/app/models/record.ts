@@ -13,4 +13,5 @@ export interface Record {
   status?: string;
   totalMinutes?: number;
   totalAmount?: number;
+  slot?: string;
 }

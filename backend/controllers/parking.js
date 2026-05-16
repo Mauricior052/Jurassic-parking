@@ -78,6 +78,33 @@ export const update = async (req, res) => {
   }
 };
 
+export const updateLayout = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { viewBox, slots } = req.body;
+    if (!slots || !Array.isArray(slots)) {
+      return res.status(400).json({ message: 'slots debe ser un array' });
+    }
+
+    const parking = await Parking.findByIdAndUpdate(
+      id,
+      { viewBox, slots },
+      { returnDocument: 'after', runValidators: true }
+    );
+
+    if (!parking) {
+      return res.status(404).json({ message: 'Parking no encontrado' });
+    }
+
+    res.json(parking);
+  } catch (err) {
+    if (err.name === 'CastError') {
+      return res.status(400).json({ message: 'ID inválido' });
+    }
+    res.status(500).json({ message: err.message });
+  }
+};
+
 export const remove = async (req, res) => {
   try {
     const { id } = req.params;

@@ -57,8 +57,7 @@ export class Home {
       const id = this.parkingService.selectedParkingId();
       if (id) {
         this.loadActive(id);
-        this.loadLayout(id);
-    }
+      }
     });
   }
 
@@ -68,25 +67,32 @@ export class Home {
     });
   }
 
-  loadLayout(parkingId: string) {
-    this.layoutService.getLayout(parkingId, this.capacity()).subscribe({
-      next: (layout) => {
-        // Si el servicio devuelve null o vacío, podrías setear un default aquí
-        this.currentLayout.set(layout);
-      },
-      error: () => toast.error('Error al cargar el mapa')
-    });
-  }
+  protected currentLayout = computed(() => {
+    const p = this.parking();
+    if (!p) return null;
 
-  protected currentLayout = signal<ParkingLayout | null>(null);
+    if (p.slots?.length) {
+      return {
+        parkingId: p.id!,
+        viewBox: p.viewBox ?? '0 0 600 400',
+        slots: p.slots
+      };
+    }
+
+    return this.layoutService.generateDefaultLayout(p.id!, p.totalSpaces);
+  });
 
   protected occupiedSet = computed(() =>
     new Set(this.rowData().map(r => r.slotCode).filter(Boolean))
   );
 
-  onLayoutSaved(layout: ParkingLayout) {
-  //this.layoutService.saveLayout(layout).subscribe(() => {
-    toast.success('Layout guardado')
-  //});
-}
+  onLayoutChange(layout: ParkingLayout) {
+    this.layoutService.saveLayout(layout).subscribe({
+      next: () => {
+        toast.success('Layout guardado');
+        this.parkingService.loadParkings();
+      },
+      error: () => toast.error('Error al guardar el mapa')
+    });
+  }
 }

@@ -52,7 +52,7 @@
       @if (currentLayout()) {
         <app-parking-map
           [layout]="currentLayout()!"
-          (layoutChange)="onLayoutSaved($event)"/>
+          (layoutChange)="onLayoutChange($event)"/>
       } @else {
         <div class="w-full h-full flex items-center justify-center text-zinc-500">
           <span class="animate-pulse">Cargando mapa...</span>
@@ -61,39 +61,4 @@
     </div>
     
   </section>
-
-  <!-- <section class="bg-parking-surface p-8 rounded-3xl border border-parking-border shadow-sm">
-    <div class="flex items-center justify-between mb-8">
-      <h2 class="text-xl font-extrabold flex items-center gap-2">
-        <ng-icon name="lucideMapPin" class="text-parking-primary"></ng-icon>
-        Estado de los Lugares
-      </h2>
-      <div class="flex gap-2">
-        <span class="flex items-center gap-1 text-xs font-bold text-parking-muted">
-          <span class="w-2 h-2 rounded-full bg-parking-available"></span> Libre
-        </span>
-        <span class="flex items-center gap-1 text-xs font-bold text-parking-muted ml-3">
-          <span class="w-2 h-2 rounded-full bg-parking-occupied"></span> Ocupado
-        </span>
-      </div>
-    </div>
-
-    <div class="grid grid-cols-[repeat(auto-fill,minmax(6rem,1fr))] gap-5">
-      @for (slot of slots(); track slot.code) {
-        <div class="h-24 flex flex-col items-center justify-between p-3 rounded-xl border-2 transition-all"
-          [class]="slot.occupied ? 'bg-red-50/10 border-red-500/50' : 'bg-emerald-50/10 border-emerald-500/50'">
-          
-          <span class="text-[10px] uppercase tracking-wider opacity-60">{{ slot.code }}</span>
-          
-          <ng-icon [name]="slot.occupied ? 'lucideCar' : 'lucideCircle'" 
-                  [class]="slot.occupied ? 'text-red-500 text-2xl' : 'text-emerald-500 text-xl'">
-          </ng-icon>
-
-          <span class="text-[9px] font-medium">
-            {{ slot.occupied ? 'OCUPADO' : 'LIBRE' }}
-          </span>
-        </div>
-      }
-    </div>
-  </section> -->
 </main>

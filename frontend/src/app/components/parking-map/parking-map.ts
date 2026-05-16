@@ -34,13 +34,13 @@ export class ParkingMapComponent{
 
   ngOnInit() {
     const initialLayout = this.layout();
-    if (initialLayout) {
-      const orderedSlots = initialLayout.slots.map((slot, index) => {
-        const pos = this.calculateGridPosition(index);
-        return { ...slot, x: pos.x, y: pos.y };
-      });
-      this.slots.set(orderedSlots);
-    }
+    const slots = initialLayout.slots.map((slot, index) => {
+      if (slot.x !== undefined && slot.y !== undefined) {
+        return slot;
+      }
+      return { ...slot, ...this.calculateGridPosition(index) };
+    });
+    this.slots.set(slots);
   }
 
   selectedSlot = computed(() => {

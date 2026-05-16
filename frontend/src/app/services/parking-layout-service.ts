@@ -1,24 +1,31 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { catchError, Observable, of } from 'rxjs';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { ParkingLayout, SlotLayout } from '../models/parking-layout';
+import { environment } from '../../environments/environment';
 
 const SW = 56, SH = 32, GAP_X = 12, GAP_Y = 20, COLS = 9, MARGIN = 20;
+const base_url = environment.base_url;
 
 @Injectable({ providedIn: 'root' })
+
 export class ParkingLayoutService {
   private http = inject(HttpClient);
 
-  getLayout(parkingId: string, totalSpaces: number): Observable<ParkingLayout> {
-    return this.http.get<ParkingLayout>(`/api/parkings/${parkingId}/layout`).pipe(
-      catchError(() => of(this.generateDefaultLayout(parkingId, totalSpaces)))
-    );
+  get headers() {
+    return {
+      headers: new HttpHeaders({
+        'token': localStorage.getItem('token') || ''
+      })
+    };
   }
 
   saveLayout(layout: ParkingLayout): Observable<ParkingLayout> {
-    return this.http.put<ParkingLayout>(
-      `/api/parkings/${layout.parkingId}/layout`,
-      layout
+    console.log(layout)
+    return this.http.patch<ParkingLayout>(
+      `${base_url}/parking/${layout.parkingId}/layout`,
+      { viewBox: layout.viewBox, slots: layout.slots },
+      this.headers
     );
   }
 

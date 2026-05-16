@@ -1,5 +1,4 @@
 import { Routes } from '@angular/router';
-
 import { authGuard } from './guards/auth-guard';
 import { Login } from './pages/login/login';
 import { Home } from './pages/home/home';
@@ -9,6 +8,7 @@ import { MapsComponent } from './pages/maps/maps';
 import { Records } from './pages/records/records';
 import { History } from './pages/history/history';
 import { ParkingComponent } from './pages/parking/parking';
+import { Reservation } from './pages/reservation/reservation';
 
 export const routes: Routes = [
     { path: 'login', component: Login, title: 'Login' },
@@ -22,7 +22,8 @@ export const routes: Routes = [
             { path: 'entries', component: Records, title: 'Entradas' },
             { path: 'history', component: History, title: 'Historial' },
             { path: 'parking', component: ParkingComponent, title: 'Estacionamientos' },
-            { path: 'users', component: Users, title: 'Usuarios' }
+            { path: 'users', component: Users, title: 'Usuarios' },
+            { path: 'reservation', component: Reservation, title: 'Reservas' }
         ]
     },
 ];
