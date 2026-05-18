@@ -1,5 +1,6 @@
 import Record from '../models/record.js';
 import Parking from '../models/parking.js';
+import User from '../models/user.js';
 
 export const getAll = async (req, res) => {
   try {
@@ -8,7 +9,7 @@ export const getAll = async (req, res) => {
     if (parking == "all") {
       records = await Record.find().populate('parking', 'price').sort({ entryTime: -1 });
     } else {
-      records = await Record.find({ parking: parking }).populate('parking', 'price').sort({ entryTime: -1 });
+      records = await Record.find({ parking: parking }).populate('parking', 'name price').sort({ entryTime: -1 });
     }
     res.json(records);
     
@@ -17,10 +18,21 @@ export const getAll = async (req, res) => {
   }
 };
 
+export const getByUser = async (req, res) => {
+  try {
+    const userId = req.id;
+    const user = await User.findById(userId);
+    const records = await Record.find({ user }).populate('parking', 'name price').sort({ entryTime: -1 });
+    res.json(records);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
 export const active = async (req, res) => {  
   try {
     const { parking } = req.params;
-    const records = await Record.find({ parking: parking, status: "ACTIVE", }).populate('parking', 'price').sort({ entryTime: -1 });
+    const records = await Record.find({ parking: parking, status: "ACTIVE", }).populate('parking', 'name price').sort({ entryTime: -1 });
     res.json(records);
     
   } catch (err) {

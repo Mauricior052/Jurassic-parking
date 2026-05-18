@@ -7,7 +7,6 @@ import { ParkingService } from './services/parking-service';
   selector: 'app-root',
   imports: [RouterOutlet, NgxSonnerToaster],
   templateUrl: './app.html',
-  styleUrl: './app.css'
 })
 export class App implements OnInit {
   private parkingService = inject(ParkingService);

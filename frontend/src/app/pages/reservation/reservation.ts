@@ -6,7 +6,6 @@ import { toast } from 'ngx-sonner';
 
 import { Record } from '../../models/record';
 import { RecordService } from '../../services/record-service';
-import { ThemeService } from '../../services/theme-service';
 import { ParkingService } from '../../services/parking-service';
 
 @Component({
@@ -19,7 +18,6 @@ import { ParkingService } from '../../services/parking-service';
 export class Reservation {
   private recordService = inject(RecordService);
   private parkingService = inject(ParkingService);
-  protected themeService = inject(ThemeService);
 
   @ViewChild('plateInput') plateInput!: ElementRef<HTMLInputElement>;
   

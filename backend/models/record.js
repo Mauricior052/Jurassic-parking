@@ -42,10 +42,6 @@ const recordSchema = new mongoose.Schema({
   totalMinutes: Number,
   totalAmount: Number,
 
-  reservation: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Reservation",
-  }
 }, { timestamps: true });
 
 export default mongoose.model("Record", recordSchema);
