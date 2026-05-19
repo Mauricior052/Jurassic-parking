@@ -1,4 +1,3 @@
-// parking-slot-picker.component.ts
 import { Component, input, output, computed, signal } from '@angular/core';
 import { Parking } from '../../models/parking';
 import { SlotLayout } from '../../models/parking';
@@ -38,7 +37,7 @@ export class ParkingSlotPickerComponent {
   }
 
   onSlotClick(slot: SlotLayout) {
-    if (this.occupied().has(slot.code)) return; // no hace nada si está ocupado
+    if (this.occupied().has(slot.code)) return;
     this.selected.set(slot.code);
   }
 

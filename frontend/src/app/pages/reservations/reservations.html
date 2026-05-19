@@ -1,0 +1,113 @@
+<div class="space-y-6">
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="flex items-center gap-3 pl-2 text-2xl font-black">
+        <ng-icon name="lucideCalendar" class="text-parking-primary"></ng-icon>Reservaciones
+      </h1>
+      <p class="pl-2 text-sm text-parking-muted">Administra tus reservas</p>
+    </div>
+  </div>
+  @if (loading()) {
+    <div class="text-center py-12" style="color: var(--color-parking-muted)">
+      <p>Cargando reservas...</p>
+    </div>
+
+  } @else if (records().length === 0) {
+    <div class="text-center py-16" style="color: var(--color-parking-muted)">
+      <ng-icon name="lucideParkingCircle" class="text-parking-primary"></ng-icon>
+      <p class="text-base font-medium" style="color: var(--color-parking-text)">Sin reservas aún</p>
+      <p class="text-sm mt-1">Tus reservas aparecerán aquí</p>
+    </div>
+
+  } @else {
+    <div class="max-w-xl mx-auto pb-8">
+      <!-- Activas -->
+      @if (active().length > 0) {
+        <h3 class="text-xs font-semibold uppercase tracking-widest mb-3" style="color: var(--color-parking-primary)">Activas</h3>
+        <div class="flex flex-col gap-3 mb-8">
+          @for (r of active(); track r.id) {
+            <div class="border rounded-2xl p-4"
+                 style="background: var(--color-parking-surface); border-color: var(--color-parking-primary); box-shadow: var(--shadow-glow)">
+
+              <div class="flex justify-between items-start mb-3">
+                <div>
+                  <p class="font-semibold text-base" style="color: var(--color-parking-text)">{{ r.parking.name }}</p>
+                </div>
+                <span class="text-xs font-semibold px-2 py-1 rounded-full"
+                      style="background: var(--color-parking-accent); color: var(--color-parking-available)">
+                  ● Activa
+                </span>
+              </div>
+
+              <div class="grid grid-cols-2 gap-2">
+                <div class="rounded-xl p-2.5" style="background: var(--color-parking-accent)">
+                  <p class="text-xs mb-0.5" style="color: var(--color-parking-muted)">Cajón</p>
+                  <p class="text-sm font-semibold" style="color: var(--color-parking-text)">{{ r.slot }}</p>
+                </div>
+                <div class="rounded-xl p-2.5" style="background: var(--color-parking-accent)">
+                  <p class="text-xs mb-0.5" style="color: var(--color-parking-muted)">Entrada</p>
+                  <p class="text-sm font-semibold" style="color: var(--color-parking-text)">{{ formatDate(r.entryTime) }}</p>
+                </div>
+                <div class="rounded-xl p-2.5" style="background: var(--color-parking-accent)">
+                  <p class="text-xs mb-0.5" style="color: var(--color-parking-muted)">Tiempo</p>
+                  <p class="text-sm font-semibold" style="color: var(--color-parking-available)">{{ getDuration(r.entryTime) }}</p>
+                </div>
+                <div class="rounded-xl p-2.5" style="background: var(--color-parking-accent)">
+                  <p class="text-xs mb-0.5" style="color: var(--color-parking-muted)">A pagar</p>
+                  <p class="text-sm font-semibold" style="color: var(--color-parking-primary)">${{ r.totalAmount ?? '—' }}</p>
+                </div>
+              </div>
+
+            </div>
+          }
+        </div>
+      }
+
+      <!-- Historial -->
+      @if (history().length > 0) {
+        <h3 class="text-xs font-semibold uppercase tracking-widest mb-3"
+            style="color: var(--color-parking-muted)">Historial</h3>
+
+        <div class="flex flex-col gap-3">
+          @for (r of history(); track r.id) {
+            <div class="border rounded-2xl p-4"
+                 style="background: var(--color-parking-surface); border-color: var(--color-parking-border)">
+
+              <div class="flex justify-between items-start mb-3">
+                <div>
+                  <p class="font-semibold text-base" style="color: var(--color-parking-text)">{{ r.parking.name }}</p>
+                </div>
+                <span class="text-xs font-semibold px-2 py-1 rounded-full"
+                      style="background: var(--color-parking-accent)"
+                      [ngStyle]="statusStyle(r.status)">
+                  {{ statusLabel(r.status) }}
+                </span>
+              </div>
+
+              <div class="grid grid-cols-2 gap-2">
+                <div class="rounded-xl p-2.5" style="background: var(--color-parking-accent)">
+                  <p class="text-xs mb-0.5" style="color: var(--color-parking-muted)">Cajón</p>
+                  <p class="text-sm font-semibold" style="color: var(--color-parking-text)">{{ r.slot }}</p>
+                </div>
+                <div class="rounded-xl p-2.5" style="background: var(--color-parking-accent)">
+                  <p class="text-xs mb-0.5" style="color: var(--color-parking-muted)">Entrada</p>
+                  <p class="text-sm font-semibold" style="color: var(--color-parking-text)">{{ formatDate(r.entryTime) }}</p>
+                </div>
+                <div class="rounded-xl p-2.5" style="background: var(--color-parking-accent)">
+                  <p class="text-xs mb-0.5" style="color: var(--color-parking-muted)">Duración</p>
+                  <p class="text-sm font-semibold" style="color: var(--color-parking-text)">{{ getDuration(r.entryTime, r.exitTime) }}</p>
+                </div>
+                <div class="rounded-xl p-2.5" style="background: var(--color-parking-accent)">
+                  <p class="text-xs mb-0.5" style="color: var(--color-parking-muted)">Total</p>
+                  <p class="text-sm font-semibold" style="color: var(--color-parking-text)">${{ r.totalAmount ?? '—' }}</p>
+                </div>
+              </div>
+
+            </div>
+          }
+        </div>
+      }
+
+    </div>
+  }
+</div>

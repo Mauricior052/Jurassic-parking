@@ -44,6 +44,23 @@ export class MapsComponent implements AfterViewInit {
 
       this.mapReady = true;
 
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const userLocation = {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude
+            };
+            this.map.setCenter(userLocation); 
+          },
+          (error) => {
+            console.warn("No se pudo obtener la ubicación del usuario:", error.message);
+          }
+        );
+      } else {
+        console.warn("El navegador no soporta geolocalización.");
+      }
+
       const parkings = this.parkingService.parkings();
       if (parkings.length > 0) {
         this.renderMarkers(parkings);
@@ -54,11 +71,22 @@ export class MapsComponent implements AfterViewInit {
     }
   }
 
+  private activePin: { tooltip: HTMLElement; marker: google.maps.marker.AdvancedMarkerElement } | null = null;
+
+  private closeActivePin() {
+    if (this.activePin) {
+      this.activePin.tooltip.style.display = 'none';
+      this.activePin.marker.zIndex = null;
+      this.activePin = null;
+    }
+  }
+
   private async renderMarkers(parkings: Parking[]) {
     const { AdvancedMarkerElement } = await google.maps.importLibrary('marker') as google.maps.MarkerLibrary;
 
     this.markers.forEach(m => m.map = null);
     this.markers = [];
+    this.map.addListener('click', () => this.closeActivePin());
 
     parkings.forEach(parking => {
       const [lng, lat] = parking.location.coordinates;
@@ -88,10 +116,10 @@ export class MapsComponent implements AfterViewInit {
           </div>
 
           <div style="display: flex; gap: 8px;">
-            <a class="action-btn" target="_blank" href="/reservation?parking=${parking.id}">
+            <a class="action-btn" href="/reservation/${parking.id}">
               Reservar
             </a>
-            <a class="action-btn btn-secondary" target="_blank" href="https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}">
+            <a class="action-btn btn-secondary" href="https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}">
               Cómo llegar
             </a>
           </div>
@@ -101,10 +129,7 @@ export class MapsComponent implements AfterViewInit {
       `;
 
       const tooltip = pin.querySelector('.marker-tooltip') as HTMLElement;
-
       pin.style.pointerEvents = 'auto';
-
-      pin.addEventListener('click', (e) => e.stopPropagation());
 
       pin.addEventListener('mouseenter', () => {
         tooltip.style.display = 'block';
@@ -112,12 +137,11 @@ export class MapsComponent implements AfterViewInit {
       });
 
       pin.addEventListener('mouseleave', (e) => {
-        setTimeout(() => {
-          if (!pin.matches(':hover')) {
-            tooltip.style.display = 'none';
-            marker.zIndex = null;
-          }
-        }, 200);
+        if (this.activePin?.tooltip === tooltip) {
+          return;
+        }
+        tooltip.style.display = 'none';
+        marker.zIndex = null;
       });
 
       const marker = new AdvancedMarkerElement({
@@ -125,6 +149,20 @@ export class MapsComponent implements AfterViewInit {
         map: this.map,
         title: parking.name,
         content: pin,
+      });
+
+      marker.addListener('gmp-click', () => {
+        const isCurrentlyActive = this.activePin?.tooltip === tooltip;
+        if (this.activePin && this.activePin.tooltip !== tooltip) {
+          this.closeActivePin();
+        }
+        if (isCurrentlyActive) {
+          this.activePin = null;
+        } else {
+          tooltip.style.display = 'block';
+          marker.zIndex = 1000;
+          this.activePin = { tooltip, marker };
+        }
       });
 
       this.markers.push(marker);

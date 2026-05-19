@@ -1,7 +1,7 @@
 import { Component, input, output, computed, signal, ElementRef, viewChild } from '@angular/core';
 import { ParkingLayout, SlotLayout } from '../../models/parking-layout';
 
-const SW = 56, SH = 32, SNAP = 8;
+const SW = 40, SH = 28, SNAP = 8;
 
 function snap(v: number): number {
   return Math.round(v / SNAP) * SNAP;
@@ -15,7 +15,7 @@ function snap(v: number): number {
 export class ParkingMapComponent{
   layout = input<ParkingLayout>({
     parkingId: '',
-    viewBox: '0 0 600 400',
+    viewBox: '0 0 800 800',
     slots: []
   });
   layoutChange = output<ParkingLayout>();
@@ -48,7 +48,6 @@ export class ParkingMapComponent{
     return idx !== null ? this.slots()[idx] : null;
   });
 
-  // Convierte coordenadas del pointer a coordenadas SVG
   private toSvgPoint(e: PointerEvent): { x: number; y: number } {
     const svg = this.svgRef().nativeElement;
     const pt = svg.createSVGPoint();

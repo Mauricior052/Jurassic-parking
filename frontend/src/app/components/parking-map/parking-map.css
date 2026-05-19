@@ -38,12 +38,6 @@
   border-color: #3b82f6 !important;
 }
 
-.sep {
-  width: 1px;
-  height: 20px;
-  background: var(--parking-border, #e2e8f0);
-}
-
 .canvas-wrap {
   border: 1px solid var(--parking-border, #e2e8f0);
   border-radius: 12px;

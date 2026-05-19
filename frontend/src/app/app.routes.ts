@@ -9,6 +9,7 @@ import { Records } from './pages/records/records';
 import { History } from './pages/history/history';
 import { ParkingComponent } from './pages/parking/parking';
 import { Reservation } from './pages/reservation/reservation';
+import { Reservations } from './pages/reservations/reservations';
 
 export const routes: Routes = [
     { path: 'login', component: Login, title: 'Login' },
@@ -23,7 +24,8 @@ export const routes: Routes = [
             { path: 'history', component: History, title: 'Historial' },
             { path: 'parking', component: ParkingComponent, title: 'Estacionamientos' },
             { path: 'users', component: Users, title: 'Usuarios' },
-            { path: 'reservation', component: Reservation, title: 'Reservas' }
+            { path: 'reservations', component: Reservations, title: 'Reservaciones' },
+            { path: 'reservation/:parking', component: Reservation, title: 'Reserva' }
         ]
     },
 ];

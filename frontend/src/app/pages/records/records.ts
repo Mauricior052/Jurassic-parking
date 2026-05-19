@@ -12,11 +12,12 @@ import { ThemeService } from '../../services/theme-service';
 import { Actions } from '../../components/actions/actions';
 import { formatCurrency } from '../../utils/formatter';
 import { ParkingService } from '../../services/parking-service';
+import { ParkingSlotPickerComponent } from '../../components/parking-slot-picker/parking-slot-picker';
 
 @Component({
   selector: 'app-records',
   standalone: true,
-  imports: [FormsModule, NgIcon, AgGridAngular],
+  imports: [FormsModule, NgIcon, AgGridAngular, ParkingSlotPickerComponent],
   templateUrl: './records.html',
   providers: [DatePipe]
 })
@@ -35,6 +36,9 @@ export class Records {
   });
   private gridApi: any;
   private intervalId: any;
+  public showSlotPicker = signal(false);
+  public parking = this.parkingService.selectedParking;
+  public occupiedSlots = signal<Set<string>>(new Set());
 
   constructor() {
     effect(() => {
@@ -91,14 +95,21 @@ export class Records {
     });
   }
 
-  registerEntry() {
-    const { plate, vehicle } = this.record();
-    const parkingId = this.parkingService.selectedParkingId();
-    
+  selectSlot() {
+    const { plate, vehicle } = this.record();    
     if (!plate) { toast.warning('Ingresa una placa'); return; }
     if (!vehicle) { toast.warning('Ingresa una descripción'); return; }
+    
+    this.showSlotPicker.set(true);
+  }
 
-    this.recordService.entry({ plate, vehicle, parking: { id: parkingId } }).subscribe({
+  registerEntry(slot: any) {
+    const { plate, vehicle } = this.record();
+    const parkingId = this.parkingService.selectedParkingId();
+    this.showSlotPicker.set(false);
+    const slotCode = slot.code;
+
+    this.recordService.entry({ plate, vehicle, slotCode, parking: { id: parkingId } }).subscribe({
       next: () => {
         toast.success('Vehículo registrado');
         this.record.set({ plate: '', vehicle: '' });

@@ -27,7 +27,11 @@ export class RecordService {
     return this.http.get(`${base_url}/records/active/${parking}`, this.headers);
   }
 
-  entry(record: Record) {
+  getByUser() {
+    return this.http.get(`${base_url}/records/user`, this.headers);
+  }
+
+  entry(record: any) {
     return this.http.post(`${base_url}/records/entry`, record, this.headers);
   }
 

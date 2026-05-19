@@ -42,9 +42,9 @@ export const active = async (req, res) => {
 
 export const entry = async (req, res) => {
   try {
-    const { plate, vehicle, parking } = req.body;
+    const { plate, vehicle, slotCode, parking } = req.body;
     const user = req.id;
-    const record = await Record.create({ plate, vehicle, parking: parking.id, user, entryTime: new Date() });
+    const record = await Record.create({ plate, vehicle, slotCode, parking: parking.id, user, entryTime: new Date() });
 
     res.status(201).json(record);
   } catch (err) {

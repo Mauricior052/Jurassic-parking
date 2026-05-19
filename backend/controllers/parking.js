@@ -1,20 +1,5 @@
 import Parking from '../models/parking.js';
-
-export const create = async (req, res) => {
-  try {
-    const data = req.body;
-    const userId = req.id;
-
-    const parking = await Parking.create({
-      ...data,
-      owner: userId,
-    });
-
-    res.status(201).json(parking);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-};
+import Record from '../models/record.js';
 
 export const getAll = async (req, res) => {
   try {
@@ -39,24 +24,45 @@ export const getById = async (req, res) => {
   }
 };
 
-export const nearby = async (req, res) => {
+export const getSlotsWithStatus = async (req, res) => {
   try {
-    const { lng, lat, distance = 1000 } = req.query;
+    const {parkingId} = req.body;
+    const parking = await Parking.findById(parkingId).lean();
+    if (!parking) throw new Error("Estacionamiento no encontrado");
 
-    const parkings = await Parking.find({
-      location: {
-        $near: {
-          $geometry: {
-            type: 'Point',
-            coordinates: [parseFloat(lng), parseFloat(lat)],
-          },
-          $maxDistance: parseInt(distance),
-        },
-      },
-      active: true,
+    const registrosActivos = await Record.find({
+      parking: parkingId,
+      status: 'active'
+    }).lean();
+
+    const slotsOcupadosCodes = new Set(registrosActivos.map(reg => reg.slotCode));
+    const slotsConEstado = parking.slots.map(slot => ({
+      ...slot,
+      isOccupied: slotsOcupadosCodes.has(slot.code)
+    }));
+
+    return {
+      ...parking,
+      slots: slotsConEstado
+    };
+
+  } catch (error) {
+    console.error("Error al obtener los slots:", error);
+    throw error;
+  }
+};
+
+export const create = async (req, res) => {
+  try {
+    const data = req.body;
+    const userId = req.id;
+
+    const parking = await Parking.create({
+      ...data,
+      owner: userId,
     });
 
-    res.json(parkings);
+    res.status(201).json(parking);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

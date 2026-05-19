@@ -8,10 +8,10 @@ export interface Record {
     price?: number;
   };
   user?: string;
-  entryTime?: Date;
-  exitTime?: Date;
+  slot?: string;
+  entryTime: Date;
+  exitTime: Date;
   status?: string;
   totalMinutes?: number;
   totalAmount?: number;
-  slot?: string;
 }

@@ -1,13 +1,11 @@
 <div class="editor-wrap">
 
   <div class="toolbar">
-    <button (click)="addSlot()">+ Agregar</button>
+    <!-- <button (click)="addSlot()">+ Agregar</button> -->
     <!-- <button (click)="deleteSelected()" [disabled]="selectedIdx() === null">Eliminar</button> -->
-    <div class="sep"></div>
     <button (click)="rotateSelected(45)" [disabled]="selectedIdx() === null">↻ 45°</button>
     <button (click)="setAngle(0)" [disabled]="selectedIdx() === null">Horizontal</button>
     <button (click)="setAngle(90)" [disabled]="selectedIdx() === null">Vertical</button>
-    <div class="sep"></div>
     <button class="save-btn" (click)="save()">Guardar layout</button>
   </div>
 
@@ -35,39 +33,36 @@
             <rect
               [attr.x]="-SW/2 - 4" [attr.y]="-SH/2 - 4"
               [attr.width]="SW + 8" [attr.height]="SH + 8"
-              rx="8" fill="none"
+              rx="6" fill="none"
               stroke="#3b82f6" stroke-width="1.5"
-              stroke-dasharray="5 3"/>
+              stroke-dasharray="4 2"/>
           }
 
           <rect
             [attr.x]="-SW/2" [attr.y]="-SH/2"
             [attr.width]="SW" [attr.height]="SH"
-            rx="5"
+            rx="4"
             [attr.fill]="selectedIdx() === i ? '#3b82f620' : '#22c55e12'"
             [attr.stroke]="selectedIdx() === i ? '#3b82f6' : '#22c55e'"
-            stroke-width="1.5"/>
-
-          <rect x="-13" y="-7" width="26" height="9" rx="3"
+            stroke-width="1.2"/>
+          <rect x="-10" y="-5" width="20" height="7" rx="2"
             [attr.fill]="selectedIdx() === i ? '#3b82f640' : '#22c55e30'"
             [attr.stroke]="selectedIdx() === i ? '#3b82f6' : '#22c55e'"
             stroke-width="0.8"/>
-          <rect x="-11" y="2" width="6" height="4" rx="2"
+          <rect x="-8" y="2" width="4" height="3" rx="1"
             [attr.fill]="selectedIdx() === i ? '#3b82f660' : '#22c55e50'"/>
-          <rect x="5" y="2" width="6" height="4" rx="2"
+          <rect x="4" y="2" width="4" height="3" rx="1"
             [attr.fill]="selectedIdx() === i ? '#3b82f660' : '#22c55e50'"/>
 
           <text
             text-anchor="middle" dominant-baseline="middle"
-            y="12" font-size="9" font-weight="700" font-family="monospace"
+            y="9" font-size="7" font-weight="700" font-family="monospace"
             [attr.fill]="selectedIdx() === i ? '#3b82f6' : '#6b7280'">
             {{ slot.code }}
           </text>
-
         </g>
       }
     </svg>
   </div>
-
   <p class="status">{{ statusMsg() }}</p>
 </div>

@@ -30,7 +30,7 @@ const parkingSchema = new mongoose.Schema(
     rating: { type: Number, default: 0, min: 0, max: 5 },
     active: { type: Boolean, default: true },
 
-    viewBox: { type: String, default: '0 0 600 400' },
+    viewBox: { type: String, default: '0 0 600 600' },
     slots:   { type: [slotSchema], default: [] }
   },
   { timestamps: true }

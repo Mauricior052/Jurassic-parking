@@ -49,6 +49,10 @@ export class ParkingService {
     return this.http.get(`${base_url}/parking`, this.headers);
   }
 
+  getById(id: string) {
+    return this.http.get(`${base_url}/parking/${id}`, this.headers);
+  }
+
   createParking(parking: Parking) {
     return this.http.post(`${base_url}/parking`, parking, this.headers);
   }
