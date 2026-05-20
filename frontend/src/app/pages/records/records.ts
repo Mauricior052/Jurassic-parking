@@ -13,6 +13,7 @@ import { Actions } from '../../components/actions/actions';
 import { formatCurrency } from '../../utils/formatter';
 import { ParkingService } from '../../services/parking-service';
 import { ParkingSlotPickerComponent } from '../../components/parking-slot-picker/parking-slot-picker';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-records',
@@ -26,6 +27,7 @@ export class Records {
   private parkingService = inject(ParkingService);
   private datePipe = inject(DatePipe);
   protected themeService = inject(ThemeService);
+  private router = inject(Router);
 
   @ViewChild('plateInput') plateInput!: ElementRef<HTMLInputElement>;
   
@@ -60,6 +62,7 @@ export class Records {
   public columnDefs: ColDef[] = [
     { headerName: 'Placa', field: 'plate', flex: 2 },
     { headerName: 'Vehículo', field: 'vehicle', flex: 3 },
+    { headerName: 'Slot', field: 'slotCode', width: 110 },
     { headerName: 'Entrada', field: 'entryTime', width: 120, valueFormatter: (params) => this.datePipe.transform(params.value, 'shortTime') || ''},
     { headerName: 'Tiempo', width: 110, valueGetter: (params) => this.getDuration(params.data.entryTime) },
     { headerName: 'A pagar', width: 100, valueGetter: (p) => this.getAmount(p.data) },
@@ -107,7 +110,7 @@ export class Records {
     const { plate, vehicle } = this.record();
     const parkingId = this.parkingService.selectedParkingId();
     this.showSlotPicker.set(false);
-    const slotCode = slot.code;
+    const slotCode = slot;
 
     this.recordService.entry({ plate, vehicle, slotCode, parking: { id: parkingId } }).subscribe({
       next: () => {
@@ -128,7 +131,8 @@ export class Records {
     this.recordService.exit(record.id).subscribe({
       next: (res: any) => {
         toast.success(`Salida registrada - Total: $${res.totalAmount}`);
-        this.loadActive();
+        this.router.navigate(['/ticket', record.id]);
+        // this.loadActive();
       },
       error: () => {
         toast.error('Error al registrar salida');

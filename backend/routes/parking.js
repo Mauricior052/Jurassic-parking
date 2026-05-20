@@ -11,17 +11,17 @@ router.get("/", validateJWT, getAll);
 
 router.get("/mine", validateJWT, mine);
 
-router.get("/:id", [
-  validateJWT,
-  param('id', 'No es un ID válido').isMongoId(),
-  validateFields
-], getById);
-
 router.get("/:id/slots", [
   validateJWT,
   param('id', 'No es un ID válido').isMongoId(),
   validateFields
 ], getSlotsWithStatus);
+
+router.get("/:id", [
+  validateJWT,
+  param('id', 'No es un ID válido').isMongoId(),
+  validateFields
+], getById);
 
 router.post("/", [
   validateJWT,

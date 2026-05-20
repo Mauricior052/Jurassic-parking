@@ -5,6 +5,7 @@ export interface SlotLayout {
   width?: number;
   height?: number;
   angle?: number;
+  isOccupied?: boolean;
 }
 
 export interface ParkingLayout {

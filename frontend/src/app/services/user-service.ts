@@ -93,12 +93,21 @@ export class UserService {
     );
   }
 
+  getUserById(id: string) {
+    return this.http.get<User>(`${base_url}/users/${id}`, this.headers);
+  }
+
   createUser(user: User) {
     return this.http.post(`${base_url}/users`, user, this.headers);
   }
 
   updateUser(user: User) {
     return this.http.put(`${base_url}/users/${user.id}`, user, this.headers);
+  }
+
+  updateCard(card: any) {
+    console.log(card)
+    return this.http.put(`${base_url}/users/card`, card, this.headers);
   }
 
   deleteUser(id: string) {

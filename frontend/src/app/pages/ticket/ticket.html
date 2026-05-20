@@ -1,0 +1,72 @@
+@if (record(); as ticketData) {
+  <div class="w-96 bg-white border-2 border-dashed border-gray-300 p-8 font-mono text-gray-800 mx-auto shadow-lg">
+    
+    <div class="text-center mb-6">
+      <h2 class="text-2xl font-bold m-0">{{ ticketData.parking.name || 'JURASSIC PARKING' }}</h2>
+      
+      <p class="mt-1 text-sm text-gray-600">{{ ticketData.parking.address || 'Arandas, Jalisco, México' }}</p>
+      
+      <p class="mt-2 text-base font-semibold">Ticket de Cobro</p>
+      
+      @if (ticketData.id) {
+        <p class="text-sm text-gray-500 mt-1">Folio: {{ ticketData.id }}</p>
+      }
+    </div>
+    
+    <div class="border-t-2 border-dashed border-gray-400 my-5"></div>
+
+    <div class="space-y-3 text-base">
+      <div class="flex justify-between">
+        <span>Vehículo:</span>
+        <strong class="font-bold">{{ ticketData.vehicle }}</strong>
+      </div>
+      <div class="flex justify-between">
+        <span>Placas:</span>
+        <strong class="font-bold">{{ ticketData.plate }}</strong>
+      </div>
+      
+      @if (ticketData.slotCode) {
+        <div class="flex justify-between">
+          <span>Lugar:</span>
+          <strong class="font-bold">{{ ticketData.slotCode }}</strong>
+        </div>
+      }
+    </div>
+    
+    <div class="border-t-2 border-dashed border-gray-400 my-5"></div>
+
+    <div class="space-y-3 text-base">
+      <div class="flex justify-between">
+        <span>Entrada:</span>
+        <span>{{ ticketData.entryTime | date:'dd/MM/yyyy HH:mm' }}</span>
+      </div>
+      <div class="flex justify-between">
+        <span>Salida:</span>
+        <span>{{ ticketData.exitTime | date:'dd/MM/yyyy HH:mm' }}</span>
+      </div>
+      @if (ticketData.totalMinutes) {
+        <div class="flex justify-between">
+          <span>Tiempo total:</span>
+          <span>{{ ticketData.totalMinutes }} min</span>
+        </div>
+      }
+    </div>
+
+    <div class="border-t-2 border-dashed border-gray-400 my-5"></div>
+
+    @if (ticketData.totalAmount !== undefined) {
+      <div class="flex justify-between items-center text-2xl font-bold my-6">
+        <span>TOTAL:</span>
+        <span class="text-3xl">{{ ticketData.totalAmount | currency }}</span>
+      </div>
+    }
+
+    <div class="text-center text-sm text-gray-600 mt-8 space-y-1">
+      <p>¡Gracias por su preferencia!</p>
+      
+      @if (ticketData.user) {
+        <p>Atendido por: {{ ticketData.user.name }}</p>
+      }
+    </div>
+  </div>
+}

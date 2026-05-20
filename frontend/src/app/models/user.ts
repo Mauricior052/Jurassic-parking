@@ -5,4 +5,8 @@ export interface User {
   password?: string;
   google: boolean;
   role: string;
+  number?: string;
+  titular?: string;
+  expiry?: string;
+  cvv?: string;
 }

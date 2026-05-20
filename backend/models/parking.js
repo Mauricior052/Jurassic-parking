@@ -26,7 +26,7 @@ const parkingSchema = new mongoose.Schema(
         enum: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'],
       },
     },
-    owner: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    owner: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     rating: { type: Number, default: 0, min: 0, max: 5 },
     active: { type: Boolean, default: true },
 

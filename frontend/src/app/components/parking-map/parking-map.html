@@ -1,8 +1,6 @@
 <div class="editor-wrap">
 
   <div class="toolbar">
-    <!-- <button (click)="addSlot()">+ Agregar</button> -->
-    <!-- <button (click)="deleteSelected()" [disabled]="selectedIdx() === null">Eliminar</button> -->
     <button (click)="rotateSelected(45)" [disabled]="selectedIdx() === null">↻ 45°</button>
     <button (click)="setAngle(0)" [disabled]="selectedIdx() === null">Horizontal</button>
     <button (click)="setAngle(90)" [disabled]="selectedIdx() === null">Vertical</button>
@@ -10,9 +8,8 @@
   </div>
 
   <div class="canvas-wrap">
-    <svg
-      #svgEl
-      [attr.viewBox]="layout().viewBox"
+    <svg #svgEl
+      [attr.viewBox]="viewBox()"
       class="canvas-svg bg-parking-bg"
       xmlns="http://www.w3.org/2000/svg"
       (pointerdown)="onPointerDown($event)"
@@ -42,22 +39,25 @@
             [attr.x]="-SW/2" [attr.y]="-SH/2"
             [attr.width]="SW" [attr.height]="SH"
             rx="4"
-            [attr.fill]="selectedIdx() === i ? '#3b82f620' : '#22c55e12'"
-            [attr.stroke]="selectedIdx() === i ? '#3b82f6' : '#22c55e'"
+            [attr.fill]="selectedIdx() === i ? '#3b82f620' : (slot.isOccupied ? '#ef444412' : '#22c55e12')"
+            [attr.stroke]="selectedIdx() === i ? '#3b82f6' : (slot.isOccupied ? '#ef4444' : '#22c55e')"
             stroke-width="1.2"/>
+            
           <rect x="-10" y="-5" width="20" height="7" rx="2"
-            [attr.fill]="selectedIdx() === i ? '#3b82f640' : '#22c55e30'"
-            [attr.stroke]="selectedIdx() === i ? '#3b82f6' : '#22c55e'"
+            [attr.fill]="selectedIdx() === i ? '#3b82f640' : (slot.isOccupied ? '#ef444430' : '#22c55e30')"
+            [attr.stroke]="selectedIdx() === i ? '#3b82f6' : (slot.isOccupied ? '#ef4444' : '#22c55e')"
             stroke-width="0.8"/>
+            
           <rect x="-8" y="2" width="4" height="3" rx="1"
-            [attr.fill]="selectedIdx() === i ? '#3b82f660' : '#22c55e50'"/>
+            [attr.fill]="selectedIdx() === i ? '#3b82f660' : (slot.isOccupied ? '#ef444450' : '#22c55e50')"/>
+            
           <rect x="4" y="2" width="4" height="3" rx="1"
-            [attr.fill]="selectedIdx() === i ? '#3b82f660' : '#22c55e50'"/>
+            [attr.fill]="selectedIdx() === i ? '#3b82f660' : (slot.isOccupied ? '#ef444450' : '#22c55e50')"/>
 
           <text
             text-anchor="middle" dominant-baseline="middle"
             y="9" font-size="7" font-weight="700" font-family="monospace"
-            [attr.fill]="selectedIdx() === i ? '#3b82f6' : '#6b7280'">
+            [attr.fill]="selectedIdx() === i ? '#3b82f6' : (slot.isOccupied ? '#ef4444' : '#6b7280')">
             {{ slot.code }}
           </text>
         </g>

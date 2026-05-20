@@ -27,6 +27,7 @@ export class Reservation implements OnInit {
   private route          = inject(ActivatedRoute);
   private router         = inject(Router);
 
+  public user       = signal<any>(null);
   public parking       = signal<any>(null);
   public slots         = signal<any[]>([]);
   public selectedSlot  = signal<any>(null);
@@ -39,19 +40,30 @@ export class Reservation implements OnInit {
   public selectedPayment = signal<string>('credit');
 
   readonly typeIcon: { [key: string]: string } = {
-    Auto: '🚗', Moto: '🏍️', Camioneta: '🚙'
+    Auto: 'lucideCar',
+    Moto: 'lucideBike',
+    Camioneta: 'lucideTruck'
   };
+  public showVehicleMenu = signal(false);
 
   ngOnInit() {
     const parkingId = this.route.snapshot.paramMap.get('parking');
     if (parkingId) this.loadParking(parkingId);
     this.loadVehicles();
+    this.loadUser();
+  }
+
+  loadUser() {
+    this.userService.getUserById(this.userService.usuario!.id!).subscribe({
+      next: (user: any) => {
+        this.user.set(user.user);
+      }
+    })
   }
 
   loadParking(id: string) {
     this.parkingService.getById(id).subscribe((res: any) => {
       this.parking.set(res);
-      console.log('Parking loaded:', res);
       this.slots.set(res.slots);
     });
   }
@@ -71,7 +83,8 @@ export class Reservation implements OnInit {
     return this.slots().filter(s => !s.occupied).length;
   }
 
-  onSlotPick(slot: any) {
+  onSlotSelected(slot: any) {
+    console.log('Slot seleccionado:', slot);
     this.selectedSlot.set(slot);
   }
 
@@ -98,11 +111,11 @@ export class Reservation implements OnInit {
     this.loading.set(true);
 
     const payload = {
-      plate:         vehicle.plate,
-      vehicle:       vehicle.description,
-      slot:          slot.code,
-      parking:       { id: parkingId },
-      user:          user?.id,
+      plate:    vehicle.plate,
+      vehicle:  vehicle.description,
+      slotCode: slot,
+      parking:  { id: parkingId },
+      user:     user?.id,
     };
 
     this.recordService.entry(payload).subscribe({
@@ -124,6 +137,11 @@ export class Reservation implements OnInit {
   public cardCvv = signal('');
 
   openCardModal() {
+    const savedCard = this.user()?.number;
+    if (savedCard) {
+      toast.info('Utilizando la tarjeta vinculada a tu perfil');
+      return;
+    }
     this.showCardModal.set(true);
   }
 
@@ -155,18 +173,27 @@ export class Reservation implements OnInit {
   }
 
   get cardSummary(): string {
+    const savedCard = this.user()?.number;
+    if (savedCard) {
+      const cleanSaved = savedCard.replace(/\s/g, '');
+      return '**** **** **** ' + cleanSaved.slice(-4);
+    }
+
     const n = this.cardNumber();
     return n ? '**** **** **** ' + n.replace(/\s/g, '').slice(-4) : '—';
   }
 
   get isCardComplete(): boolean {
+    const savedCard = this.user()?.numero || this.user()?.number;
+    if (savedCard && savedCard.replace(/\s/g, '').length >= 4) {
+      return true;
+    }
     return this.cardNumber().replace(/\s/g, '').length === 16 &&
-          !!this.cardExpiry().match(/^\d{2}\/\d{2}$/) &&
-          this.cardCvv().length >= 3;
+           !!this.cardExpiry().match(/^\d{2}\/\d{2}$/) &&
+           this.cardCvv().length >= 3;
   }
   
   formatCvv(value: string) {
     this.cardCvv.set(value.replace(/\D/g, '').slice(0, 4));
   }
-
 }

@@ -42,14 +42,13 @@
         <h3 class="text-sm font-semibold mb-3" style="color: var(--color-parking-text)">Selecciona tu cajón</h3>
 
         <app-parking-slot-picker
-          [parking]="parking()"
-          [occupied]="occupiedSlots()"
-          (slotPick)="onSlotPick($event)">
+          [parkingId]="parking()?.id!"
+          (slotSelected)="onSlotSelected($event)">
         </app-parking-slot-picker>
 
         @if (selectedSlot()) {
           <p class="text-sm font-medium mt-2" style="color: var(--color-parking-primary)">
-            Cajón seleccionado: {{ selectedSlot().code }}
+            Cajón seleccionado: {{ selectedSlot() }}
           </p>
         }
       </div>
@@ -57,30 +56,58 @@
       <!-- Formulario -->
       <div class="mb-6">
         <h3 class="text-sm font-semibold mb-3" style="color: var(--color-parking-text)">Tus datos</h3>
-
         <!-- Selector de vehículo -->
-        <div class="mb-4">
+        <div class="mb-4 relative">
           <label class="block text-sm font-medium mb-1.5" style="color: var(--color-parking-muted)">Vehículo</label>
+          
           @if (vehicles().length === 0) {
             <div class="text-center py-4 rounded-xl border"
-                 style="border-color: var(--color-parking-border); color: var(--color-parking-muted)">
+                style="border-color: var(--color-parking-border); color: var(--color-parking-muted)">
               <p class="text-sm">Sin vehículos registrados</p>
-              <a class="text-xs font-semibold mt-1 inline-block"
-                 style="color: var(--color-parking-primary)"
-                 href="/profile">Agregar en mi perfil →</a>
+              <a class="text-xs font-semibold mt-1 inline-flex items-center gap-1 transition-opacity hover:opacity-80"
+                style="color: var(--color-parking-primary)"
+                href="/profile">Agregar en mi perfil <ng-icon name="lucideArrowRight"></ng-icon></a>
             </div>
           } @else {
-            <select
-              class="w-full px-4 py-2.5 rounded-xl text-base outline-none border appearance-none"
+            <!-- Botón que simula el select -->
+            <button
+              class="w-full px-4 py-2.5 rounded-xl text-base outline-none border flex items-center justify-between transition-all"
               style="background: var(--color-parking-input); border-color: var(--color-parking-border); color: var(--color-parking-text)"
-              (change)="selectedVehicle.set(vehicles()[$any($event.target).selectedIndex - 1])">
-              <option value="" disabled selected style="background: var(--color-parking-input)">Selecciona tu vehículo</option>
-              @for (v of vehicles(); track v.id) {
-                <option [value]="v.id" style="background: var(--color-parking-input)">
-                  {{ typeIcon[v.type] }} {{ v.plate }} — {{ v.description }}
-                </option>
+              (click)="showVehicleMenu.set(!showVehicleMenu())">
+              
+              @if (selectedVehicle()) {
+                <span class="flex items-center gap-2">
+                  <!-- Aquí sí funciona el ng-icon -->
+                  <ng-icon [name]="typeIcon[selectedVehicle()!.type]"></ng-icon>
+                  {{ selectedVehicle()!.plate }} — {{ selectedVehicle()!.description }}
+                </span>
+              } @else {
+                <span style="color: var(--color-parking-muted)">Selecciona tu vehículo</span>
               }
-            </select>
+              
+              <ng-icon name="lucideChevronDown" class="text-lg" style="color: var(--color-parking-muted)"></ng-icon>
+            </button>
+
+            <!-- Menú desplegable -->
+            @if (showVehicleMenu()) {
+              <div class="absolute z-10 w-full mt-2 py-2 rounded-xl border shadow-lg"
+                  style="background: var(--color-parking-surface); border-color: var(--color-parking-border)">
+                @for (v of vehicles(); track v.id) {
+                  <button
+                    class="w-full px-4 py-2.5 text-left flex items-center gap-3 transition-colors hover:bg-black/5"
+                    style="color: var(--color-parking-text)"
+                    (click)="selectedVehicle.set(v); showVehicleMenu.set(false)">
+                    
+                    <ng-icon [name]="typeIcon[v.type]" class="text-lg" style="color: var(--color-parking-muted)"></ng-icon>
+                    <div>
+                      <span class="block font-medium">{{ v.plate }}</span>
+                      <span class="block text-xs opacity-70">{{ v.description }}</span>
+                    </div>
+
+                  </button>
+                }
+              </div>
+            }
           }
         </div>
 
@@ -88,19 +115,19 @@
         <div class="mb-4">
           <label class="block text-sm font-medium mb-1.5" style="color: var(--color-parking-muted)">Método de pago</label>
           <button
-            class="w-full flex items-center justify-between px-4 py-2.5 rounded-xl border transition-all"
+            class="w-full flex items-center justify-between px-4 py-2.5 rounded-xl border transition-all hover:opacity-80"
             [style]="isCardComplete
               ? 'background: var(--color-parking-accent); border-color: var(--color-parking-primary); color: var(--color-parking-text)'
               : 'background: var(--color-parking-accent); border-color: var(--color-parking-border); color: var(--color-parking-muted)'"
             (click)="openCardModal()">
-            <span class="flex items-center gap-2">
-              <span>💳</span>
+            <span class="flex items-center gap-3">
+              <ng-icon name="lucideCreditCard" class="text-lg"></ng-icon>
               <span class="text-sm">{{ isCardComplete ? cardSummary : 'Agregar tarjeta' }}</span>
             </span>
             @if (isCardComplete) {
-              <span style="color: var(--color-parking-available)">✓</span>
+              <ng-icon name="lucideCheck" class="text-lg" style="color: var(--color-parking-available)"></ng-icon>
             } @else {
-              <span class="text-xs" style="color: var(--color-parking-muted)">→</span>
+              <ng-icon name="lucideArrowRight" class="text-lg" style="color: var(--color-parking-muted)"></ng-icon>
             }
           </button>
         </div>
@@ -110,14 +137,18 @@
           <label class="block text-sm font-medium mb-1.5" style="color: var(--color-parking-muted)">Tiempo estimado (horas)</label>
           <div class="flex items-center gap-4">
             <button
-              class="w-9 h-9 rounded-full border flex items-center justify-center text-xl"
+              class="w-9 h-9 rounded-full border flex items-center justify-center transition-colors hover:bg-black/5"
               style="background: var(--color-parking-accent); border-color: var(--color-parking-border); color: var(--color-parking-text)"
-              (click)="changeHours(-1)">−</button>
+              (click)="changeHours(-1)">
+              <ng-icon name="lucideMinus" class="text-lg"></ng-icon>
+            </button>
             <span class="text-lg font-semibold min-w-8 text-center" style="color: var(--color-parking-text)">{{ estimatedHours() }}h</span>
             <button
-              class="w-9 h-9 rounded-full border flex items-center justify-center text-xl"
+              class="w-9 h-9 rounded-full border flex items-center justify-center transition-colors hover:bg-black/5"
               style="background: var(--color-parking-accent); border-color: var(--color-parking-border); color: var(--color-parking-text)"
-              (click)="changeHours(1)">+</button>
+              (click)="changeHours(1)">
+              <ng-icon name="lucidePlus" class="text-lg"></ng-icon>
+            </button>
           </div>
         </div>
       </div>
@@ -164,17 +195,21 @@
         <div class="fixed inset-0 z-50 flex items-end justify-center"
              style="background: rgba(0,0,0,0.6)"
              (click)="closeCardModal()">
-          <div class="w-full max-w-xl rounded-t-3xl p-6"
+          <div class="w-full max-w-xl rounded-t-3xl p-6 shadow-2xl"
                style="background: var(--color-parking-surface); border-top: 1px solid var(--color-parking-border)"
                (click)="$event.stopPropagation()">
 
             <div class="flex justify-between items-center mb-5">
               <h3 class="text-base font-bold" style="color: var(--color-parking-text)">Datos de tarjeta</h3>
-              <button class="text-xl" style="color: var(--color-parking-muted)" (click)="closeCardModal()">✕</button>
+              <button class="p-1.5 rounded-full transition-colors hover:bg-black/5" 
+                      style="color: var(--color-parking-muted)" 
+                      (click)="closeCardModal()">
+                <ng-icon name="lucideX" class="text-xl"></ng-icon>
+              </button>
             </div>
 
             <!-- Preview tarjeta -->
-            <div class="rounded-2xl p-4 mb-5 relative overflow-hidden"
+            <div class="rounded-2xl p-4 mb-5 relative overflow-hidden shadow-md"
                  style="background: linear-gradient(135deg, var(--color-parking-primary), #9f1239); min-height: 80px">
               <p class="text-xs mb-3 opacity-70" style="color: var(--color-parking-text)">Tarjeta de pago</p>
               <p class="text-lg font-mono font-semibold tracking-widest" style="color: var(--color-parking-text)">
@@ -190,8 +225,8 @@
             <div class="mb-4">
               <label class="block text-sm font-medium mb-1.5" style="color: var(--color-parking-muted)">Número de tarjeta</label>
               <input
-                class="w-full px-4 py-2.5 rounded-xl text-base outline-none border font-mono tracking-widest"
-                style="background: var(--color-parking-input); border-color: var(--color-parking-border); color: var(--color-parking-text)"
+                class="w-full px-4 py-2.5 rounded-xl text-base outline-none border font-mono tracking-widest focus:ring-2 transition-all"
+                style="background: var(--color-parking-input); border-color: var(--color-parking-border); color: var(--color-parking-text); --tw-ring-color: var(--color-parking-primary)"
                 type="text"
                 placeholder="0000 0000 0000 0000"
                 [ngModel]="cardNumber()"
@@ -204,8 +239,8 @@
               <div class="flex-1">
                 <label class="block text-sm font-medium mb-1.5" style="color: var(--color-parking-muted)">Vencimiento</label>
                 <input
-                  class="w-full px-4 py-2.5 rounded-xl text-base outline-none border font-mono"
-                  style="background: var(--color-parking-input); border-color: var(--color-parking-border); color: var(--color-parking-text)"
+                  class="w-full px-4 py-2.5 rounded-xl text-base outline-none border font-mono focus:ring-2 transition-all"
+                  style="background: var(--color-parking-input); border-color: var(--color-parking-border); color: var(--color-parking-text); --tw-ring-color: var(--color-parking-primary)"
                   type="text"
                   placeholder="MM/AA"
                   [ngModel]="cardExpiry()"
@@ -217,8 +252,8 @@
               <div class="w-28">
                 <label class="block text-sm font-medium mb-1.5" style="color: var(--color-parking-muted)">CVV</label>
                 <input
-                  class="w-full px-4 py-2.5 rounded-xl text-base outline-none border font-mono"
-                  style="background: var(--color-parking-input); border-color: var(--color-parking-border); color: var(--color-parking-text)"
+                  class="w-full px-4 py-2.5 rounded-xl text-base outline-none border font-mono focus:ring-2 transition-all"
+                  style="background: var(--color-parking-input); border-color: var(--color-parking-border); color: var(--color-parking-text); --tw-ring-color: var(--color-parking-primary)"
                   type="text"
                   placeholder="•••"
                   maxlength="4"
@@ -229,10 +264,10 @@
             </div>
 
             <button
-              class="w-full py-3.5 rounded-xl text-base font-semibold"
+              class="w-full py-3.5 rounded-xl text-base font-semibold transition-transform active:scale-95 flex justify-center items-center gap-2"
               style="background: var(--color-parking-primary); color: var(--color-parking-text); box-shadow: var(--shadow-glow)"
               (click)="confirmCard()">
-              Confirmar tarjeta
+              <ng-icon name="lucideCheck" class="text-lg"></ng-icon> Confirmar tarjeta
             </button>
 
           </div>
@@ -242,6 +277,7 @@
     </div>
   } @else {
     <div class="text-center py-12" style="color: var(--color-parking-muted)">
+      <ng-icon name="lucideLoader2" class="animate-spin text-3xl mb-4"></ng-icon>
       <p>Cargando información del estacionamiento...</p>
     </div>
   }

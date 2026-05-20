@@ -48,7 +48,7 @@
 .canvas-svg {
   display: block;
   width: 100%;
-  touch-action: none;      /* crítico para mobile */
+  touch-action: none;
   cursor: default;
 }
 

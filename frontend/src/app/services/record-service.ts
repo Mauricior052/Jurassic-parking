@@ -1,7 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
-import { Record } from '../models/record';
 
 const base_url = environment.base_url;
 
@@ -21,6 +20,10 @@ export class RecordService {
 
   getAll(parking: string) {
     return this.http.get(`${base_url}/records/${parking}`, this.headers);
+  }
+
+  getById(id: string) {
+    return this.http.get(`${base_url}/records/ticket/${id}`, this.headers);
   }
 
   getActive(parking: string) {

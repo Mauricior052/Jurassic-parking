@@ -40,8 +40,8 @@ export class Login implements AfterViewInit {
   }
 
   loginData = { 
-    email: localStorage.getItem('email') || 'm@gmail.com', 
-    password: '1234', 
+    email: localStorage.getItem('email') || '', 
+    password: '', 
     rememberMe: !!localStorage.getItem('email') 
   };
   

@@ -1,5 +1,6 @@
-import { Component, input, output, computed, signal, ElementRef, viewChild } from '@angular/core';
+import { Component, input, output, computed, signal, ElementRef, viewChild, OnInit, inject, effect } from '@angular/core';
 import { ParkingLayout, SlotLayout } from '../../models/parking-layout';
+import { ParkingLayoutService } from '../../services/parking-layout-service';
 
 const SW = 40, SH = 28, SNAP = 8;
 
@@ -12,19 +13,19 @@ function snap(v: number): number {
   templateUrl: './parking-map.html',
   styleUrl: './parking-map.css'
 })
-export class ParkingMapComponent{
-  layout = input<ParkingLayout>({
-    parkingId: '',
-    viewBox: '0 0 800 800',
-    slots: []
-  });
+export class ParkingMapComponent {
+  parkingId = input.required<string>();
+  
   layoutChange = output<ParkingLayout>();
+
+  private parkingService = inject(ParkingLayoutService);
 
   svgRef = viewChild.required<ElementRef<SVGSVGElement>>('svgEl');
 
+  viewBox = signal<string>('0 0 800 600');
   slots = signal<SlotLayout[]>([]);
   selectedIdx = signal<number | null>(null);
-  statusMsg = signal('Haz clic en un slot para seleccionarlo.');
+  statusMsg = signal('Cargando layout...');
 
   private dragging = false;
   private dragOff = { x: 0, y: 0 };
@@ -32,15 +33,78 @@ export class ParkingMapComponent{
   readonly SW = SW;
   readonly SH = SH;
 
-  ngOnInit() {
-    const initialLayout = this.layout();
-    const slots = initialLayout.slots.map((slot, index) => {
-      if (slot.x !== undefined && slot.y !== undefined) {
-        return slot;
-      }
-      return { ...slot, ...this.calculateGridPosition(index) };
+  constructor() {
+    effect(() => {
+      const id = this.parkingId();
+      if (!id) return;
+      this.loadLayout(id);
     });
-    this.slots.set(slots);
+  }
+
+  private loadLayout(id: string): void {
+    console.log(this.parkingId());
+    this.parkingService.getSlots(this.parkingId()).subscribe({
+      next: (res: any) => {
+        const fetchedSlots: any[] = Array.isArray(res) ? res : (res?.slots || []);
+        const spacesCount = fetchedSlots.length;
+        let layoutInfo: ParkingLayout;
+
+        if (spacesCount === 0) {
+          // Si no hay cajones, inicializamos vacío
+          layoutInfo = { parkingId: this.parkingId(), viewBox: '0 0 800 600', slots: [] };
+        } else {
+          // Revisamos si los slots que llegaron ya tienen coordenadas
+          const hasLayout = fetchedSlots.some(s => s.x !== undefined && s.y !== undefined);
+
+          if (hasLayout) {
+            layoutInfo = {
+              parkingId: this.parkingId(),
+              viewBox: res.viewBox || '0 0 800 600',
+              slots: fetchedSlots
+            };
+          } else {
+            console.log(`Generando layout por defecto para ${spacesCount} slots...`);
+            // Generamos las posiciones por defecto basándonos en el length del arreglo
+            const defaultLayout = this.parkingService.generateDefaultLayout(this.parkingId(), spacesCount);
+            
+            layoutInfo = {
+              parkingId: this.parkingId(),
+              viewBox: defaultLayout.viewBox,
+              // Combinamos la data original (code, isOccupied) con las coordenadas calculadas (x, y)
+              slots: fetchedSlots.map((slot, i) => ({
+                ...slot,
+                x: defaultLayout.slots[i].x,
+                y: defaultLayout.slots[i].y,
+                angle: defaultLayout.slots[i].angle,
+                isOccupied: slot.isOccupied ?? false
+              }))
+            };
+          }
+        }
+
+        this.applyLayout(layoutInfo);
+      },
+      error: (err) => {
+        console.error('Error al cargar slots del estacionamiento:', err);
+        this.applyLayout({ parkingId: this.parkingId(), viewBox: '0 0 800 600', slots: [] });
+        this.statusMsg.set('Error al cargar los datos.');
+      }
+    });
+  }
+
+  private applyLayout(layout: ParkingLayout) {
+    if (layout.viewBox) {
+      this.viewBox.set(layout.viewBox);
+    }
+    
+    const mappedSlots = layout.slots.map(slot => ({
+      ...slot,
+      angle: slot.angle ?? 0,
+      isOccupied: slot.isOccupied ?? false
+    }));
+    
+    this.slots.set(mappedSlots);
+    this.statusMsg.set('Haz clic en un slot para seleccionarlo.');
   }
 
   selectedSlot = computed(() => {
@@ -80,7 +144,10 @@ export class ParkingMapComponent{
       this.dragging = true;
       this.dragOff = { x: svgP.x - this.slots()[idx].x, y: svgP.y - this.slots()[idx].y };
       (e.target as SVGElement).setPointerCapture(e.pointerId);
-      this.statusMsg.set(`Seleccionado: ${this.slots()[idx].code} — arrastra para mover`);
+      
+      const slot = this.slots()[idx];
+      const estado = slot.isOccupied ? '(Ocupado)' : '(Libre)';
+      this.statusMsg.set(`Seleccionado: ${slot.code} ${estado} — arrastra para mover`);
     } else {
       this.selectedIdx.set(null);
       this.statusMsg.set('Haz clic en un slot para seleccionarlo.');
@@ -110,33 +177,6 @@ export class ParkingMapComponent{
     this.dragging = false;
   }
 
-  addSlot() {
-    const currentSlots = this.slots();
-    const nextIndex = currentSlots.length;
-    const { x, y } = this.calculateGridPosition(nextIndex);
-
-    const taken = new Set(this.slots().map(s => s.code));
-    let code = '';
-    for (const l of 'ABCDEFGHIJKLMNOPQRSTUVWXYZ') {
-      for (let n = 1; n <= 30; n++) {
-        const c = `${l}${n}`;
-        if (!taken.has(c)) { code = c; break; }
-      }
-      if (code) break;
-    }
-    this.slots.update(list => [...list, { code, x, y, angle: 0 }]);
-    this.selectedIdx.set(this.slots().length - 1);
-    this.statusMsg.set(`Slot ${code} agregado. Arrástralo a su posición.`);
-  }
-
-  deleteSelected() {
-    const idx = this.selectedIdx();
-    if (idx === null) return;
-    this.slots.update(list => list.filter((_, i) => i !== idx));
-    this.selectedIdx.set(null);
-    this.statusMsg.set('Slot eliminado.');
-  }
-
   rotateSelected(deg: number) {
     const idx = this.selectedIdx();
     if (idx === null) return;
@@ -159,8 +199,9 @@ export class ParkingMapComponent{
 
   save() {
     this.layoutChange.emit({ 
-      ...this.layout(), 
-      slots: this.slots() 
+      parkingId: this.parkingId(), 
+      slots: this.slots(),
+      viewBox: this.viewBox()
     });
     this.statusMsg.set('Cambios preparados para guardar...');
   }
@@ -171,18 +212,4 @@ export class ParkingMapComponent{
   }
 
   trackByCode(_: number, s: SlotLayout) { return s.code; }
-
-  COLS = 5; 
-  GAP = 10;
-  private calculateGridPosition(index: number): { x: number, y: number } {
-    const col = index % this.COLS;
-    const row = Math.floor(index / this.COLS);
-    
-    // Multiplicamos el índice por el tamaño del slot + el espacio (GAP)
-    // Usamos snap para asegurar que se alineen a tu sistema de coordenadas
-    return {
-      x: snap(col * (this.SW + this.GAP) + this.GAP),
-      y: snap(row * (this.SH + this.GAP) + this.GAP)
-    };
-  }
 }

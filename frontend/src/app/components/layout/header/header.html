@@ -1,14 +1,14 @@
 <header class="always-dark sticky top-0 z-50 bg-parking-bg border-b border-parking-border px-4 py-2 text-parking-text">
   <div class="flex items-center justify-between max-w-350 mx-auto">
     
-    <div class="flex items-center gap-3 cursor-pointer group" (click)="goToHome()">
+    <a routerLink="/" class="flex items-center gap-3 cursor-pointer group">
       <div class="bg-parking-primary text-white p-2 rounded-xl flex items-center shadow-glow group-hover:scale-105 transition-transform">
         <ng-icon name="lucideParkingCircle" class="text-xl"></ng-icon>
       </div>
       <h1 class="text-xl font-extrabold tracking-tight">
         Jurassic <span class="text-parking-primary">Parking</span>
       </h1>
-    </div>
+    </a>
 
     <div class="hidden md:block">
       <div class="relative group">
@@ -22,14 +22,16 @@
     </div>
 
     <div class="flex items-center gap-5">
-      <select [ngModel]="parkingService.selectedParkingId()" (ngModelChange)="parkingService.setParking($event)"
-        class="bg-parking-surface border border-parking-border text-xs w-fit max-w-xs rounded-xl p-2 outline-none
-              focus:ring-parking-primary focus:border-parking-primary transition-all cursor-pointer">
-        @for (p of parkingService.parkings(); track p.id) {
-          <option [value]="p.id">{{ p.name }}</option>
-        }
-      </select>
-
+      @if (userService.usuario?.role === 'Admin') {
+        <select [ngModel]="parkingService.selectedParkingId()" (ngModelChange)="parkingService.setParking($event)"
+          class="bg-parking-surface border border-parking-border text-xs w-fit max-w-xs rounded-xl p-2 outline-none
+                focus:ring-parking-primary focus:border-parking-primary transition-all cursor-pointer">
+          @for (p of parkingService.parkings(); track p.id) {
+            <option [value]="p.id">{{ p.name }}</option>
+          }
+        </select>
+      }
+      
       <div class="w-px h-6 bg-parking-border"></div>
 
       @if (user$ | async; as user) {
@@ -75,10 +77,10 @@
               </div>
 
               <div class="p-1">
-                <button class="w-full flex items-center gap-3 px-3 py-2.5 text-sm rounded-lg hover:bg-parking-accent transition-colors cursor-pointer">
+                <a routerLink="/profile" class="w-full flex items-center gap-3 px-3 py-2.5 text-sm rounded-lg hover:bg-parking-accent transition-colors cursor-pointer">
                   <ng-icon name="lucideUser" class="text-parking-muted"></ng-icon>
                   <span>Mi Perfil</span>
-                </button>
+                </a>
               </div>
 
               <div class="h-px bg-parking-border my-1"></div>

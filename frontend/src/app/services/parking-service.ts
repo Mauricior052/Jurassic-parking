@@ -23,8 +23,9 @@ export class ParkingService {
     });
   }
 
-  setParking(id: string) {
+  async setParking(id: string) {
     this.selectedParkingId.set(id);
+    window.location.reload();
   }
 
   loadParkings() {

@@ -8,7 +8,7 @@ export interface Record {
     price?: number;
   };
   user?: string;
-  slot?: string;
+  slotCode?: string;
   entryTime: Date;
   exitTime: Date;
   status?: string;

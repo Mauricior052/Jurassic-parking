@@ -24,3 +24,20 @@ export const authGuard: CanActivateFn = () => {
     })
   );
 };
+
+export const adminGuard: CanActivateFn | CanMatchFn = () => {
+  const userService = inject(UserService);
+  const router = inject(Router);
+
+  return userService.validateToken().pipe(
+    map(isAuthenticated => {
+      if (!isAuthenticated) {
+        return router.parseUrl('/login');
+      }
+      const user = userService.usuario; 
+      const isAdmin = user?.role === 'ADMIN';
+
+      return isAdmin ? true : router.parseUrl('/map');
+    })
+  );
+};

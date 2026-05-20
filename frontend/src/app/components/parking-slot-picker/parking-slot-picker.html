@@ -1,4 +1,5 @@
 <div class="flex flex-col gap-6">
+
   <!-- Leyenda -->
   <div class="flex items-center gap-6 text-sm text-parking-muted">
     <span class="flex items-center gap-2">
@@ -15,56 +16,80 @@
     </span>
   </div>
 
+  <!-- Estado de Carga -->
+  @if (loading()) {
+    <div class="flex items-center justify-center py-10 text-parking-muted">
+      Cargando mapa...
+    </div>
+  }
+
+  <!-- Estado de Error -->
+  @if (error()) {
+    <div class="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-red-400">
+      {{ error() }}
+    </div>
+  }
+
   <!-- Mapa SVG -->
-  <div class="overflow-auto rounded-2xl border border-parking-border bg-parking-surface p-4">
-    <svg [attr.viewBox]="viewBox()" class="w-full" style="min-width: 400px">
+  @if (!loading() && !error()) {
+    <div class="overflow-auto rounded-2xl border border-parking-border bg-parking-surface p-4">
+      <svg [attr.viewBox]="viewBox()" class="w-full" style="min-width: 400px">
+        
+        @for (slot of slots(); track slot.code) {
+          <!-- Calculamos el estado una sola vez por iteración -->
+          @let state = slotState(slot, selected());
+          
+          <g
+            [attr.transform]="getTransform(slot)"
+            (click)="onSlotClick(slot)"
+            [style.cursor]="state === 'occupied' ? 'not-allowed' : 'pointer'"
+          >
+            <!-- Rectángulo del espacio -->
+            <rect
+              [attr.x]="-SW / 2"
+              [attr.y]="-SH / 2"
+              [attr.width]="SW"
+              [attr.height]="SH"
+              rx="4"
+              [attr.fill]="state === 'occupied'
+                ? 'var(--color-red-500)'
+                : state === 'selected'
+                  ? 'var(--color-parking-primary)'
+                  : 'var(--color-emerald-500)'"
+              [attr.fill-opacity]="state === 'free' ? 0.15 : 0.25"
+              [attr.stroke]="state === 'occupied'
+                ? 'var(--color-red-500)'
+                : state === 'selected'
+                  ? 'var(--color-parking-primary)'
+                  : 'var(--color-emerald-500)'"
+              stroke-width="1.5"
+            />
+            
+            <!-- Contenido (Emoji o Código) -->
+            @if (state === 'occupied') {
+              <text text-anchor="middle" dominant-baseline="middle" font-size="12" font-weight="600" [attr.fill]="'white'">{{ slot.code }}</text>
+            } @else {
+              <text
+                text-anchor="middle"
+                dominant-baseline="middle"
+                font-size="12"
+                font-weight="600"
+                [attr.fill]="state === 'free' ? 'var(--color-emerald-500)' : 'white'"
+              >{{ slot.code }}</text>
+            }
+          </g>
+        }
+      </svg>
+    </div>
+  }
 
-      @for (slot of slots(); track slot.code) {
-        <g [attr.transform]="getTransform(slot)"
-           (click)="onSlotClick(slot)"
-           [style.cursor]="occupied().has(slot.code) ? 'not-allowed' : 'pointer'">
-
-          <!-- Fondo del slot -->
-          <rect
-            [attr.x]="-SW/2" [attr.y]="-SH/2"
-            [attr.width]="SW" [attr.height]="SH"
-            rx="4"
-            [attr.fill]="slotState(slot.code) === 'occupied' ? 'var(--color-red-500)' :
-                         slotState(slot.code) === 'selected'  ? 'var(--color-parking-primary)' :
-                                                                'var(--color-emerald-500)'"
-            [attr.fill-opacity]="slotState(slot.code) === 'free' ? 0.15 : 0.25"
-            [attr.stroke]="slotState(slot.code) === 'occupied' ? 'var(--color-red-500)' :
-                           slotState(slot.code) === 'selected'  ? 'var(--color-parking-primary)' :
-                                                                  'var(--color-emerald-500)'"
-            stroke-width="1.5" />
-
-          <!-- Código del slot -->
-          <text
-            text-anchor="middle" dominant-baseline="middle"
-            font-size="10" font-weight="600"
-            [attr.fill]="slotState(slot.code) === 'free' ? 'var(--color-emerald-500)' : 'white'">
-            {{ slot.code }}
-          </text>
-
-          <!-- Icono de carro si está ocupado -->
-          @if (slotState(slot.code) === 'occupied') {
-            <text text-anchor="middle" dominant-baseline="middle"
-                  font-size="14" dy="1">🚗</text>
-          }
-        </g>
-      }
-    </svg>
-  </div>
-
-  <!-- Botón confirmar -->
+  <!-- Confirmación de Selección -->
   @if (selected()) {
-    <div class="flex items-center justify-between rounded-xl bg-parking-primary/10 border border-parking-primary/30 px-4 py-3">
+    <div class="flex items-center justify-between rounded-xl border border-parking-primary/30 bg-parking-primary/10 px-4 py-3">
       <span class="text-sm font-medium">
         Espacio seleccionado: <strong class="text-parking-primary">{{ selected() }}</strong>
       </span>
-      <button (click)="confirm()" class="btn-primary">
-        Confirmar espacio →
-      </button>
+      <button (click)="confirm()" class="btn-primary">Confirmar espacio →</button>
     </div>
   }
 

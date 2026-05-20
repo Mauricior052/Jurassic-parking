@@ -1,11 +1,9 @@
 <div class="space-y-6">
-  <div class="flex items-center justify-between">
-    <div>
+  <div class="flex flex-col items-center justify-center">
       <h1 class="flex items-center gap-3 pl-2 text-2xl font-black">
         <ng-icon name="lucideCalendar" class="text-parking-primary"></ng-icon>Reservaciones
       </h1>
       <p class="pl-2 text-sm text-parking-muted">Administra tus reservas</p>
-    </div>
   </div>
   @if (loading()) {
     <div class="text-center py-12" style="color: var(--color-parking-muted)">
@@ -31,7 +29,7 @@
 
               <div class="flex justify-between items-start mb-3">
                 <div>
-                  <p class="font-semibold text-base" style="color: var(--color-parking-text)">{{ r.parking.name }}</p>
+                  <p class="font-semibold text-base" style="color: var(--color-parking-text)">{{ r.parking }}</p>
                 </div>
                 <span class="text-xs font-semibold px-2 py-1 rounded-full"
                       style="background: var(--color-parking-accent); color: var(--color-parking-available)">
@@ -42,7 +40,7 @@
               <div class="grid grid-cols-2 gap-2">
                 <div class="rounded-xl p-2.5" style="background: var(--color-parking-accent)">
                   <p class="text-xs mb-0.5" style="color: var(--color-parking-muted)">Cajón</p>
-                  <p class="text-sm font-semibold" style="color: var(--color-parking-text)">{{ r.slot }}</p>
+                  <p class="text-sm font-semibold" style="color: var(--color-parking-text)">{{ r.slotCode }}</p>
                 </div>
                 <div class="rounded-xl p-2.5" style="background: var(--color-parking-accent)">
                   <p class="text-xs mb-0.5" style="color: var(--color-parking-muted)">Entrada</p>
@@ -75,7 +73,7 @@
 
               <div class="flex justify-between items-start mb-3">
                 <div>
-                  <p class="font-semibold text-base" style="color: var(--color-parking-text)">{{ r.parking.name }}</p>
+                  <p class="font-semibold text-base" style="color: var(--color-parking-text)">{{ r.parking }}</p>
                 </div>
                 <span class="text-xs font-semibold px-2 py-1 rounded-full"
                       style="background: var(--color-parking-accent)"
@@ -87,7 +85,7 @@
               <div class="grid grid-cols-2 gap-2">
                 <div class="rounded-xl p-2.5" style="background: var(--color-parking-accent)">
                   <p class="text-xs mb-0.5" style="color: var(--color-parking-muted)">Cajón</p>
-                  <p class="text-sm font-semibold" style="color: var(--color-parking-text)">{{ r.slot }}</p>
+                  <p class="text-sm font-semibold" style="color: var(--color-parking-text)">{{ r.slotCode }}</p>
                 </div>
                 <div class="rounded-xl p-2.5" style="background: var(--color-parking-accent)">
                   <p class="text-xs mb-0.5" style="color: var(--color-parking-muted)">Entrada</p>

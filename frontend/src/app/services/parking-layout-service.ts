@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { ParkingLayout, SlotLayout } from '../models/parking-layout';
 import { environment } from '../../environments/environment';
 
-const SW = 56, SH = 32, GAP_X = 12, GAP_Y = 20, COLS = 9, MARGIN = 20;
+const SW = 40, SH = 28, GAP_X = 2, GAP_Y = 10, COLS = 10, MARGIN = 20;
 const base_url = environment.base_url;
 
 @Injectable({ providedIn: 'root' })
@@ -20,13 +20,21 @@ export class ParkingLayoutService {
     };
   }
 
+  getSlots(id: string) {
+    return this.http.get(`${base_url}/parking/${id}/slots`, this.headers);
+  }
+
   saveLayout(layout: ParkingLayout): Observable<ParkingLayout> {
-    console.log(layout)
     return this.http.patch<ParkingLayout>(
       `${base_url}/parking/${layout.parkingId}/layout`,
       { viewBox: layout.viewBox, slots: layout.slots },
       this.headers
     );
+  }
+
+  saveDefaultLayout(parkingId: string, totalSpaces: number): Observable<ParkingLayout> {
+    const layout = this.generateDefaultLayout(parkingId, totalSpaces);
+    return this.saveLayout(layout);
   }
 
   generateDefaultLayout(parkingId: string, totalSpaces: number): ParkingLayout {
@@ -35,7 +43,7 @@ export class ParkingLayoutService {
       const row = Math.floor(i / COLS);
       const col = i % COLS;
       return {
-        code: `${letters[row]}${col + 1}`,
+        code: `${letters[row % 26]}${col + 1}`,
         x: MARGIN + col * (SW + GAP_X),
         y: MARGIN + row * (SH + GAP_Y),
         angle: 0,
@@ -48,7 +56,7 @@ export class ParkingLayoutService {
 
     return {
       parkingId,
-      viewBox: `0 0 ${width} ${height}`,
+      viewBox: `0 0 ${width} ${height+100}`,
       slots,
     };
   }

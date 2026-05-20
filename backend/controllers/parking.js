@@ -26,14 +26,11 @@ export const getById = async (req, res) => {
 
 export const getSlotsWithStatus = async (req, res) => {
   try {
-    const {parkingId} = req.body;
-    const parking = await Parking.findById(parkingId).lean();
+    const { id } = req.params;
+    const parking = await Parking.findById(id).lean();
     if (!parking) throw new Error("Estacionamiento no encontrado");
 
-    const registrosActivos = await Record.find({
-      parking: parkingId,
-      status: 'active'
-    }).lean();
+    const registrosActivos = await Record.find({ parking: id, status: 'ACTIVE' }).lean();
 
     const slotsOcupadosCodes = new Set(registrosActivos.map(reg => reg.slotCode));
     const slotsConEstado = parking.slots.map(slot => ({
@@ -41,10 +38,7 @@ export const getSlotsWithStatus = async (req, res) => {
       isOccupied: slotsOcupadosCodes.has(slot.code)
     }));
 
-    return {
-      ...parking,
-      slots: slotsConEstado
-    };
+    res.json({ parkingId: id, viewBox: parking.viewBox, slots: slotsConEstado });
 
   } catch (error) {
     console.error("Error al obtener los slots:", error);

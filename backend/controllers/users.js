@@ -11,6 +11,20 @@ export const getUsers = async (req, res) => {
   res.json({ users, total });
 };
 
+export const getUserById = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const userDB = await User.findById(id, 'name email role google favorites number titular expiry');
+    if (!userDB) {
+      return res.status(404).json({ msg: 'No existe un usuario con ese id' });
+    }
+    res.json({ user: userDB });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ msg: 'Error inesperado' });
+  }
+};
+
 export const createUser = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -69,6 +83,23 @@ export const updateUser = async (req, res) => {
     res.status(500).json({ msg: 'Error inesperado' });
   }
 };
+
+export const updateCard = async (req, res) => {
+  try {
+    const id = req.id;
+    const { number, titular, expiry } = req.body;
+    
+    const updatedUser = await User.findByIdAndUpdate( id, { number, titular, expiry }, { returnDocument: 'after' } );
+    if (!updatedUser) {
+      return res.status(404).json({ msg: 'Usuario no encontrado' });
+    }
+    res.json({ updatedUser });
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ msg: 'Error inesperado' });
+  }
+}
 
 export const deleteUser = async (req, res) => {
   try {

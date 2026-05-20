@@ -14,7 +14,7 @@ export const connectDB = async () => {
     mongoose.set('toObject', { virtuals: true });
 
     
-    await mongoose.connect(process.env.MONGO_URL);
+    await mongoose.connect(process.env.MONGO_URI);
     console.log("DB online");
 
   } catch (error) {

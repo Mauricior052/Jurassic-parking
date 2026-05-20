@@ -20,11 +20,11 @@ export class Reservations implements OnInit, OnDestroy {
   private intervalId: any;
 
   public active = computed(() =>
-    this.records().filter(r => r.status === 'active')
+    this.records().filter(r => r.status === 'ACTIVE')
   );
 
   public history = computed(() =>
-    this.records().filter(r => r.status !== 'active')
+    this.records().filter(r => r.status !== 'ACTIVE')
       .sort((a, b) => new Date(b.entryTime!).getTime() - new Date(a.entryTime!).getTime())
   );
 
@@ -40,7 +40,6 @@ export class Reservations implements OnInit, OnDestroy {
     this.recordService.getByUser().subscribe({
       next: (res: any) => {
         this.records.set(res);
-        console.log
         this.loading.set(false);
       },
       error: (err) => {

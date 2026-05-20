@@ -11,6 +11,7 @@ import { ThemeService } from '../../services/theme-service';
 import { Actions } from '../../components/actions/actions';
 import { IconComponent } from '../../components/icon/icon-component';
 import { MapsService } from '../../services/maps-service';
+import { ParkingLayoutService } from '../../services/parking-layout-service';
 
 @Component({
   selector: 'app-parking',
@@ -22,6 +23,7 @@ export class ParkingComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private parkingService = inject(ParkingService);
   private mapsService = inject(MapsService);
+  private parkingLayoutService = inject(ParkingLayoutService);
   protected themeService = inject(ThemeService);
 
   rowData = signal<Parking[]>([]);
@@ -163,11 +165,20 @@ export class ParkingComponent implements OnInit {
       });
     } else {
       this.parkingService.createParking(this.form).subscribe({
-        next: () => {
-          this.loading = false;
-          toast.success('Estacionamiento creado correctamente');
-          this.loadParkings();
-          this.closeModal();
+        next: (res: any) => {
+          console.log(res);
+          this.parkingLayoutService.saveDefaultLayout(res.id, res.totalSpaces).subscribe({
+            next: () => {
+              this.loading = false;
+              toast.success('Estacionamiento creado correctamente');
+              this.loadParkings();
+              this.closeModal();
+            },
+            error: (err) => {
+              this.loading = false;
+              toast.error(err?.error?.msg || 'Error al crear estacionamiento');
+            }
+          })
         },
         error: (err) => {
           this.loading = false;

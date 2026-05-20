@@ -3,7 +3,7 @@ import { check } from 'express-validator';
 
 import { validateFields } from '../middlewares/validate-fields.js';
 import { validateJWT, validateAdmin } from '../middlewares/validate-jwt.js';
-import { active, calculate, cancel, entry, exit, getAll, getByUser } from '../controllers/record.js';
+import { active, calculate, cancel, entry, exit, getAll, getById, getByUser } from '../controllers/record.js';
 
 
 const router = Router();
@@ -11,6 +11,7 @@ const router = Router();
 router.get("/active/:parking", validateJWT, active);
 router.get("/user", validateJWT, getByUser);
 
+router.get("/ticket/:id", validateJWT, getById);
 router.get("/:parking", validateJWT, getAll);
 
 router.post("/entry", [

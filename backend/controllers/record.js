@@ -18,12 +18,29 @@ export const getAll = async (req, res) => {
   }
 };
 
+export const getById = async (req, res) => {  
+  try {
+    const { id } = req.params;
+    const record = await Record.findById(id).populate('parking', 'name address').populate('user', 'name');
+    res.json(record);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
 export const getByUser = async (req, res) => {
   try {
     const userId = req.id;
-    const user = await User.findById(userId);
-    const records = await Record.find({ user }).populate('parking', 'name price').sort({ entryTime: -1 });
-    res.json(records);
+    const records = await Record.find({ user: userId }).populate('parking', 'name').sort({ entryTime: -1 }).lean();;
+
+    const flattenedRecords = records.map(record => ({
+      id: record._id,
+      ...record,
+      parking: record.parking?.name || null
+    }));
+
+    res.json(flattenedRecords);
+
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -48,6 +65,7 @@ export const entry = async (req, res) => {
 
     res.status(201).json(record);
   } catch (err) {
+    console.log(err);
     res.status(500).json({ message: err.message });
   }
 };
