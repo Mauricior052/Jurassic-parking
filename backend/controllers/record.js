@@ -22,6 +22,7 @@ export const getById = async (req, res) => {
   try {
     const { id } = req.params;
     const record = await Record.findById(id).populate('parking', 'name address').populate('user', 'name');
+    Record.deleteOne({ id: "6a0cf6c5a1959baec816764b"})
     res.json(record);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -31,7 +32,7 @@ export const getById = async (req, res) => {
 export const getByUser = async (req, res) => {
   try {
     const userId = req.id;
-    const records = await Record.find({ user: userId }).populate('parking', 'name').sort({ entryTime: -1 }).lean();;
+    const records = await Record.find({ user: userId }).populate('parking', 'name').sort({ entryTime: -1 }).lean();
 
     const flattenedRecords = records.map(record => ({
       id: record._id,

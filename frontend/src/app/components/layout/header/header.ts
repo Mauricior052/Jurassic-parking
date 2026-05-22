@@ -21,6 +21,7 @@ export class Header {
   private router = inject(Router);
 
   public user$ = this.userService.usuario$;
+  public usuario = this.userService.usuario;
   isMenuOpen = false;
 
   toggleMenu() {

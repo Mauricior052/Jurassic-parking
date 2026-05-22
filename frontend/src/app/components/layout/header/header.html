@@ -22,7 +22,7 @@
     </div>
 
     <div class="flex items-center gap-5">
-      @if (userService.usuario?.role === 'Admin') {
+      @if (userService.usuario?.role === 'admin') {
         <select [ngModel]="parkingService.selectedParkingId()" (ngModelChange)="parkingService.setParking($event)"
           class="bg-parking-surface border border-parking-border text-xs w-fit max-w-xs rounded-xl p-2 outline-none
                 focus:ring-parking-primary focus:border-parking-primary transition-all cursor-pointer">

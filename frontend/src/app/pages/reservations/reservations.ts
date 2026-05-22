@@ -39,13 +39,14 @@ export class Reservations implements OnInit, OnDestroy {
   load() {
     this.recordService.getByUser().subscribe({
       next: (res: any) => {
+        console.log(res)
         this.records.set(res);
         this.loading.set(false);
       },
       error: (err) => {
         console.log(err)
         this.loading.set(false)
-      } 
+      }
     });
   }
 

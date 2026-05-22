@@ -27,7 +27,7 @@ export const routes: Routes = [
             { path: 'reservation/:parking', component: Reservation, title: 'Reserva' },
 
             // Admin
-            { path: '', component: Home, title: 'Home', canActivate: [adminGuard] },
+            { path: '', component: Home, title: 'Home',  canActivate: [adminGuard] },
             { 
                 path: 'users', 
                 component: Users, 

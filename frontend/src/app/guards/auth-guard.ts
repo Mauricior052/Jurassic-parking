@@ -35,7 +35,7 @@ export const adminGuard: CanActivateFn | CanMatchFn = () => {
         return router.parseUrl('/login');
       }
       const user = userService.usuario; 
-      const isAdmin = user?.role === 'ADMIN';
+      const isAdmin = user?.role === 'admin';
 
       return isAdmin ? true : router.parseUrl('/map');
     })
